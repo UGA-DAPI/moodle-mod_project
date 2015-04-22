@@ -74,7 +74,7 @@ echo $OUTPUT->box_start('center', '100%');
 	//récupération des rôles et des users affectés
 	//list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
     $assignableroles = $DB->get_records('role', array(), '', 'id,name,shortname');
-    $roles = array('projectetu','projectens','projectent');
+    $roles = array('student','editingteacher','teacher');
     $rolesName = array('Etudiants Projet','Tuteurs enseignant','Tuteurs entreprise');
     for ($i=0;$i<3;$i++){
       $rolempty = true;

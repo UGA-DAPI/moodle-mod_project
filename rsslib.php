@@ -15,10 +15,10 @@
 	*
 	*/
 	
-function project_rss_get_feed($context, $args) {
-    global $CFG, $DB, $USER;
+	function project_rss_get_feed($context, $args) {
+		global $CFG, $DB, $USER;
 
-    $status = true;
+		$status = true;
 
     //are RSS feeds enabled?
     /*if (empty($CFG->project_enablerssfeeds)) {
@@ -31,7 +31,7 @@ function project_rss_get_feed($context, $args) {
 
     //the sql that will retreive the data for the feed and be hashed to get the cache filename
     list($sql, $params) = project_rss_get_sql($projectid);
-	
+    
 
     // Hash the sql to get the cache file name.
     $filename = rss_get_file_name($projectid, $sql, $params);
@@ -39,20 +39,20 @@ function project_rss_get_feed($context, $args) {
     //Is the cache out of date?
     $cachedfilelastmodified = 0;
     if (file_exists($cachedfilepath)) {
-        $cachedfilelastmodified = filemtime($cachedfilepath);
+    	$cachedfilelastmodified = filemtime($cachedfilepath);
     }
     // Used to determine if we need to generate a new RSS feed.
     $dontrecheckcutoff = time()-60;
     // If it hasn't been generated we will need to create it, otherwise only update
     // if there is new stuff to show and it is older than the cut off date set above.
-	if (($cachedfilelastmodified == 0) || (($dontrecheckcutoff > $cachedfilelastmodified) &&
-        project_rss_newstuff($projectid, $cachedfilelastmodified))) {
+    if (($cachedfilelastmodified == 0) || (($dontrecheckcutoff > $cachedfilelastmodified) &&
+    	project_rss_newstuff($projectid, $cachedfilelastmodified))) {
         // Need to regenerate the cached version.
-        $result = project_rss_feed_contents($projectid, $sql, $params);
-		$status = rss_save_file('mod_project', $filename, $result);
-    }
+    	$result = project_rss_feed_contents($projectid, $sql, $params);
+    $status = rss_save_file('mod_project', $filename, $result);
+}
     //return the path to the cached version
-    return $cachedfilepath;
+return $cachedfilepath;
 }
 
 /**
@@ -61,7 +61,7 @@ function project_rss_get_feed($context, $args) {
  * @param stdClass $project
  */
 function project_rss_delete_file($projectid) {
-    rss_delete_file('mod_project', $projectid);
+	rss_delete_file('mod_project', $projectid);
 }
 
 ///////////////////////////////////////////////////////
@@ -77,9 +77,9 @@ function project_rss_delete_file($projectid) {
  * @return bool True for new items
  */
 function project_rss_newstuff($projectid, $time) {
-    global $DB;
-    list($sql, $params) = project_rss_get_sql($projectid, $time);
-    return $DB->record_exists_sql($sql, $params);
+	global $DB;
+	list($sql, $params) = project_rss_get_sql($projectid, $time);
+	return $DB->record_exists_sql($sql, $params);
 }
 
 
@@ -92,24 +92,24 @@ function project_rss_newstuff($projectid, $time) {
  * @return string the SQL query to be used to get the Discussion details from the project table of the database
  */
 function project_rss_get_sql($projectid, $newsince=0) {
-    global $CFG, $DB, $USER;
+	global $CFG, $DB, $USER;
 
-    $timelimit = '';
+	$timelimit = '';
 
     //$modcontext = null;
 
-    $now = round(time(), -2);
-    $params = array();
+	$now = round(time(), -2);
+	$params = array();
 
-    $projectsort = "timemodified DESC";
+	$projectsort = "timemodified DESC";
    // $postdata = "p.id AS postid, p.subject, p.created as postcreated, p.modified, p.discussion, p.userid, p.message as postmessage, p.messageformat AS postformat, p.messagetrust AS posttrust";
 
-    $sql = "SELECT *
-              FROM {project}
-             WHERE projectgrpid = {$projectid} AND etat = 1
-					
-          ORDER BY $projectsort";
-    return array($sql, $params);
+	$sql = "SELECT *
+	FROM {project}
+	WHERE projectgrpid = {$projectid} AND etat = 1
+	
+	ORDER BY $projectsort";
+	return array($sql, $params);
 }
 
 /**
@@ -126,9 +126,9 @@ function project_rss_get_sql($projectid, $newsince=0) {
  */
 
 function project_rss_feed_contents($projectid, $sql, $params) {
-    global $CFG, $DB, $USER;
+	global $CFG, $DB, $USER;
 
-    $status = true;
+	$status = true;
 
 	$recs = $DB->get_records('project', array('projectgrpid' => $projectid,'etat' => 1));
     //set a flag. Are we displaying discussions or posts?
@@ -137,10 +137,10 @@ function project_rss_feed_contents($projectid, $sql, $params) {
 	
 	$roleprojectgrp = $DB->get_record('role', array('id' => $projectid));
 	
-    $formatoptions = new stdClass();
-    $items = array();
+	$formatoptions = new stdClass();
+	$items = array();
 	$moduleproject = $DB->get_record('modules', array('name' => 'project'));
-    foreach ($recs as $rec) {
+	foreach ($recs as $rec) {
 		$item = new stdClass();
 		//$user = new stdClass();
 		$item->title = format_string($rec->name);
@@ -182,7 +182,7 @@ function project_rss_feed_contents($projectid, $sql, $params) {
 		
 		//AJOUT AFFICHAGE DE L EQUIPE
 		$assignableroles = $DB->get_records('role', array(), '', 'id,name,shortname');
-		$roles = array('projectetu','projectens','projectent');
+		$roles = array('student','editingteacher','teacher');
 		$rolesName = array('Etudiants Projet','Tuteurs enseignant','Tuteurs entreprise');
 		$description .= "<span>Composition de l'équipe :</span><br />";
 		for ($i=0;$i<3;$i++){
@@ -221,15 +221,15 @@ function project_rss_feed_contents($projectid, $sql, $params) {
 
     // Create the RSS header.
 	$header = rss_standard_header(strip_tags(format_string('Ensemble des projets',true)),
-                                  null,
-                                  format_string("Retrouvez tous les projets terminées du groupe ".$roleprojectgrp->name,true));
+		null,
+		format_string("Retrouvez tous les projets terminées du groupe ".$roleprojectgrp->name,true));
     // Now all the RSS items, if there are any.
-    $rssProjets = '';
-    if (!empty($items)) {
-        $rssProjets = rss_add_items($items);
-    }
+	$rssProjets = '';
+	if (!empty($items)) {
+		$rssProjets = rss_add_items($items);
+	}
     // Create the RSS footer.
-    $footer = rss_standard_footer();
+	$footer = rss_standard_footer();
 
-    return $header . $rssProjets . $footer;
+	return $header . $rssProjets . $footer;
 }

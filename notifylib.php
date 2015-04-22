@@ -239,20 +239,20 @@ function project_notify_milestone_change(&$project, $milestoneid, $typeDemande, 
 	$notifydescription = '';
 	if($typeDemande==1){//Demande de validation envoi aux tuteurs enseignants
 		$subject = get_string('notifymilestonchangeaskvalid', 'project').$project->name;
-		$role = $DB->get_record('role', array('shortname' => 'projectens'));//seul les enseignants recoive une notification
+		$role = $DB->get_record('role', array('shortname' => 'editingteacher'));//seul les enseignants recoive une notification
 		/*
 		utile si notification aux entreprises aussi
-		$roleEnt = $DB->get_record('role', array('shortname' => 'projectent'));//tuteur entreprises
+		$roleEnt = $DB->get_record('role', array('shortname' => 'teacher'));//tuteur entreprises
 		$role = array_merge($role,$roleEnt);//on prend les enseigntans et les entreprises
 		*/
 		$notifydescription = "Une demande de validation de l'étape a été faite";
 	}elseif($typeDemande==2){//Demande de révision envoi aux étudiants
 		$subject = get_string('notifymilestonchangeaskrevalid', 'project').$project->name;
-		$role = $DB->get_record('role', array('shortname' => 'projectetu'));
+		$role = $DB->get_record('role', array('shortname' => 'student'));
 		$notifydescription = "Une demande de révision de l'étape a été faite";
 	}elseif($typeDemande==3){//étape validé envoi aux étudiants
 		$subject = get_string('notifymilestonchangevalid', 'project').$project->name;
-		$role = $DB->get_record('role', array('shortname' => 'projectetu'));
+		$role = $DB->get_record('role', array('shortname' => 'student'));
 		$notifydescription = "L'étape a été validée";
 	}
 	$message = project_compile_mail_template('milestonechangestatut', array(

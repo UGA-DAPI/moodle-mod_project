@@ -33,30 +33,14 @@ class mod_project_mod_form extends moodleform_mod {
 		$PAGE->requires->js( new moodle_url('/mod/project/js/formprojet.js'));
 //-------------------------------------------------------------------------------
 //$contextss = get_context_instance(CONTEXT_SYSTEM);
-$contextss = get_context_instance(CONTEXT_COURSE, $COURSE->id);//context du cours
+$contextss = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+//context du cours
 $canAddTypeProject = false;
 $forceTypeProject= false;
-if(has_capability('mod/project:addtypeinstance', $contextss)){//capacité system d'ajouter un type projet !
-$canAddTypeProject = true;
+if(has_capability('mod/project:addtypeinstance', $contextss)){
+//capacité system d'ajouter un type projet !
+    $canAddTypeProject = true;
 }
-/* Ancien code pour check droit du role projectgrp ...
-// Check du role pour le groupe projectgrp qui permet d'ajouter un type de projet
-$assignableroles = $DB->get_records('role', array(), '', 'id,name,shortname');
-foreach ($assignableroles as $role) {
-	if($role->shortname=='projectgrp'){
-		$roleusers = '';
-		$roleusers = get_role_users($role->id, $contextss, false, 'u.id');
-		if (!empty($roleusers)) {
-			$listeUsers ='';
-			foreach ($roleusers as $checkUser) {
-				if($checkUser->id == $USER->id){
-					$canAddTypeProject = true;
-				}
-			}
-		}
-	}
-}
-*/
 //--------------------------------------------------------------------------------
     /// Adding the "general" fieldset, where all the common settings are showed
 $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -176,7 +160,7 @@ $types = 0;
         	$projectgrpoptions = array();
         	if (!empty($roleuser)){
         		foreach ($roleuser as $rolecourse) {
-        			if(preg_match_all('#projectgrp#', $rolecourse->shortname, $matches)){
+        			if(preg_match_all('#editingteacher#', $rolecourse->shortname, $matches)){
         				$projectgrpoptions[$rolecourse->id] = $rolecourse->name;
 						//$roleProjectgrpid = $rolecourse->id;
         			}

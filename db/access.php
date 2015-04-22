@@ -45,7 +45,7 @@ $capabilities = array(
     //créer un projet
 	'mod/project:addinstance' => array(
 		'captype' => 'write',
-		'contextlevel' => CONTEXT_MODULE,   // pourquoi pas CONTEXT_COURSE ???
+		'contextlevel' => CONTEXT_COURSE,
 		'legacy' => array(
 			'editingteacher' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
@@ -54,7 +54,7 @@ $capabilities = array(
 	//voir le projet, ainsi que son avancement
 	'mod/project:view' => array(
 		'captype' => 'write',
-		'contextlevel' => CONTEXT_MODULE,   // pourquoi pas CONTEXT_COURSE ???
+		'contextlevel' => CONTEXT_COURSE,
 		'legacy' => array(
 			'editingteacher' => CAP_ALLOW,
 			'teacher' => CAP_ALLOW,
@@ -71,8 +71,8 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-
-	'mod/project:changemiles' => array(
+	// ajouter / editer les étapes
+	'mod/project:changemilestone' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
@@ -132,7 +132,7 @@ $capabilities = array(
 			'student' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)
-		)
+		),
 	//archiver un projet
 	'mod/project:archive' => array(
 		'captype' => 'write',
@@ -141,8 +141,8 @@ $capabilities = array(
 			'editingteacher' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)
-		)
-	//teecharger un livrable. interdit aux techers -> tuteurs, dans le cadre de la confidentialité ??
+		),
+	//telecharger un livrable. interdit aux teachers (=tuteurs) dans le cadre de la confidentialité ??
 	'mod/project:downloaddeliverable' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -152,22 +152,13 @@ $capabilities = array(
 			'teacher' => CAP_PREVENT,
 			'manager' => CAP_ALLOW
 			)
-		)
+		),
 	// etre noté. pourquoi les editingteacher peuvent etre notés ??
 	'mod/project:becomennoted' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
 			'student' => CAP_ALLOW,
-			'editingteacher' => CAP_ALLOW,
-			'manager' => CAP_ALLOW
-			)
-		)
-	//ajouter une etape au projet 
-	'mod/project:addmilestone' => array(
-		'captype' => 'write',
-		'contextlevel' => CONTEXT_MODULE,
-		'legacy' => array(
 			'editingteacher' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)

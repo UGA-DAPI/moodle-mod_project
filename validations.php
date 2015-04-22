@@ -103,11 +103,11 @@
 	project_print_validations($project, $currentGroupId, 0, $cm->id);
 	$createvalidationstr = get_string('createvalidationsession', 'project');
 	$copyvalidationstr = get_string('copyvalidationsession', 'project');
-	if (has_capability('mod/project:managevalidations', context_module::instance($cm->id))){
+	//if (has_capability('mod/project:managevalidations', context_module::instance($cm->id))){
 		echo '<p><center>';
 		echo "<a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cm->id}&amp;view=validations&amp;work=new\">$createvalidationstr</a>";
 	    echo "- <a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cm->id}&amp;view=validations&amp;work=new&amp;followup=1\">$copyvalidationstr</a>";
 		echo '</center></p>';
-	}
+	//}
 
 ?>
