@@ -68,7 +68,7 @@
     	project_print_messages($project, $currentGroupId, $cm->id, 0 );
 		$context = context_module::instance($cm->id);
         //if ($USER->editmode == 'on') {
-        if (has_capability('mod/project:adddiscussion', $context) && $project->etat==0) {
+        if (has_capability('mod/project:communicate', $context) && $project->etat==0) {
     		echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;parent=0'>".get_string('adddiscu','project')."</a>&nbsp; ";
     		//project_print_group_commands();
     	}

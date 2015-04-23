@@ -14,7 +14,7 @@
 	*
 	*/
 
-    if (!has_capability('mod/project:manage', $context)){
+    if (!has_capability('mod/project:cvs', $context)){
         print_error(get_string('notateacher','project'));
         return;
     }

@@ -76,11 +76,11 @@
     <input type="hidden" name="id" value="<?php p($cm->id) ?>" />
     <input type="hidden" name="work" value="groupcmd" />
     <?php
-        if ($USER->editmode == 'on' && has_capability('mod/project:changedelivs', $context) && $project->etat==0) {
+        if ($USER->editmode == 'on' && has_capability('mod/project:editdeliverables', $context) && $project->etat==0) {
     		echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0'>".get_string('adddeliv','project')."</a>&nbsp; ";
     	}
     	project_print_deliverables($project, $currentGroupId, 0, $cm->id);
-        if ($USER->editmode == 'on' && has_capability('mod/project:changedelivs', $context) && $project->etat==0) {
+        if ($USER->editmode == 'on' && has_capability('mod/project:editdeliverables', $context) && $project->etat==0) {
     		echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0'>".get_string('adddeliv','project')."</a>&nbsp; ";
     		project_print_group_commands();
     	}

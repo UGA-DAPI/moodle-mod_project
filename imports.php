@@ -11,7 +11,7 @@
 *
 */
     require_once $CFG->dirroot.'/mod/project/importlib.php';
-    if (!has_capability('mod/project:viewprojectcontrols', $context) && !has_capability('mod/project:manage', $context)){
+    if (!has_capability('mod/project:imports', $context)){
         print_error(get_string('notateacher','project'));
         return;
     }
@@ -30,7 +30,7 @@
         echo $OUTPUT->continue_button("view.php?id={$cm->id}");    
         return;
     }
-    /************************************ clears an existing XSL sheet *******************************/
+    /************************************ load an existing XSL sheet *********************************/
     if ($work == 'loadxsl'){
         $uploader = new upload_manager('xslfilter', false, false, $course->id, true, 0, true);
         $uploader->preprocess_files();
@@ -48,7 +48,7 @@
         $DB->set_field('project', 'xslfilter', '', array('id' => $project->id));
         $project->xslfilter = '';
     }
-    /************************************ clears an existing XSL sheet *******************************/
+    /************************************ load an existing CSS sheet *********************************/
     if ($work == 'loadcss'){
         $uploader = new upload_manager('cssfilter', false, false, $course->id, true, 0, true);
         $uploader->preprocess_files();
@@ -58,7 +58,7 @@
             $uploader->save_files("{$course->id}/moddata/project/{$project->id}");
         }
     }
-    /************************************ clears an existing XSL sheet *******************************/
+    /************************************ clears an existing CSS sheet *******************************/
     if ($work == 'clearcss'){
         include_once "filesystemlib.php";
         $csssheetname = $DB->get_field('project', 'cssfilter', array('id' => $project->id));    
@@ -103,7 +103,7 @@
     <ul>
     <li><a href="?work=doexportall&amp;id=<?php p($cm->id) ?>"><?php print_string('exportallforcurrentgroup', 'project') ?></a></li>
     <?php
-    if (has_capability('mod/project:manage', $context)){
+    if (has_capability('mod/project:imports', $context)){
     ?>
     <li><a href="Javascript:document.forms['export'].submit()"><?php print_string('loadcustomxslsheet', 'project') ?></a>
     <form name="export" method="post" enctype="multipart/form-data" style="display:inline">
@@ -126,7 +126,7 @@
     }
     ?>
     <?php
-    if (has_capability('mod/project:manage', $context)){
+    if (has_capability('mod/project:imports', $context)){
     ?>
     <li><a href="Javascript:document.forms['exportcss'].submit()"><?php print_string('loadcustomcsssheet', 'project') ?></a>
     <form name="exportcss" method="post" enctype="multipart/form-data" style="display:inline">

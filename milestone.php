@@ -65,7 +65,7 @@
 		echo $OUTPUT->confirm("La mise en révision de l'étape a bien été faite. Vous pouvez, de plus, commenter cette demande de révision.<br /><br />Voulez-vous laisser un commentaire sur cette demande dans la partie messages ?", $url, $urlretour);
 	}else{
 		project_print_milestones($project, $currentGroupId, NULL, $cm->id);
-		if ($USER->editmode == 'on' && (has_capability('mod/project:changemiles', $context)) && $project->etat==0) {
+		if ($USER->editmode == 'on' && (has_capability('mod/project:changemilestone', $context)) && $project->etat==0) {
 			echo "<br/><a href='view.php?id={$cm->id}&amp;work=add'>".get_string('addmilestone','project')."</a>";
 			//echo " - <a href='view.php?id={$cm->id}&amp;work=clearall'>".get_string('clearall','project')."</a>";
 			//echo " - <a href='view.php?id={$cm->id}&amp;work=sortbydate'>".get_string('sortbydate','project')."</a>";

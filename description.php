@@ -112,9 +112,10 @@ if ($work == 'edit'){
 	
    // project_print_heading($project, $currentGroupId);
     echo "<center>";
-    if ($USER->editmode == 'on') {
-        //echo "<br/><a href=\"view.php?work=edit&amp;id={$cm->id}\" >".get_string('editheading','project')."</a>";
-        //echo " - <a href=\"view.php?work=doexport&amp;id={$cm->id}\" >".get_string('exportheadingtoXML','project')."</a>";
+    if ($USER->editmode == 'on' && has_capability('mod/project:addinstance', $context)) {
+    	echo "<h1>vous avez les droit de modifier le projet.</h1>";
+        echo "<br/><a href=\"view.php?work=edit&amp;id={$cm->id}\" >".get_string('editheading','project')."</a>";
+        echo " - <a href=\"view.php?work=doexport&amp;id={$cm->id}\" >".get_string('exportheadingtoXML','project')."</a>";
     }
     //echo "<br/><a href=\"xmlview.php?id={$cm->id}\" target=\"_blank\">".get_string('gettheprojectfulldocument','project')."</a>";
     echo "</center>";

@@ -38,7 +38,7 @@
     }
 
 
-    if (!has_capability('mod/project:gradeproject', $context)){
+    if (!has_capability('mod/project:note', $context)){
         print_error(get_string('notateacher','project'));
         return;
     }
@@ -46,11 +46,11 @@
     // checks if assessments can occur
     if (!groups_get_activity_groupmode($cm, $project->course)){
         // $groupStudents = get_course_students($project->course);
-        $groupStudents = get_users_by_capability($context, 'mod/project:canbeevaluated', 'id,firstname,lastname,email,picture', 'lastname');
+        $groupStudents = get_users_by_capability($context, 'mod/project:becomennoted', 'id,firstname,lastname,email,picture', 'lastname');
     } else {
         $groupmembers = groups_get_members($currentGroupId);
         foreach($groupmembers as $amember){
-            if (!has_capability('mod/project:canbeevaluated', $context, $amember->id)) continue;
+            if (!has_capability('mod/project:becomennoted', $context, $amember->id)) continue;
             $groupStudents[] = clone($amember);
         }
     }

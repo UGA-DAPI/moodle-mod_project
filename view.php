@@ -1,21 +1,4 @@
-<?php// $Id: view.php,v 1.2 2012-08-12 22:01:36 vf Exp $
-
-/**
-* Project : Technical Project Manager (IEEE like)
-*
-* This page prints a particular instance of project
-*
-    *
-    * @package mod-project
-    * @category mod
-    * @author Yohan Thomas - W3C2i (support@w3c2i.com)
-    * @date 30/09/2013
-    * @version 3.0
-    * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-    *
-    */
-//////////
-
+<?php
 require_once('../../config.php');
 require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->dirroot.'/mod/project/lib.php');
@@ -150,7 +133,7 @@ else {
 } else {*/
     $action = 'notavailable';
 }
-}
+
  // ...log activity...
 add_to_log($course->id, 'project', 'view', "view.php?id=$cm->id", $project->id, $cm->id);
 

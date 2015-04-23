@@ -19,7 +19,7 @@ $mode = ($delivid) ? 'update' : 'add' ;
 
 $url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$delivid;
 
-	if($mode=='add' && !has_capability('mod/project:changedelivs', $context)){//si un étudiant tente de créer un libvrable/ressource on le redirige
+	if($mode=='add' && !has_capability('mod/project:editdeliverables', $context)){//si un étudiant tente de créer un libvrable/ressource on le redirige
 		redirect($url);
 	}
 	$mform = new Deliverable_Form($url, $mode, $project, $delivid);
@@ -35,7 +35,7 @@ $url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$delivid;
 		$data->modified = time();
 		$data->lastuserid = $USER->id;
 
-		if($data->typeelm==0 && !has_capability('mod/project:changedelivs', $context)){//si un étudiant consultait juste une ressource
+		if($data->typeelm==0 && !has_capability('mod/project:editdeliverables', $context)){//si un étudiant consultait juste une ressource
 			redirect($url);
 		}
 		if(isset($data->description_editor)){//si c'est un livrable et qu'on peut éditer ==> c'est un type enseignant

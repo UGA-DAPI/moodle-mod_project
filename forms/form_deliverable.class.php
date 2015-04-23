@@ -37,7 +37,7 @@ class Deliverable_Form extends moodleform {
     	$PAGE->requires->js( new moodle_url('/mod/project/js/formdeliv.js'));
 		
     	$modcontext = context_module::instance($this->project->cmid);
-		$canEdit = has_capability('mod/project:changedelivs', $modcontext);
+		$canEdit = has_capability('mod/project:editdeliverables', $modcontext);
 		
 		$maxfiles = 1;                // TODO: add some setting
 		$maxbytes = $COURSE->maxbytes; // TODO: add some setting	
@@ -59,11 +59,12 @@ class Deliverable_Form extends moodleform {
 			$deliverytypes[] = 'Livrable';
 			if (isset($this->current)){
 				$mform->addElement('hidden', 'typeelm', $this->current->typeelm);
-			}else{
+			}
+			else{
 				$mform->addElement('select', 'typeelm', get_string('typeelm', 'project'), $deliverytypes);
 				$mform->addHelpButton('typeelm', 'typeelm', 'project');
 			}
-			if($this->current->typeelm==1){
+			if(isset($this->current) && $this->current->typeelm==1){
 				$mform->addElement('text', 'abstract', get_string('delivtitle', 'project'), array('size' => "100%"));
 			}else{
 				$mform->addElement('text', 'abstract', get_string('ressourcetitle', 'project'), array('size' => "100%"));

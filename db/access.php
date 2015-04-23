@@ -42,7 +42,7 @@
 */
 
 $capabilities = array(
-    //créer un projet
+    //create & edit a project. also used for criteria(for whatever reason)
 	'mod/project:addinstance' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_COURSE,
@@ -91,7 +91,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-    //dition d'une ressource
+    //edition d'une ressource
 	'mod/project:editressouces' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -123,7 +123,7 @@ $capabilities = array(
 			)
 		),
 	//messagerie
-	'mod/project:editdiscussion' => array(
+	'mod/project:communicate' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
@@ -159,6 +159,82 @@ $capabilities = array(
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
 			'student' => CAP_ALLOW,
+			'editingteacher' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+
+	
+	//noter
+	'mod/project:note' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+
+	
+
+	//gestion du cvs. n'est pas implementé pour l'instant
+	'mod/project:cvs' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+
+	//gestion des criteres.
+	'mod/project:criteria' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+
+	//gestion des import/export CSS XSL .
+	'mod/project:imports' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+
+	//changer les taches, et a qui elle sont assignées. pas demandé dans le cahier des charges
+	'mod/project:changetasks' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'student' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+
+	//todo ? seem it's used to display the ful name if you have the right ... i'll add this to everyone by default
+	'mod/project:viewfullnames' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'teacher' => CAP_ALLOW,
+			'student' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+
+	//gestion de la copie. inutilisé ?
+	'mod/project:copy' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
 			'editingteacher' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)
