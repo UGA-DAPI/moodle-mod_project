@@ -132,7 +132,7 @@ $url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$delivid;
 		$deliverable->id = $cm->id;
 		if($deliverable->typeelm==1){//type livrable
 			echo $OUTPUT->heading(get_string('updatedeliv','project'));
-		}elseif(has_capability('mod/project:changedelivs', $context)){//ressource vu enseignant
+		}elseif(has_capability('mod/project:editdeliverables', $context)){//ressource vu enseignant
 			echo $OUTPUT->heading(get_string('updateressource','project'));
 		}else{
 			echo $OUTPUT->heading(get_string('viewressource','project'));

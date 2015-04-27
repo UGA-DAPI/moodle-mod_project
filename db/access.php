@@ -42,10 +42,22 @@
 */
 
 $capabilities = array(
+
+	//PROJET////////////////////////////////////////////////////
+
     //create & edit a project. also used for criteria(for whatever reason)
 	'mod/project:addinstance' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_COURSE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+    //   ||creer un/rendre le||   projet duplicable ? => a voir et eventuellement a changer
+	'mod/project:addtypeinstance' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
 			'editingteacher' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
@@ -62,8 +74,8 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-    //   ||creer un/rendre le||   projet duplicable ? => a voir et eventuellement a changer
-	'mod/project:addtypeinstance' => array(
+	//archiver un projet
+	'mod/project:archive' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
@@ -71,6 +83,19 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
+
+	//gestion de la copie. inutilisé ?
+	'mod/project:copy' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+
+	//ETAPES////////////////////////////////////////////////////
+
 	// ajouter / editer les étapes
 	'mod/project:changemilestone' => array(
 		'captype' => 'write',
@@ -78,24 +103,6 @@ $capabilities = array(
 		'legacy' => array(
 			'student' => CAP_ALLOW,
 			'teacher' => CAP_ALLOW,
-			'editingteacher' => CAP_ALLOW,
-			'manager' => CAP_ALLOW
-			)
-		),
-    //edition d'un livrable
-	'mod/project:editdeliverables' => array(
-		'captype' => 'write',
-		'contextlevel' => CONTEXT_MODULE,
-		'legacy' => array(
-			'editingteacher' => CAP_ALLOW,
-			'manager' => CAP_ALLOW
-			)
-		),
-    //edition d'une ressource
-	'mod/project:editressouces' => array(
-		'captype' => 'write',
-		'contextlevel' => CONTEXT_MODULE,
-		'legacy' => array(
 			'editingteacher' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)
@@ -122,19 +129,10 @@ $capabilities = array(
 			'manager' => CAP_PROHIBIT
 			)
 		),
-	//messagerie
-	'mod/project:communicate' => array(
-		'captype' => 'write',
-		'contextlevel' => CONTEXT_MODULE,
-		'legacy' => array(
-			'teacher' => CAP_ALLOW,
-			'editingteacher' => CAP_ALLOW,
-			'student' => CAP_ALLOW,
-			'manager' => CAP_ALLOW
-			)
-		),
-	//archiver un projet
-	'mod/project:archive' => array(
+	//RESSOURCES ET LIVRABLES ////////////////////////////////////
+
+    //edition d'un livrable
+	'mod/project:editdeliverables' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
@@ -150,6 +148,27 @@ $capabilities = array(
 			'student' => CAP_ALLOW,
 			'editingteacher' => CAP_ALLOW,
 			'teacher' => CAP_PREVENT,
+			'manager' => CAP_ALLOW
+			)
+		),
+    //edition d'une ressource
+	'mod/project:editressouces' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+	
+	//messagerie
+	'mod/project:communicate' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'teacher' => CAP_ALLOW,
+			'editingteacher' => CAP_ALLOW,
+			'student' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)
 		),
@@ -217,6 +236,17 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
+	//get task. not used yet
+	'mod/project:beassignedtasks' => array(
+		'captype' => 'write',
+		'contextlevel' => CONTEXT_MODULE,
+		'legacy' => array(
+			'editingteacher' => CAP_ALLOW,
+			'student' => CAP_ALLOW,
+			'manager' => CAP_ALLOW
+			)
+		),
+	
 
 	//todo ? seem it's used to display the ful name if you have the right ... i'll add this to everyone by default
 	'mod/project:viewfullnames' => array(
@@ -226,16 +256,6 @@ $capabilities = array(
 			'editingteacher' => CAP_ALLOW,
 			'teacher' => CAP_ALLOW,
 			'student' => CAP_ALLOW,
-			'manager' => CAP_ALLOW
-			)
-		),
-
-	//gestion de la copie. inutilisé ?
-	'mod/project:copy' => array(
-		'captype' => 'write',
-		'contextlevel' => CONTEXT_MODULE,
-		'legacy' => array(
-			'editingteacher' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)
 		)
