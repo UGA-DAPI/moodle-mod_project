@@ -85,24 +85,24 @@ function project_edition_enable_button($cm, $course, $project, $editmode){
     if (!has_capability('moodle/grade:edit', $context)){
         if (isguestuser() && !$project->guestscanuse) return '';
         if (!isguestuser() && !groups_is_member($currentGroupId)) return '';
-            if (isguestuser() && ($currentGroupId || !$project->guestscanuse)) return '';
-        }
-
-        if ($editmode == 'on') {
-            $str = "<form method=\"get\" style=\"display : inline\" action=\"view.php\">";
-            $str.= "<input type=\"hidden\" name=\"editmode\" value=\"off\" />";
-            $str .= "<input type=\"hidden\" name=\"id\" value=\"{$cm->id}\" />";
-            $str .= "<input type=\"submit\" value=\"" .    get_string('disableedit', 'project') . "\" />";
-            $str .= "</form>";
-        } else {
-            $str = "<form method=\"get\"    style=\"display : inline\" action=\"view.php\">";
-            $str.= "<input type=\"hidden\" name=\"editmode\" value=\"on\" />";
-            $str .= "<input type=\"hidden\" name=\"id\" value=\"{$cm->id}\" />";
-            $str .= "<input type=\"submit\" value=\"" .    get_string('enableedit', 'project') . "\" />";
-            $str .= "</form>";
-        }
-        return $str;
+        if (isguestuser() && ($currentGroupId || !$project->guestscanuse)) return '';
     }
+
+    if ($editmode == 'on') {
+        $str = "<form method=\"get\" style=\"display : inline\" action=\"view.php\">";
+        $str.= "<input type=\"hidden\" name=\"editmode\" value=\"off\" />";
+        $str .= "<input type=\"hidden\" name=\"id\" value=\"{$cm->id}\" />";
+        $str .= "<input type=\"submit\" value=\"" .    get_string('disableedit', 'project') . "\" />";
+        $str .= "</form>";
+    } else {
+        $str = "<form method=\"get\"    style=\"display : inline\" action=\"view.php\">";
+        $str.= "<input type=\"hidden\" name=\"editmode\" value=\"on\" />";
+        $str .= "<input type=\"hidden\" name=\"id\" value=\"{$cm->id}\" />";
+        $str .= "<input type=\"submit\" value=\"" .    get_string('enableedit', 'project') . "\" />";
+        $str .= "</form>";
+    }
+    return $str;
+}
 
 /**
 * prints assignement
@@ -1119,7 +1119,7 @@ function project_print_milestones($project, $group, $numstage, $cmid){
 * @uses $CFG
 * @uses $USER
 */
-function project_print_deliverables($project, $group, $fatherid, $cmid, $propagated=null){
+/*function project_print_deliverables($project, $group, $fatherid, $cmid, $propagated=null){
 	global $CFG, $USER, $DB, $OUTPUT;
 	static $level = 0;
 	static $startuplevelchecked = false;
@@ -1127,74 +1127,76 @@ function project_print_deliverables($project, $group, $fatherid, $cmid, $propaga
 	project_check_startup_level('deliverable', $fatherid, $level, $startuplevelchecked);	
 	
 	echo "<div class='sepbloc'></div>";
-	project_print_bloc_deliverables($project, $group,$fatherid, $cmid,$propagated, 1);
-	project_print_bloc_deliverables($project, $group,$fatherid, $cmid,$propagated, 0);
+	project_print_bloc_elem($project, $group,$fatherid, $cmid,$propagated, 1);
+	project_print_bloc_elem($project, $group,$fatherid, $cmid,$propagated, 0);
 	
 	echo "<div class='sepbloc'></div>";
-}
+}*/
 
-
-function project_print_bloc_deliverables($project, $group,$fatherid, $cmid,$propagated, $typeelm){
+function project_print_bloc_elem($project, $group,$fatherid, $cmid, $typeelm, $propagated=null){
 	global $CFG, $USER, $DB, $OUTPUT;
 	static $level = 0;
 	static $startuplevelchecked = false;
-	if($typeelm==1){
-		$classBloc = "blocDelivrable";
-		$lblBloc = "livrable";
-	}else{
-		$classBloc = "blocRessource";
-		$lblBloc = "ressource";
-	}
-	$query = "
- SELECT 
- d.*,
- m.abstract as milestoneabstract,
- c.collapsed
- FROM 
- {project_deliverable} as d
- LEFT JOIN
- {project_milestone} as m
- ON
- d.milestoneid = m.id
- LEFT JOIN
- {project_collapse} as c
- ON
- d.id = c.entryid AND
- c.entity = 'deliverables' AND
- c.userid = $USER->id
- WHERE 
- d.groupid = {$group} AND 
- d.projectid = {$project->id} AND 
- d.fatherid = {$fatherid} AND
- d.typeelm = {$typeelm}
- ORDER BY 
- d.ordering
- ";
- echo "<div class='".$classBloc."'><h3 class='header'><img src='".$OUTPUT->pix_url($lblBloc, 'project')."' alt='".get_string($lblBloc, 'project')."' />".get_string($lblBloc, 'project')."</h3>";
- if ($deliverables = $DB->get_records_sql($query)) {
-    foreach($deliverables as $deliverable){
-        $level++;
-        echo "<div class=\"nodelevel{$level}\">";
-        $propagatedroot = $propagated;
-        if (!$propagated || (!isset($propagated->milestoneid) && $deliverable->milestoneid)) {
-            $propagatedroot = new stdClass;
-            $propagatedroot->milestoneid = $deliverable->milestoneid;
-            $propagatedroot->milestoneabstract = $deliverable->milestoneabstract;
-        } else {
-         $deliverable->milestoneid = $propagated->milestoneid;
-         $deliverable->milestoneabstract = $propagated->milestoneabstract;
-         $deliverable->milestoneforced = 1;
-     }
-     project_print_single_deliverable($deliverable, $project, $group, $cmid, count($deliverables));
+    echo "<div class='sepbloc'></div>";
+    if($typeelm==1){
+        project_check_startup_level('deliverable', $fatherid, $level, $startuplevelchecked);
+        $classBloc = "blocDelivrable";
+        $lblBloc = "livrable";
+    }else{
+        project_check_startup_level('ressources', $fatherid, $level, $startuplevelchecked);
+        $classBloc = "blocRessource";
+        $lblBloc = "ressource";
+    }
+    $query = "
+    SELECT 
+    d.*,
+    m.abstract as milestoneabstract,
+    c.collapsed
+    FROM 
+    {project_deliverable} as d
+    LEFT JOIN
+    {project_milestone} as m
+    ON
+    d.milestoneid = m.id
+    LEFT JOIN
+    {project_collapse} as c
+    ON
+    d.id = c.entryid AND
+    c.entity = 'deliverables' AND
+    c.userid = $USER->id
+    WHERE 
+    d.groupid = {$group} AND 
+    d.projectid = {$project->id} AND 
+    d.fatherid = {$fatherid} AND
+    d.typeelm = {$typeelm}
+    ORDER BY 
+    d.ordering
+    ";
+    echo "<div class='".$classBloc."'><h3 class='header'><img src='".$OUTPUT->pix_url($lblBloc, 'project')."' alt='".get_string($lblBloc, 'project')."' />".get_string($lblBloc, 'project')."</h3>";
+    if ($deliverables = $DB->get_records_sql($query)) {
+        foreach($deliverables as $deliverable){
+            $level++;
+            echo "<div class=\"nodelevel{$level}\">";
+            $propagatedroot = $propagated;
+            if (!$propagated || (!isset($propagated->milestoneid) && $deliverable->milestoneid)) {
+                $propagatedroot = new stdClass;
+                $propagatedroot->milestoneid = $deliverable->milestoneid;
+                $propagatedroot->milestoneabstract = $deliverable->milestoneabstract;
+            } else {
+             $deliverable->milestoneid = $propagated->milestoneid;
+             $deliverable->milestoneabstract = $propagated->milestoneabstract;
+             $deliverable->milestoneforced = 1;
+         }
+         project_print_single_deliverable($deliverable, $project, $group, $cmid, count($deliverables));
 
-     $visibility = ($deliverable->collapsed) ? 'display: none' : 'display: block' ; 
-     echo "<div id=\"sub{$deliverable->id}\" style=\"$visibility\" >";
+         $visibility = ($deliverable->collapsed) ? 'display: none' : 'display: block' ; 
+         echo "<div id=\"sub{$deliverable->id}\" style=\"$visibility\" >";
 			//project_print_deliverables($project, $group, $deliverable->id, $cmid, $propagatedroot);
-     echo "</div>";
-     $level--;
-     echo "</div>";
- }
-} else {
+         echo "</div>";
+         $level--;
+         echo "</div>";
+     }
+ } else {
     if ($level == 0){
      echo $OUTPUT->box_start();
      if($typeelm==1){
@@ -1206,6 +1208,7 @@ function project_print_bloc_deliverables($project, $group,$fatherid, $cmid,$prop
 }
 }
 echo "</div>";
+echo "<div class='sepbloc'></div>";
 }
 /**
 * prints a single task object

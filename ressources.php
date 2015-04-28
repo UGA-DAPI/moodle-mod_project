@@ -76,9 +76,9 @@
     <input type="hidden" name="id" value="<?php p($cm->id) ?>" />
     <input type="hidden" name="work" value="groupcmd" />
     <?php
-    	project_print_bloc_elem($project, $currentGroupId, 0, $cm->id,1);
-        if ($USER->editmode == 'on' && has_capability('mod/project:editdeliverables', $context) && $project->etat==0) {
-    		echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0'>".get_string('adddeliv','project')."</a>&nbsp; ";
+    	project_print_bloc_elem($project, $currentGroupId, 0, $cm->id,0);
+        if ($USER->editmode == 'on' && has_capability('mod/project:editressources', $context) && $project->etat==0) {
+    		echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0'>".get_string('address','project')."</a>&nbsp; ";
     	}
     ?>
     </form>

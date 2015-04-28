@@ -19,7 +19,7 @@ $mode = ($delivid) ? 'update' : 'add' ;
 
 $url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$delivid;
 
-	if($mode=='add' && !has_capability('mod/project:editdeliverables', $context)){//si un étudiant tente de créer un libvrable/ressource on le redirige
+	if($mode=='add' && (!has_capability('mod/project:editdeliverables', $context) || !has_capability('mod/project:editdeliverables', $context))){//si un étudiant tente de créer un libvrable/ressource on le redirige
 		redirect($url);
 	}
 	$mform = new Deliverable_Form($url, $mode, $project, $delivid);

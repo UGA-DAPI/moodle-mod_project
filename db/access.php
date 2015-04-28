@@ -45,7 +45,7 @@ $capabilities = array(
 
 	//PROJET////////////////////////////////////////////////////
 
-    //create & edit a project. also used for criteria(for whatever reason)
+    //create & edit a project (blueprint or true project).
 	'mod/project:addinstance' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_COURSE,
@@ -54,7 +54,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-    //   ||creer un/rendre le||   projet duplicable ? => a voir et eventuellement a changer
+    //make a project blueprint. TODO
 	'mod/project:addtypeinstance' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -63,7 +63,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-	//voir le projet, ainsi que son avancement
+	//access the project
 	'mod/project:view' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_COURSE,
@@ -74,7 +74,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-	//archiver un projet
+	//archivate a project
 	'mod/project:archive' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -84,7 +84,7 @@ $capabilities = array(
 			)
 		),
 
-	//gestion de la copie. inutilisé ?
+	//copy handlling. unused actually
 	'mod/project:copy' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -94,9 +94,9 @@ $capabilities = array(
 			)
 		),
 
-	//ETAPES////////////////////////////////////////////////////
+	//MILESTONES////////////////////////////////////////////////////
 
-	// ajouter / editer les étapes
+	// create, see & edit milestones. note that student don't have access to the edit menu so we should be fine
 	'mod/project:changemilestone' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -107,7 +107,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-    //valider une etape
+    //validate a milestone
 	'mod/project:validatemilestone' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -118,7 +118,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-    //demander la validation d'une étape
+    //ask for a milestone validation
 	'mod/project:askvalidatemilestone' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -129,9 +129,9 @@ $capabilities = array(
 			'manager' => CAP_PROHIBIT
 			)
 		),
-	//RESSOURCES ET LIVRABLES ////////////////////////////////////
+	//DELIVERABLES AND RESSOURCES ////////////////////////////////////
 
-    //edition d'un livrable
+    //create & edit deliverables
 	'mod/project:editdeliverables' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -140,7 +140,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-	//telecharger un livrable. interdit aux teachers (=tuteurs) dans le cadre de la confidentialité ??
+	//download a deliverable. teacher (aka company people) should not be able to do that for various reasons
 	'mod/project:downloaddeliverable' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -151,8 +151,8 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-    //edition d'une ressource
-	'mod/project:editressouces' => array(
+    //create & edit ressources
+	'mod/project:editressources' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
@@ -161,7 +161,7 @@ $capabilities = array(
 			)
 		),
 	
-	//messagerie
+	//access to a "forum" inside the project.
 	'mod/project:communicate' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -172,7 +172,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-	// etre noté. pourquoi les editingteacher peuvent etre notés ??
+	// become noted. i wonder why editing teacher can be noted ...
 	'mod/project:becomennoted' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -184,7 +184,7 @@ $capabilities = array(
 		),
 
 	
-	//noter
+	//note someone
 	'mod/project:note' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -193,10 +193,10 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-
+	//////OTHERS, PROBABLY NOT IMPLEMENTED YET
 	
 
-	//gestion du cvs. n'est pas implementé pour l'instant
+	//cvs handling. unused
 	'mod/project:cvs' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -206,7 +206,7 @@ $capabilities = array(
 			)
 		),
 
-	//gestion des criteres.
+	//criterias handling. unused
 	'mod/project:criteria' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -216,7 +216,7 @@ $capabilities = array(
 			)
 		),
 
-	//gestion des import/export CSS XSL .
+	//import/export CSS XSL handling. unused
 	'mod/project:imports' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -226,7 +226,7 @@ $capabilities = array(
 			)
 		),
 
-	//changer les taches, et a qui elle sont assignées. pas demandé dans le cahier des charges
+	//tasks handling. unused at the moment
 	'mod/project:changetasks' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -236,7 +236,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-	//get task. not used yet
+	//get task assigned to you. not used yet
 	'mod/project:beassignedtasks' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -248,7 +248,7 @@ $capabilities = array(
 		),
 	
 
-	//todo ? seem it's used to display the ful name if you have the right ... i'll add this to everyone by default
+	//todo ? seem it's used to display the full name if you have the right ... i'll add this to everyone by default
 	'mod/project:viewfullnames' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,

@@ -33,23 +33,23 @@ class mod_project_mod_form extends moodleform_mod {
 		$PAGE->requires->js( new moodle_url('/mod/project/js/formprojet.js'));
 //-------------------------------------------------------------------------------
 //$contextss = get_context_instance(CONTEXT_SYSTEM);
-$contextss = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $contextss = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 //context du cours
-$canAddTypeProject = false;
-$forceTypeProject= false;
-if(has_capability('mod/project:addtypeinstance', $contextss)){
+        $canAddTypeProject = false;
+        $forceTypeProject= false;
+        if(has_capability('mod/project:addtypeinstance', $contextss)){
 //capacité system d'ajouter un type projet !
-    $canAddTypeProject = true;
-}
+            $canAddTypeProject = true;
+        }
 //--------------------------------------------------------------------------------
-    /// Adding the "general" fieldset, where all the common settings are showed
-$mform->addElement('header', 'general', get_string('general', 'form'));
+        /// Adding the "general" fieldset, where all the common settings are showed
+        $mform->addElement('header', 'general', get_string('general', 'form'));
 
         //Ajout w3c2i selection choix type deprojet ou projet
-$typeoptions[1]=get_string('CREATYPEPROJET', 'project');
-$typeoptions[2]=get_string('CREAPROJET', 'project');
-$typeprojetoptions = array();
-$types = 0;
+        $typeoptions[1]=get_string('CREATYPEPROJET', 'project');
+        $typeoptions[2]=get_string('CREAPROJET', 'project');
+        $typeprojetoptions = array();
+        $types = 0;
 		if(isset($this->current->update)){//On laisse le choix du type ou projet que a la création
 			if($this->current->typeprojet==0){//on set le choix projet ou type projet suivant l'édition de l'un ou l'autre
 			$mform->addElement('hidden', 'choixprojet','1');
@@ -116,7 +116,7 @@ $types = 0;
         $mform->addHelpButton('type', 'type', 'project');
         
         
-    /// Adding the standard "name" field
+        /// Adding the standard "name" field
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
         if (!empty($CFG->formatstringstriptags)) {
         	$mform->setType('name', PARAM_TEXT);
@@ -126,7 +126,7 @@ $types = 0;
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-    /// Adding the required "intro" field to hold the description of the instance
+        /// Adding the required "intro" field to hold the description of the instance
         $this->add_intro_editor(true, get_string('introproject', 'project'));
         
         if(!isset($this->current->update) && $types==0 && $canAddTypeProject){
@@ -169,7 +169,7 @@ $types = 0;
         	if(count($projectgrpoptions)==0){
         		$mform->addElement('html', "<p><strong>Aucun rôle de type groupe project n'est créé.</strong></p>");
         	}
-        	$mform->addElement('select', 'projectgrpid', get_string('projectgrp', 'project'), $projectgrpoptions);
+        	//$mform->addElement('select', 'projectgrpid', get_string('projectgrp', 'project'), $projectgrpoptions);
 			//$mform->addElement('hidden', 'projectgrp',$roleProjectgrpid);
         }else{
         	$mform->addElement('hidden', 'projectgrpid','0');
@@ -218,7 +218,7 @@ $types = 0;
         $mform->addElement('select', 'allowdeletewhenassigned', get_string('allowdeletewhenassigned', 'project'), $yesnooptions); 
         $mform->addHelpButton('allowdeletewhenassigned', 'allowdeletewhenassigned', 'project');
 
-        $mform->addElement('static', 'tudentscanchange', get_string('studentscanchange', 'project'), get_string('seecapabilitysettings', 'project')); 
+        $mform->addElement('static', 'studentscanchange', get_string('studentscanchange', 'project'), get_string('seecapabilitysettings', 'project')); 
 
         $mform->addElement('header', 'headergrading', get_string('grading', 'project'));
         $mform->addElement('select', 'teacherusescriteria', get_string('teacherusescriteria', 'project'), $yesnooptions); 

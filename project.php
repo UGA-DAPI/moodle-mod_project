@@ -58,6 +58,8 @@ $work = optional_param('work', '', PARAM_ALPHA);
     //$tabmilelabel = (!has_capability('mod/project:changemiles', $context)) ? $tabmiletitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabmiletitle ;
     $tabmilelabel =  $tabmiletitle;//on utilise pas les cadenas
     $tabdelivtitle = get_string('deliverables', 'project');
+    $tabresstitle = get_string('ressources', 'project');
+    
     //$tabdelivlabel = (!has_capability('mod/project:changedelivs', $context)) ? $tabdelivtitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabdelivtitle ;
     $tabdelivlabel = $tabdelivtitle;//on utilise pas les cadenas
     $tabvalidtitle = get_string('validations', 'project');
@@ -73,7 +75,8 @@ $work = optional_param('work', '', PARAM_ALPHA);
     $tabRessourcePicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/ressource_16x16.png\" />";
     $tabMessagePicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/message_16x16.png\" />";
     $tabProjectsPicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/vue-projets_16x16.png\" />";
-    $tabdelivlabel = $tabLivrablePicto.get_string('deliverable', 'project')."&nbsp;".$tabRessourcePicto.get_string('ressource', 'project');
+    $tabdelivlabel = $tabLivrablePicto.get_string('deliverable', 'project');
+    $tabresslabel = $tabRessourcePicto.get_string('ressource', 'project');
     $tabs = array();
     $tabs[0][] = new tabobject('description', "view.php?id={$cm->id}&amp;view=description", get_string('description', 'project'));
     if(!$typeProject){
@@ -93,6 +96,9 @@ $work = optional_param('work', '', PARAM_ALPHA);
     $tabs[0][] = new tabobject('milestones', "view.php?id={$cm->id}&amp;view=milestones", $tabEtapePicto.$tabmilelabel, $tabmiletitle);
     if (@$project->projectusesdelivs){
         $tabs[0][] = new tabobject('deliverables', "view.php?id={$cm->id}&amp;view=deliverables", $tabdelivlabel, $tabdelivtitle);
+    }
+    if (@$project->projectusesdelivs){
+        $tabs[0][] = new tabobject('ressources', "view.php?id={$cm->id}&amp;view=ressources", $tabresslabel, $tabresstitle);
     }
     if (@$project->projectusesvalidations){
         $tabs[0][] = new tabobject('validations', "view.php?id={$cm->id}&amp;view=validations", $tabvalidlabel, $tabvalidtitle);
@@ -176,6 +182,8 @@ $work = optional_param('work', '', PARAM_ALPHA);
         include("milestone.php");
     } elseif ($currentpage == 'deliverables') { //DONE, NORMALLY
         include("deliverables.php");
+    } elseif ($currentpage == 'ressources') { //DONE, NORMALLY
+        include("ressources.php");
     } elseif ($currentpage == 'validation') { // NOT USED
         include("validation.php");
     } elseif ($currentpage == 'validations') { //NOT USED
