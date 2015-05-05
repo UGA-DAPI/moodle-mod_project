@@ -34,21 +34,13 @@ function project_add_instance($project){
 	
 	$project->timecreated = time();
 	$project->timemodified = time();
-	//init des features utilisées
-	$project->projectusesrequs = 0;
-	$project->projectusesvalidations = 0;
-	$project->projectusesspecs = 0;
-	$project->projectusesdelivs = 1;
 
-	if($project->typeprojet==0){//si c'eqst un type de projet on force confidentiel à non
-	$project->projectconfidential=0;
-}
-$context = context_module::instance($project->coursemodule);
-if($project->instance!=''){
-	$projetid= $project->instance;
-}else{
-	$projetid=0;
-}
+	$context = context_module::instance($project->coursemodule);
+	if($project->instance!=''){
+		$projetid= $project->instance;
+	}else{
+		$projetid=0;
+	}
 	/*var_dump($context);
 	var_dump($project);die();*/
 	
@@ -58,56 +50,30 @@ if($project->instance!=''){
     }*/
 
     if ($returnid = $DB->insert_record('project', $project)) {
-        if($project->typeprojet>0){//on ajoute les événements que pour les projets pas les types
-        	$event = new StdClass;
-        	$event->name        = get_string('projectstartevent','project', $project->name);
-        	$event->description = $project->intro;
-        	$event->courseid    = $project->course;
-        	$event->groupid     = 0;
-        	$event->userid      = 0;
-        	$event->modulename  = 'project';
-        	$event->instance    = $returnid;
-        	$event->eventtype   = 'projectstart';
-        	$event->timestart   = $project->projectstart;
-        	$event->timeduration = 0;
-        	calendar_event::create($event);
-        	$event->name        = get_string('projectendevent','project', $project->name);
-        	$event->eventtype   = 'projectend';
-        	$event->timestart   = $project->projectend;
-        	calendar_event::create($event);
-        }		
+    	$event = new StdClass;
+    	$event->name        = get_string('projectstartevent','project', $project->name);
+    	$event->description = $project->intro;
+    	$event->courseid    = $project->course;
+    	$event->groupid     = 0;
+    	$event->userid      = 0;
+    	$event->modulename  = 'project';
+    	$event->instance    = $returnid;
+    	$event->eventtype   = 'projectstart';
+    	$event->timestart   = $project->projectstart;
+    	$event->timeduration = 0;
+    	calendar_event::create($event);
+    	$event->name        = get_string('projectendevent','project', $project->name);
+    	$event->eventtype   = 'projectend';
+    	$event->timestart   = $project->projectend;
+    	calendar_event::create($event);
+
     }	
 
 	//gestion du champ introimg
     $introimgoptions = array('maxbytes' =>2000000, 'maxfiles'=> 1,'accepted_types' => array('.jpeg', '.jpg', '.png','return_types'=>FILE_INTERNAL));
     $project = file_postupdate_standard_filemanager($project, 'introimg', $introimgoptions, $context, 'mod_project', 'introimg', $returnid);
 
-	if($project->typeprojet>0){//Si c'est un projet on doit copier toutes les données du type de projet associé.
-	project_instance_from_typeprojet($project,$returnid);
-}
-
-	//On ajoute automatiquement l'utilisateur au role local enseignant pour le projet !
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////COMMENTE CAR INUTILE ////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*if($project->typeprojet>0){
-	$role = $DB->get_record('role', array('shortname' => 'editingteacher'));
-	$enrolement =  new StdClass;
-	$enrolement->roleid=$role->id;
-	$enrolement->contextid=$context->id;
-	$enrolement->userid=$USER->id;
-	$enrolement->timemodified= time();
-	$enrolement->modifierid=$USER->id;
-	$idroletmp = $DB->insert_record('role_assignments', $enrolement);
-}*/
-
-return $returnid;
+    return $returnid;
 }
 /**
 * Créé une copie des données du type de projet choisi dans l'objet $project vers le nouveau projet
@@ -798,17 +764,7 @@ $changemilescontent = false;
         }
     }
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////DOUBLON///////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // have a look for what has changed in milestones
+    // have a look for what has changed in deliverables
 $changedelivcontent = false;
     if (!$isteacher) { // teachers only need to see project
     	if ($logs = project_get_entitychange_logs($course, $timestart, 'changedeliverable')) {

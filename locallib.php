@@ -935,32 +935,33 @@ function project_print_milestones($project, $group, $numstage, $cmid){
         </thead>
         <tbody>";
         foreach($milestones as $milestone){		
-			//printing milestone
-         $passed = ($milestone->deadline < usertime(time())) ? 'toolate' : 'passedtime' ;
-         $difference = "";
-         if($milestone->deadline - time()>0){
-            $nbJours = round(($milestone->deadline - time())/(24*3600));
-            if($nbJours>1){
-             $difference = "dans ".$nbJours." jours";
-         }else{
-             $difference = "dans ".$nbJours." jour";
-         }
-     }else{
-        $difference = " en retard";
-    }
-    $milestonedeadline = ($milestone->deadlineenable) ? "<span class='{$passed}'>" . userdate($milestone->deadline)." ".$difference . '</span>': '<i>durée illimité</i>' ;
-    $checkbox = ($canedit) ? "<input type=\"checkbox\" name=\"ids[]\" value=\"{$milestone->id}\" />" : '' ;
+		  //printing milestone
+            $passed = ($milestone->deadline < usertime(time())) ? 'toolate' : 'passedtime' ;
+            $difference = "";
+            if($milestone->deadline - time()>0){
+                $nbJours = round(($milestone->deadline - time())/(24*3600));
+                if($nbJours>1){
+                    $difference = "dans ".$nbJours." jours";
+                }
+                else{
+                    $difference = "dans ".$nbJours." jour";
+                }
+            }else{
+                $difference = " en retard";
+            }
+            $milestonedeadline = ($milestone->deadlineenable) ? "<span class='{$passed}'>" . userdate($milestone->deadline)." ".$difference . '</span>': '<i>durée illimité</i>' ;
+            $checkbox = ($canedit) ? "<input type=\"checkbox\" name=\"ids[]\" value=\"{$milestone->id}\" />" : '' ;
 
-    $deliverables = $DB->get_records('project_deliverable', array('milestoneid' => $milestone->id, 'projectid' => $project->id,'typeelm' => 1), '', 'abstract,id');
-    $ressources = $DB->get_records('project_deliverable', array('milestoneid' => $milestone->id, 'projectid' => $project->id,'typeelm' => 0), '', 'id');
+            $deliverables = $DB->get_records('project_deliverable', array('milestoneid' => $milestone->id, 'projectid' => $project->id,'typeelm' => 1), '', 'abstract,id');
+            $ressources = $DB->get_records('project_deliverable', array('milestoneid' => $milestone->id, 'projectid' => $project->id,'typeelm' => 0), '', 'id');
 			//$taskcount = "<img src=\"".$OUTPUT->pix_url('/p/task', 'project')."\" />[".$taskCount."]";
 			//$deliverablecount = " <img src=\"".$OUTPUT->pix_url('/p/deliv', 'project')."\" />[".$delivCount."]";
-    echo "<tr class='milestonehead'>";
-    echo "<td><img style='vertical-align:middle;margin-right:3px;' src=\"{$CFG->wwwroot}/mod/project/pix/etape_16x16.png\" /><span class='step-title'>Etape {$i} - ".format_string($milestone->abstract)."</span></td>";
+            echo "<tr class='milestonehead'>";
+            echo "<td><img style='vertical-align:middle;margin-right:3px;' src=\"{$CFG->wwwroot}/mod/project/pix/etape_16x16.png\" /><span class='step-title'>Etape {$i} - ".format_string($milestone->abstract)."</span></td>";
 
-    echo "<td>".$milestonedeadline."</td>";
-    $statutLabel = array('En travaux','En cours de validation','En révision','<span class="passedtime">Validé</span>');
-    echo "<td>".$statutLabel[$milestone->statut]."</td>";
+            echo "<td>".$milestonedeadline."</td>";
+            $statutLabel = array('En travaux','En cours de validation','En révision','<span class="passedtime">Validé</span>');
+            echo "<td>".$statutLabel[$milestone->statut]."</td>";
 			// $hide = "<a href=\"javascript:toggle_show('{$i}','{$i}');\"><img name=\"eye{$i}\" src=\"".$OUTPUT->pix_url('/p/hide', 'project')."\" alt=\"collapse\" /></a>";
 			/*
 			$hide = '';
@@ -999,42 +1000,44 @@ function project_print_milestones($project, $group, $numstage, $cmid){
                 $milestoneActiveForValidate = false;
                 if ($res = $DB->get_record_sql($query)){ 
                     if ($res->count== 0){
-                     $milestoneActiveForValidate=true;
-                 }
-             }
-			if($project->typeprojet>0){//si c'est un projet on affiche les actions possible
-				if ($canvalidatemilestone && $milestone->statut == 1) {//Si on peut valider une étape et que le statut de l'étape est demande de validation
-             $actionsEtape = "<p onclick=\"javascript:var r=confirm('Etes vous sure de vouloir valider l\'étape ".addslashes($milestone->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=valider&amp;milestoneid={$milestone->id}&amp;view=milestones';}\" class='btn-action'>
-             <img src='".$OUTPUT->pix_url('/valide32', 'project')."' alt=\"".get_string('VALIDERMILESTONE', 'project')."\" /></p>";
-             $actionsEtape .= "<p onclick=\"javascript:var r=confirm('Etes vous sure de vouloir mettre en révision l\'étape ".addslashes($milestone->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=refuser&amp;milestoneid={$milestone->id}&amp;view=milestones';}\" class='btn-action'>
-             <img src='".$OUTPUT->pix_url('/refu32', 'project')."' alt=\"".get_string('REFUSERMILESTONE', 'project')."\" /></p>";
-				}elseif($milestoneActiveForValidate && $canaskvalidatemilestone && count($deliverables)>0 && ($milestone->statut == 0 || $milestone->statut == 2 )){//Si on peut demander une validation et que le statut de l'étape est travaux en cours ou en révisison
-                $actionsEtape = "<p onclick=\"javascript:var r=confirm('Etes vous sure de vouloir demander la validation de l\'étape ".addslashes($milestone->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=askvalider&amp;milestoneid={$milestone->id}&amp;view=milestones';}\" class='btn-action'>
-                <img src='".$OUTPUT->pix_url('/askvalide32', 'project')."' alt=\"".get_string('ASKVALIDERMILESTONE', 'project')."\" /></p>";
-            }
-				/* si on veut un picto sur en cours de validation vu des étudiants
-				elseif($milestone->statut== 1){
-						$actionsEtape = "<img src='".$OUTPUT->pix_url('/waitvalide32', 'project')."' alt=\"".get_string('WAITVALIDERMILESTONE', 'project')."\" />";
-                    }*/
-			}else{//pas d'actions possible sur un type projet
-            $actionsEtape="";
-        }
-        echo "<td>".$actionsEtape."</td></tr>";
-        echo "<tr class='milestonedet'><td>";
-			//affichage des ressources
-        $ressources = $DB->get_records('project_deliverable', array('milestoneid' => $milestone->id, 'projectid' => $project->id,'typeelm' => 0), '', 'abstract,id');
-        echo "<table><tbody>";
-        $k = 0;
-        if(count($ressources)>0){
-            foreach($ressources as $ressource){
-             if($k!=0){
-                echo "<tr><td>&nbsp;</td>";
-            }else{
-                echo "<tr><td>Ressources&nbsp;:</td>";
-                $k=1;
-            }
+                        $milestoneActiveForValidate=true;
+                    }
+                }
+                if($project->typeprojet>0){
+                //si c'est un projet on affiche les actions possible
+                    if ($canvalidatemilestone && $milestone->statut == 1) {
+                    //Si on peut valider une étape et que le statut de l'étape est demande de validation
+                        $actionsEtape = "<p onclick=\"javascript:var r=confirm('Etes vous sure de vouloir valider l\'étape ".addslashes($milestone->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=valider&amp;milestoneid={$milestone->id}&amp;view=milestones';}\" class='btn-action'>
+                        <img src='".$OUTPUT->pix_url('/valide32', 'project')."' alt=\"".get_string('VALIDERMILESTONE', 'project')."\" /></p>";
+                        $actionsEtape .= "<p onclick=\"javascript:var r=confirm('Etes vous sure de vouloir mettre en révision l\'étape ".addslashes($milestone->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=refuser&amp;milestoneid={$milestone->id}&amp;view=milestones';}\" class='btn-action'>
+                        <img src='".$OUTPUT->pix_url('/refu32', 'project')."' alt=\"".get_string('REFUSERMILESTONE', 'project')."\" /></p>";
+                    }
+                    elseif($milestoneActiveForValidate && $canaskvalidatemilestone && count($deliverables)>0 && ($milestone->statut == 0 || $milestone->statut == 2 )){
+                    //Si on peut demander une validation et que le statut de l'étape est travaux en cours ou en révisison
+                        $actionsEtape = "<p onclick=\"javascript:var r=confirm('Etes vous sure de vouloir demander la validation de l\'étape ".addslashes($milestone->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=askvalider&amp;milestoneid={$milestone->id}&amp;view=milestones';}\" class='btn-action'>
+                        <img src='".$OUTPUT->pix_url('/askvalide32', 'project')."' alt=\"".get_string('ASKVALIDERMILESTONE', 'project')."\" /></p>";
+                    }
+                }
+                else{
+                //pas d'actions possible sur un type projet
+                    $actionsEtape="";
+                }
+                echo "<td>".$actionsEtape."</td></tr>";
+                echo "<tr class='milestonedet'><td>";
+                //affichage des ressources
+                $ressources = $DB->get_records('project_deliverable', array('milestoneid' => $milestone->id, 'projectid' => $project->id,'typeelm' => 0), '', 'abstract,id');
+                echo "<table><tbody>";
+                $k = 0;
+                if(count($ressources)>0){
+                    foreach($ressources as $ressource){
+                     if($k!=0){
+                        echo "<tr><td>&nbsp;</td>";
+                    }else{
+                        echo "<tr><td>Ressources&nbsp;:</td>";
+                        $k=1;
+                    }
 					//$fs = get_file_storage();
-            $abstract = '';
+                    $abstract = '';
 					/*
 					//Si génération d'un lien pour chaque livrable/ressource
 					$files = $fs->get_area_files($context->id, 'mod_project', 'deliverablelocalfile', $ressource->id, 'sortorder DESC, id ASC', false);

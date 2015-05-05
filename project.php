@@ -33,38 +33,30 @@ if (!empty($editmode)) {
 /// get general command name
 $work = optional_param('work', '', PARAM_ALPHA);
 
-/// Print groupe name
-    /*
+
+/*
+//Print groupe name
+    
     if ($currentGroupId) {
         $group = $DB->get_record("groups", array("id" => $currentGroupId));
         echo "<center><b>". get_string('groupname', 'project') . $group->name . "</b></center><br/>";
     }
-    */
+    
     $typeProject=false;
     if((int)$project->typeprojet==0){
         $typeProject=true;
-    }
+    }*/
 /// Make menu
 
     $tabrequtitle = get_string('requirements', 'project');
     //$tabrequlabel = (!has_capability('mod/project:changerequs', $context)) ? $tabrequtitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabrequtitle ;
     $tabrequlabel = $tabrequtitle ;
     $tabspectitle = get_string('specifications', 'project');
-   // $tabspeclabel = (!has_capability('mod/project:changespecs', $context)) ? "<img src=\"".$OUPTUT->pix_url('p/spec', 'project').'" /> ' . $tabspectitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabspectitle ;
-    $tabtasktitle = get_string('tasks', 'project');
+    //$tabspeclabel = (!has_capability('mod/project:changespecs', $context)) ? "<img src=\"".$OUPTUT->pix_url('p/spec', 'project').'" /> ' . $tabspectitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabspectitle ;
     //$tabtasklabel = (!has_capability('mod/project:changetasks', $context)) ? "<img src=\"{$CFG->wwwroot}/mod/project/pix/p/task.gif\" /> " . $tabtasktitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabtasktitle ;
-    $tabtasklabel =  $tabtasktitle ;
-    $tabmiletitle = get_string('milestones', 'project');
     //$tabmilelabel = (!has_capability('mod/project:changemiles', $context)) ? $tabmiletitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabmiletitle ;
-    $tabmilelabel =  $tabmiletitle;//on utilise pas les cadenas
-    $tabdelivtitle = get_string('deliverables', 'project');
-    $tabresstitle = get_string('ressources', 'project');
-    
     //$tabdelivlabel = (!has_capability('mod/project:changedelivs', $context)) ? $tabdelivtitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabdelivtitle ;
-    $tabdelivlabel = $tabdelivtitle;//on utilise pas les cadenas
-    $tabvalidtitle = get_string('validations', 'project');
     //$tabvalidlabel = (!has_capability('mod/project:validate', $context)) ? $tabvalidtitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabvalidtitle ;
-    $tabvalidlabel = $tabvalidtitle ;
     $tabrequlabel = "<img src=\"{$CFG->wwwroot}/mod/project/pix/p/req.gif\" height=\"14\" /> " . $tabrequlabel;
     //$tabspeclabel = "<img src=\"{$CFG->wwwroot}/mod/project/pix/p/spec.gif\" height=\"14\" /> " . $tabspeclabel;
     //$tabtasklabel = "<img src=\"{$CFG->wwwroot}/mod/project/pix/p/task.gif\" height=\"14\" /> " . $tabtasklabel;
@@ -75,13 +67,12 @@ $work = optional_param('work', '', PARAM_ALPHA);
     $tabRessourcePicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/ressource_16x16.png\" />";
     $tabMessagePicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/message_16x16.png\" />";
     $tabProjectsPicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/vue-projets_16x16.png\" />";
-    $tabdelivlabel = $tabLivrablePicto.get_string('deliverable', 'project');
-    $tabresslabel = $tabRessourcePicto.get_string('ressource', 'project');
+    $tabValidPicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/vue-projets_16x16.png\" />";
+    $tabTaskPicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/vue-projets_16x16.png\" />";
+
     $tabs = array();
-    $tabs[0][] = new tabobject('description', "view.php?id={$cm->id}&amp;view=description", get_string('description', 'project'));
-    if(!$typeProject){
-        $tabs[0][] = new tabobject('views', "view.php?id={$cm->id}&amp;view=summary", $tabEquipePicto. get_string('views', 'project'),get_string('views', 'project'));
-    }
+
+    
     /*
     if(has_capability('mod/project:viewpreproductionentities', $context, $USER->id)){
         if (@$project->projectusesrequs){
@@ -92,21 +83,25 @@ $work = optional_param('work', '', PARAM_ALPHA);
         }
     }
     */
-    //$tabs[0][] = new tabobject('tasks', "view.php?id={$cm->id}&amp;view=tasks", $tabtasklabel, $tabtasktitle);
-    $tabs[0][] = new tabobject('milestones', "view.php?id={$cm->id}&amp;view=milestones", $tabEtapePicto.$tabmilelabel, $tabmiletitle);
+    //
+
+    $tabs[0][] = new tabobject('description', "view.php?id={$cm->id}&amp;view=description", get_string('description', 'project'));  
+    $tabs[0][] = new tabobject('views', "view.php?id={$cm->id}&amp;view=summary", $tabEquipePicto. get_string('views', 'project'),get_string('views', 'project'));
+    $tabs[0][] = new tabobject('milestones', "view.php?id={$cm->id}&amp;view=milestones", $tabEtapePicto.get_string('milestones', 'project'), get_string('milestones', 'project'));
     if (@$project->projectusesdelivs){
-        $tabs[0][] = new tabobject('deliverables', "view.php?id={$cm->id}&amp;view=deliverables", $tabdelivlabel, $tabdelivtitle);
+        $tabs[0][] = new tabobject('ressources', "view.php?id={$cm->id}&amp;view=ressources", $tabRessourcePicto.get_string('ressource', 'project'), get_string('ressource', 'project'));
     }
     if (@$project->projectusesdelivs){
-        $tabs[0][] = new tabobject('ressources', "view.php?id={$cm->id}&amp;view=ressources", $tabresslabel, $tabresstitle);
+        $tabs[0][] = new tabobject('deliverables', "view.php?id={$cm->id}&amp;view=deliverables", $tabLivrablePicto.get_string('deliverable', 'project'),get_string('deliverable', 'project'));
     }
     if (@$project->projectusesvalidations){
-        $tabs[0][] = new tabobject('validations', "view.php?id={$cm->id}&amp;view=validations", $tabvalidlabel, $tabvalidtitle);
+        $tabs[0][] = new tabobject('validations', "view.php?id={$cm->id}&amp;view=validations", $tabValidPicto.get_string('validations', 'project'), get_string('validations', 'project'));
     }
-    if(!$typeProject){
-        $tabs[0][] = new tabobject('messages', "view.php?id={$cm->id}&amp;view=messages", $tabMessagePicto.get_string('messages', 'project'),get_string('messages', 'project'));
+    if (@$project->projectusestasks) {
+        $tabs[0][] = new tabobject('tasks', "view.php?id={$cm->id}&amp;view=tasks", $tabTaskPicto.get_string('tasks', 'project'), get_string('tasks', 'project'));
     }
-    if(has_capability('mod/project:addinstance', $context, $USER->id) && !$typeProject){
+    $tabs[0][] = new tabobject('messages', "view.php?id={$cm->id}&amp;view=messages", $tabMessagePicto.get_string('messages', 'project'),get_string('messages', 'project'));
+    if(has_capability('mod/project:addinstance', $context, $USER->id)){
         $tabs[0][] = new tabobject('vue projets', "view.php?id={$cm->id}&amp;view=projects", $tabProjectsPicto.get_string('projects', 'project'),get_string('projects', 'project'));
     }
     /*if (preg_match("/view_/", $currentpage)){

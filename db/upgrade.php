@@ -34,16 +34,21 @@ function xmldb_project_upgrade($oldversion=0) {
     global $CFG, $THEME, $DB;
 	
 	$dbman = $DB->get_manager();
-    if ($oldversion < 2013100900) {
+    if ($oldversion < 2015050502) {
 
         // Define field projectconfidential to be added to project.
         $table = new xmldb_table('project');
 		//ajout dans table project => des projets
-		
+		/*
 		//champ projectconfidential
         $field = new xmldb_field('projectconfidential', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'typeprojet');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+        } 
+        //champ projectconfidential
+        $field = new xmldb_field('typeprojet', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'cssfilter');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->deleteField($table, $field);
         }
 		
 		//champ introimg
@@ -51,7 +56,13 @@ function xmldb_project_upgrade($oldversion=0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		
+*/
+        //champ projectusetaks
+        $field = new xmldb_field('projectusestasks', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'useriskcorrection');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+		/*
 		//champ commanditaire
         $field = new xmldb_field('commanditaire', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null, 'introimg');
         if (!$dbman->field_exists($table, $field)) {
@@ -133,9 +144,9 @@ function xmldb_project_upgrade($oldversion=0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		
+		*/
         // project savepoint reached.
-        upgrade_mod_savepoint(true, 2013100900, 'project');
+        upgrade_mod_savepoint(true, 2015050502, 'project');
     }
 
     $result = true;

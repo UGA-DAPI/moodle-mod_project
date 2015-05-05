@@ -75,7 +75,7 @@ if($exportxml==1){
     }
     else { 
     // for normal users, change current group
-        $currentGroupId = 0 + groups_get_course_group($course, true);
+        $currentGroupId = 0 + groups_get_activity_group($cm, true);
         if (!groups_is_member($currentGroupId , $USER->id) && !is_siteadmin($USER->id)) $USER->editmode = "off";
     }
 }

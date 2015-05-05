@@ -28,15 +28,15 @@
             <FIELD NAME="autogradingenabled" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="allownotifications" NEXT="autogradingweight"/>
             <FIELD NAME="autogradingweight" TYPE="float" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="autogradingenabled" NEXT="enablecvs"/>
             <FIELD NAME="enablecvs" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="autogradingweight" NEXT="useriskcorrection"/>
-            <FIELD NAME="useriskcorrection" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="impacts risks on costs" PREVIOUS="enablecvs" NEXT="projectusesrequs"/>
-            <FIELD NAME="projectusesrequs" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="useriskcorrection" NEXT="projectusesspecs"/>
+            <FIELD NAME="useriskcorrection" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="impacts risks on costs" PREVIOUS="enablecvs" NEXT="projectusestasks"/>
+            <FIELD NAME="projectusestasks" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="useriskcorrection" NEXT="projectusesrequs"/>
+            <FIELD NAME="projectusesrequs" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="projectusestasks" NEXT="projectusesspecs"/>
             <FIELD NAME="projectusesspecs" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="projectusesrequs" NEXT="projectusesdelivs"/>
             <FIELD NAME="projectusesdelivs" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="projectusesspecs" NEXT="projectusesvalidations"/>
             <FIELD NAME="projectusesvalidations" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="projectusesdelivs" NEXT="xslfilter"/>
             <FIELD NAME="xslfilter" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false" COMMENT="Xslt filename for custom reports" PREVIOUS="projectusesvalidations" NEXT="cssfilter"/>
-            <FIELD NAME="cssfilter" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false" COMMENT="Css steelsheet filename for reports" PREVIOUS="xslfilter" NEXT="typeprojet"/>
-            <FIELD NAME="typeprojet" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="cssfilter" NEXT="projectconfidential"/>
-            <FIELD NAME="projectconfidential" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="typeprojet" NEXT="introimg"/>
+            <FIELD NAME="cssfilter" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false" COMMENT="Css steelsheet filename for reports" PREVIOUS="xslfilter" NEXT="projectconfidential"/>
+            <FIELD NAME="projectconfidential" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="cssfilter" NEXT="introimg"/>
             <FIELD NAME="introimg" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="projectconfidential" NEXT="commanditaire"/>
             <FIELD NAME="commanditaire" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" PREVIOUS="introimg" NEXT="projectgrpid"/>
             <FIELD NAME="projectgrpid" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="commanditaire" NEXT="etat"/>
