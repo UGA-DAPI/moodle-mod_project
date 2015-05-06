@@ -1186,32 +1186,31 @@ function project_print_bloc_elem($project, $group,$fatherid, $cmid, $typeelm, $p
                 $propagatedroot->milestoneid = $deliverable->milestoneid;
                 $propagatedroot->milestoneabstract = $deliverable->milestoneabstract;
             } else {
-             $deliverable->milestoneid = $propagated->milestoneid;
-             $deliverable->milestoneabstract = $propagated->milestoneabstract;
-             $deliverable->milestoneforced = 1;
-         }
-         project_print_single_deliverable($deliverable, $project, $group, $cmid, count($deliverables));
+                $deliverable->milestoneid = $propagated->milestoneid;
+                $deliverable->milestoneabstract = $propagated->milestoneabstract;
+                $deliverable->milestoneforced = 1;
+            }
+            project_print_single_deliverable($deliverable, $project, $group, $cmid, count($deliverables), $typeelm);
 
-         $visibility = ($deliverable->collapsed) ? 'display: none' : 'display: block' ; 
-         echo "<div id=\"sub{$deliverable->id}\" style=\"$visibility\" >";
-			//project_print_deliverables($project, $group, $deliverable->id, $cmid, $propagatedroot);
-         echo "</div>";
-         $level--;
-         echo "</div>";
-     }
- } else {
-    if ($level == 0){
-     echo $OUTPUT->box_start();
-     if($typeelm==1){
-        print_string('nodeliverables', 'project');
-    }else{
-        print_string('noressources', 'project');
+            $visibility = ($deliverable->collapsed) ? 'display: none' : 'display: block' ; 
+            echo "<div id=\"sub{$deliverable->id}\" style=\"$visibility\" >";
+            echo "</div>";
+            $level--;
+            echo "</div>";
+        }
+    } else {
+        if ($level == 0){
+            echo $OUTPUT->box_start();
+            if($typeelm==1){
+                print_string('nodeliverables', 'project');
+            }else{
+                print_string('noressources', 'project');
+            }
+            echo $OUTPUT->box_end();
+        }
     }
-    echo $OUTPUT->box_end();
-}
-}
-echo "</div>";
-echo "<div class='sepbloc'></div>";
+    echo "</div>";
+    echo "<div class='sepbloc'></div>";
 }
 /**
 * prints a single task object
@@ -1222,12 +1221,14 @@ echo "<div class='sepbloc'></div>";
 * @param setSize the size of the set of objects we are printing an item of
 * @param fullsingle true if prints a single isolated element
 */
-function project_print_single_deliverable($deliverable, $project, $group, $cmid, $setSize, $fullsingle = false){
+function project_print_single_deliverable($deliverable, $project, $group, $cmid, $setSize, $typeelm, $fullsingle = false){
     global $CFG, $USER, $DB, $OUTPUT;
 
     $context = context_module::instance($cmid);
     $canedit = $USER->editmode == 'on' && has_capability('mod/project:editdeliverables', $context);
     $numdeliv = implode('.', project_tree_get_upper_branch('project_deliverable', $deliverable->id, true, true));
+    $stringelm = ($typeelm == 0) ? 'ressources' : 'deliverables';
+
 	/*
 	if (!$fullsingle){
         	if (project_count_subs('project_deliverable', $deliverable->id) > 0) {
@@ -1311,7 +1312,7 @@ function project_print_single_deliverable($deliverable, $project, $group, $cmid,
 	     $abstract = format_string($deliverable->abstract);
         }
 	*/
-        $abstract = "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$deliverable->id}&amp;view=deliverables\">{$deliverable->abstract}</a>";
+        $abstract = "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$deliverable->id}&amp;view=".$stringelm."&amp;typeelm=".$typeelm."\">{$deliverable->abstract}</a>";
 	//$head = "<table width='100%' class=\"nodecaption\"><tr><td align='left' width='70%'><b>{$checkbox} {$indent}<span class=\"level{$delivlevel}\"><a name=\"node{$deliverable->id}\"></a>D{$numdeliv} - {$abstract}</span></b></td><td align='right' width='30%'>{$taskcount}{$milestone} {$hidedeliv}</td></tr></table>";
         $customTable = "<table width='100%' class=\"nodecaption\"><tr><td align='left' width='70%'><span class=\"level{$delivlevel}\">{$abstract}</span></td></tr>";
 /*
@@ -1356,9 +1357,9 @@ function project_print_single_deliverable($deliverable, $project, $group, $cmid,
      $link = array();
 		/*$link[] = "<a href=\"view.php?id={$cmid}&amp;work=add&amp;fatherid={$deliverable->id}&amp;view=deliverables\">
      <img src=\"".$OUTPUT->pix_url('/p/newnode', 'project')."\" alt=\"".get_string('addsubdeliv', 'project')."\" /></a>";*/
-     $link[] = "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$deliverable->id}&amp;view=deliverables\">
+     $link[] = "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$deliverable->id}&amp;view=".$stringelm."&amp;typeelm=".$typeelm."\">
      <img src=\"".$OUTPUT->pix_url('/t/edit')."\" alt=\"".get_string('update')."\" /></a>";
-     $link[] = "<p style=\"cursor:pointer;display:inline;\" onclick=\"javascript:var r=confirm('Etes vous sure de vouloir supprimer ".addslashes($deliverable->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=delete&amp;delivid={$deliverable->id}&amp;view=deliverables';}\"><img src=\"".$OUTPUT->pix_url('/t/delete')."\" alt=\"".get_string('delete')."\" /></p>";
+     $link[] = "<p style=\"cursor:pointer;display:inline;\" onclick=\"javascript:var r=confirm('Etes vous sure de vouloir supprimer ".addslashes($deliverable->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=delete&amp;delivid={$deliverable->id}&amp;view=".$stringelm."';}\"><img src=\"".$OUTPUT->pix_url('/t/delete')."\" alt=\"".get_string('delete')."\" /></p>";
 		/*$link[] = "<a href=\"view.php?id={$cmid}&amp;work=delete&amp;delivid={$deliverable->id}&amp;view=deliverables\">
      <img src=\"".$OUTPUT->pix_url('/t/delete')."\" alt=\"".get_string('delete')."\" /></a>";*/
 		/*

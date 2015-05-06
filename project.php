@@ -51,7 +51,6 @@ $work = optional_param('work', '', PARAM_ALPHA);
     $tabrequtitle = get_string('requirements', 'project');
     //$tabrequlabel = (!has_capability('mod/project:changerequs', $context)) ? $tabrequtitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabrequtitle ;
     $tabrequlabel = $tabrequtitle ;
-    $tabspectitle = get_string('specifications', 'project');
     //$tabspeclabel = (!has_capability('mod/project:changespecs', $context)) ? "<img src=\"".$OUPTUT->pix_url('p/spec', 'project').'" /> ' . $tabspectitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabspectitle ;
     //$tabtasklabel = (!has_capability('mod/project:changetasks', $context)) ? "<img src=\"{$CFG->wwwroot}/mod/project/pix/p/task.gif\" /> " . $tabtasktitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabtasktitle ;
     //$tabmilelabel = (!has_capability('mod/project:changemiles', $context)) ? $tabmiletitle . " <img src=\"{$CFG->wwwroot}/mod/project/pix/p/lock.gif\" />" : $tabmiletitle ;
@@ -68,7 +67,8 @@ $work = optional_param('work', '', PARAM_ALPHA);
     $tabMessagePicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/message_16x16.png\" />";
     $tabProjectsPicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/vue-projets_16x16.png\" />";
     $tabValidPicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/vue-projets_16x16.png\" />";
-    $tabTaskPicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/vue-projets_16x16.png\" />";
+    $tabTaskPicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/calendar_16x16.png\" />";
+    $tabSpecsPicto = "<img src=\"{$CFG->wwwroot}/mod/project/pix/spec-32x32.png\" style=\"width:16px; height:16px;\"/>";
 
     $tabs = array();
 
@@ -84,7 +84,7 @@ $work = optional_param('work', '', PARAM_ALPHA);
     }
     */
     //
-
+var_dump($project);
     $tabs[0][] = new tabobject('description', "view.php?id={$cm->id}&amp;view=description", get_string('description', 'project'));  
     $tabs[0][] = new tabobject('views', "view.php?id={$cm->id}&amp;view=summary", $tabEquipePicto. get_string('views', 'project'),get_string('views', 'project'));
     $tabs[0][] = new tabobject('milestones', "view.php?id={$cm->id}&amp;view=milestones", $tabEtapePicto.get_string('milestones', 'project'), get_string('milestones', 'project'));
@@ -99,6 +99,12 @@ $work = optional_param('work', '', PARAM_ALPHA);
     }
     if (@$project->projectusestasks) {
         $tabs[0][] = new tabobject('tasks', "view.php?id={$cm->id}&amp;view=tasks", $tabTaskPicto.get_string('tasks', 'project'), get_string('tasks', 'project'));
+    }
+    if (@$project->projectusesrequs) {
+        $tabs[0][] = new tabobject('requirement', "view.php?id={$cm->id}&amp;view=requirements", $tabTaskPicto.get_string('requirements', 'project'), get_string('requirements', 'project'));
+    }
+    if (@$project->projectusesspecs) {
+        $tabs[0][] = new tabobject('specification', "view.php?id={$cm->id}&amp;view=specifications", $tabSpecsPicto.get_string('specifications', 'project'), get_string('specifications', 'project'));
     }
     $tabs[0][] = new tabobject('messages', "view.php?id={$cm->id}&amp;view=messages", $tabMessagePicto.get_string('messages', 'project'),get_string('messages', 'project'));
     if(has_capability('mod/project:addinstance', $context, $USER->id)){

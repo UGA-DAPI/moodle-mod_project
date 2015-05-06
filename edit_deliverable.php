@@ -19,33 +19,37 @@ $mode = ($delivid) ? 'update' : 'add' ;
 
 $url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$delivid;
 
-	if($mode=='add' && (!has_capability('mod/project:editdeliverables', $context) || !has_capability('mod/project:editdeliverables', $context))){//si un étudiant tente de créer un libvrable/ressource on le redirige
-		redirect($url);
-	}
-	$mform = new Deliverable_Form($url, $mode, $project, $delivid);
-	
-	if ($mform->is_cancelled()){
-		redirect($url);
-	}
-	
-	if ($data = $mform->get_data()){
-		$data->groupid = $currentGroupId;
-		$data->projectid = $project->id;	
-		$data->userid = $USER->id;
-		$data->modified = time();
-		$data->lastuserid = $USER->id;
+if($mode=='add' && (!has_capability('mod/project:editdeliverables', $context) || !has_capability('mod/project:editdeliverables', $context))){
+	//si un étudiant tente de créer un libvrable/ressource on le redirige
+	redirect($url);
+}
+$mform = new Deliverable_Form($url, $mode, $project, $delivid);
 
-		if($data->typeelm==0 && !has_capability('mod/project:editdeliverables', $context)){//si un étudiant consultait juste une ressource
-			redirect($url);
-		}
-		if(isset($data->description_editor)){//si c'est un livrable et qu'on peut éditer ==> c'est un type enseignant
+if ($mform->is_cancelled()){
+	redirect($url);
+}
+
+if ($data = $mform->get_data()){
+	$data->groupid = $currentGroupId;
+	$data->projectid = $project->id;	
+	$data->userid = $USER->id;
+	$data->modified = time();
+	$data->lastuserid = $USER->id;
+
+	if($data->typeelm==0 && !has_capability('mod/project:editdeliverables', $context)){
+		//si un étudiant consultait juste une ressource
+		redirect($url);
+	}
+	if(isset($data->description_editor)){
+		//si c'est un livrable et qu'on peut éditer ==> c'est un type enseignant
 		$data->descriptionformat = $data->description_editor['format'];
 		$data->description = $data->description_editor['text'];
 			// editors pre save processing
 		$draftid_editor = file_get_submitted_draft_itemid('description_editor');
 		$data->description = file_save_draft_area_files($draftid_editor, $context->id, 'mod_project', 'deliverabledescription', $data->id, array('subdirs' => true), $data->description);
 		$data = file_postupdate_standard_editor($data, 'description', $mform->descriptionoptions, $context, 'mod_project', 'deliverabledescription', $data->id);
-		}elseif(!isset($data->description_editor) && $data->delivid){//on doit récupérer l'ancien commentaire
+	}elseif(!isset($data->description_editor) && $data->delivid){
+		//on doit récupérer l'ancien commentaire
 		$deliverabletmp = $DB->get_record('project_deliverable', array('id' => $data->delivid));
 		$data->description = $deliverabletmp->description;
 		$data->descriptionformat = $deliverabletmp->descriptionformat;
@@ -54,13 +58,15 @@ $url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$delivid;
 		$data->description = '';
 	}
 	
-		if(isset($data->commentaire_editor)){//si c'est un livrable et qu'on peut pas éditer ==> c'est un type étudiant
+	if(isset($data->commentaire_editor)){
+		//si c'est un livrable et qu'on peut pas éditer ==> c'est un type étudiant
 		$data->commentaireformat = $data->commentaire_editor['format'];
 		$data->commentaire = $data->commentaire_editor['text'];
 		$draftid_editor_com = file_get_submitted_draft_itemid('commentaire_editor');
 		$data->commentaire = file_save_draft_area_files($draftid_editor_com, $context->id, 'mod_project', 'commentaire', $data->id, array('subdirs' => true), $data->commentaire);
 		$data = file_postupdate_standard_editor($data, 'commentaire', $mform->descriptionoptions, $context, 'mod_project', 'commentaire', $data->id);
-		}elseif(!isset($data->commentaire_editor) && $data->delivid){//on doit récupérer l'ancien commentaire
+	}elseif(!isset($data->commentaire_editor) && $data->delivid){
+		//on doit récupérer l'ancien commentaire
 		$deliverabletmp = $DB->get_record('project_deliverable', array('id' => $data->delivid));
 		$data->commentaire = $deliverabletmp->commentaire;
 		$data->commentaireformat = FORMAT_HTML;
@@ -71,7 +77,8 @@ $url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$delivid;
 	
 
 	
-		if ($data->delivid) {//cas d'une edition
+	if ($data->delivid) {
+		//cas d'une edition
 			$data->id = $data->delivid; // id is course module id
 			$DB->update_record('project_deliverable', $data);
 			add_to_log($course->id, 'project', 'changedeliverable', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'update', $cm->id);
@@ -130,9 +137,11 @@ $url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$delivid;
 		}
 		$deliverable->delivid = $deliverable->id;
 		$deliverable->id = $cm->id;
-		if($deliverable->typeelm==1){//type livrable
+		if($deliverable->typeelm==1){
+		//type livrable
 			echo $OUTPUT->heading(get_string('updatedeliv','project'));
-		}elseif(has_capability('mod/project:editdeliverables', $context)){//ressource vu enseignant
+		}else if(has_capability('mod/project:editdeliverables', $context)){
+		//ressource vu enseignant
 			echo $OUTPUT->heading(get_string('updateressource','project'));
 		}else{
 			echo $OUTPUT->heading(get_string('viewressource','project'));

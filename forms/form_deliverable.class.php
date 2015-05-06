@@ -28,43 +28,52 @@ class Deliverable_Form extends moodleform {
 		}
 		parent::__construct($action);
 	}
-    	
+
 	function definition(){
 		global $COURSE, $DB, $PAGE;
 
-    	$mform = $this->_form;
+		$mform = $this->_form;
 		
-    	$PAGE->requires->js( new moodle_url('/mod/project/js/formdeliv.js'));
+		$PAGE->requires->js( new moodle_url('/mod/project/js/formdeliv.js'));
 		
-    	$modcontext = context_module::instance($this->project->cmid);
-		$canEdit = has_capability('mod/project:editdeliverables', $modcontext);
+		$modcontext = context_module::instance($this->project->cmid);
+		$canEdit==false; // just in case
+		if ($_GET['typeelm']==0) {
+			$canEdit = has_capability('mod/project:editressources', $modcontext);
+		}else{
+			$canEdit = has_capability('mod/project:editdeliverables', $modcontext);
+		}
 		
 		$maxfiles = 1;                // TODO: add some setting
 		$maxbytes = $COURSE->maxbytes; // TODO: add some setting	
 		$this->descriptionoptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'context' => $modcontext);
 		$this->attachmentoptions = array('subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
-    	
-    	$currentGroup = 0 + groups_get_course_group($COURSE);
 
-    	$mform->addElement('hidden', 'id');
-    	$mform->addElement('hidden', 'fatherid');
-    	$mform->addElement('hidden', 'delivid');
-    	$mform->addElement('hidden', 'work');
-    	$mform->setDefault('work', $this->mode);
-    	
-		if($canEdit){//si l'user peut editer la ressource/livrable
+		$currentGroup = 0 + groups_get_course_group($COURSE);
+
+		$mform->addElement('hidden', 'id');
+		$mform->addElement('hidden', 'fatherid');
+		$mform->addElement('hidden', 'delivid');
+		$mform->addElement('hidden', 'work');
+		$mform->setDefault('work', $this->mode);
+
+		if($canEdit){
+		//si l'user peut editer la ressource/livrable
 			//ajout du select de type ressource ou livrable
-			$deliverytypes = array();
+			/*$deliverytypes = array();
 			$deliverytypes[] = 'Ressource';
-			$deliverytypes[] = 'Livrable';
+			$deliverytypes[] = 'Livrable';*/
 			if (isset($this->current)){
 				$mform->addElement('hidden', 'typeelm', $this->current->typeelm);
 			}
-			else{
+			elseif (isset($_GET['typeelm'])) {
+				$mform->addElement('hidden', 'typeelm', $_GET['typeelm']);
+			}
+			/*else{
 				$mform->addElement('select', 'typeelm', get_string('typeelm', 'project'), $deliverytypes);
 				$mform->addHelpButton('typeelm', 'typeelm', 'project');
-			}
-			if(isset($this->current) && $this->current->typeelm==1){
+			}*/
+			if(isset($_GET['typeelm']) && $_GET['typeelm']==1){
 				$mform->addElement('text', 'abstract', get_string('delivtitle', 'project'), array('size' => "100%"));
 			}else{
 				$mform->addElement('text', 'abstract', get_string('ressourcetitle', 'project'), array('size' => "100%"));
@@ -82,35 +91,35 @@ class Deliverable_Form extends moodleform {
 			//modif w3c2i pour associer étape au lirable/ressource
 			//if ($this->mode == 'update'){
 
-				$query = "
-				   SELECT
-					  id,
-					  abstract,
-					  ordering
-				   FROM
-					  {project_milestone}
-				   WHERE
-					  projectid = {$this->project->id} AND
-					  groupid = {$currentGroup}
-				   ORDER BY
-					  ordering
-				";
-				$milestones = $DB->get_records_sql($query);
-				$milestonesoptions = array();
-				if(count($milestones)>0){
-					foreach($milestones as $aMilestone){
-						$milestonesoptions[$aMilestone->id] = format_string($aMilestone->abstract);
-					}
-				}else{
-					$milestonesoptions[0] = get_string('nomilestone', 'project');
+			$query = "
+			SELECT
+			id,
+			abstract,
+			ordering
+			FROM
+			{project_milestone}
+			WHERE
+			projectid = {$this->project->id} AND
+			groupid = {$currentGroup}
+			ORDER BY
+			ordering
+			";
+			$milestones = $DB->get_records_sql($query);
+			$milestonesoptions = array();
+			if(count($milestones)>0){
+				foreach($milestones as $aMilestone){
+					$milestonesoptions[$aMilestone->id] = format_string($aMilestone->abstract);
 				}
-				$mform->addElement('select', 'milestoneid', get_string('milestone', 'project'), $milestonesoptions);		    	
-			//}
+			}else{
+				$milestonesoptions[0] = get_string('nomilestone', 'project');
+			}
+			$mform->addElement('select', 'milestoneid', get_string('milestone', 'project'), $milestonesoptions);
 
-			$mform->addElement('editor', 'description_editor', get_string('description', 'project'), null, $this->descriptionoptions);		    	
+			$mform->addElement('editor', 'description_editor', get_string('description', 'project'), null, $this->descriptionoptions);
 			$mform->setType('decription_editor', PARAM_RAW);
 			
-		}else{//Si l'user ne peut pas éditer mais juste voir, dl la ressource/livrable et commenter
+		}else{
+		//Si l'user ne peut pas éditer mais juste voir, dl la ressource/livrable et commenter
 			$mform->addElement('hidden', 'typeelm');
 			$mform->addElement('hidden', 'status');
 			$mform->addElement('hidden', 'milestoneid');
@@ -128,7 +137,8 @@ class Deliverable_Form extends moodleform {
 			$delivDetails .= "<tr><td colspan='2'>".$this->current->description."</td></tr>";
 			$delivDetails .= "</table>";
 			$mform->addElement('html', $delivDetails);
-			if((int)$this->current->typeelm==1){//c'est un livrable
+			if($this->current->typeelm==1){
+			//c'est un livrable
 				$mform->addElement('editor', 'commentaire_editor', get_string('commentaire', 'project'), null, $this->descriptionoptions);		    	
 				$mform->setType('commentaire_editor', PARAM_RAW);
 			}
@@ -150,47 +160,49 @@ class Deliverable_Form extends moodleform {
 	        }
 	    }
 		*/
-		if(!$canEdit && $this->current->typeelm==0){//si l'user peut pas editer la ressource/livrable mais que c'est une ressource ==> étudiant regardant une ressource
-			$delivData='';
-			if ($this->current->localfile) {
-				$fs = get_file_storage();
-				$files = $fs->get_area_files($modcontext->id, 'mod_project', 'deliverablelocalfile', $this->current->id, 'sortorder DESC, id ASC', false);
-				if(!empty($files)){
-					$file = reset($files);
-					$path = '/'.$modcontext->id.'/mod_project/deliverablelocalfile/'.$file->get_itemid().$file->get_filepath().$file->get_filename();
-					$url = moodle_url::make_file_url('/pluginfile.php', $path, '');
-					$delivData .= html_writer::link($url, $this->current->abstract);
-				}else{
-					$delivData .= $this->current->abstract;
-				}
-			}elseif(!empty($this->current->url)){
-				$delivData .= "<a href=\"{$this->current->url}\" target=\"_blank\">{$this->current->url}</a>";
-			}else{
-				$delivData .= "Pas de fichier à télécharger ou à voir.";
-			}
-			$mform->addElement('html', $delivData);
-			$this->add_action_buttons(false,'Retour');
-		}else{
-			if(isset($milestonetmp->statut)){
-				if(!$canEdit && $this->current->typeelm==1 && $milestonetmp->statut==1){//si l'uder peut pas editer mais que c'est un livrable => étudiant qui voir le livrable , mais si c'est un livrable d'une étape en cours de validation, on bloque l'accès.
-					$mform->addElement("html", "<p>L'étape associée a ce livrable est en cours de validation, il ne peut pas être modifié.</p>");
-					$this->add_action_buttons(false,'Retour');
-				}else{
-					$mform->addElement('text', 'url', get_string('url','project'));
-					$mform->addElement('static', 'or', '', get_string('oruploadfile','project'));
-					$mform->addElement('filemanager', 'localfile_filemanager', get_string('uploadfile', 'project'), null, $this->attachmentoptions);
-					$this->add_action_buttons(true);
-				}
-			}else{
-				$mform->addElement('text', 'url', get_string('url','project'));
-				$mform->addElement('static', 'or', '', get_string('oruploadfile','project'));
-				$mform->addElement('filemanager', 'localfile_filemanager', get_string('uploadfile', 'project'), null, $this->attachmentoptions);
-				$this->add_action_buttons(true);
-			}
-	   }
-    }
-    
-    function set_data($defaults){
+	    if(!$canEdit && $this->current->typeelm==0){
+		//si l'user peut pas editer la ressource/livrable mais que c'est une ressource ==> étudiant regardant une ressource
+	    	$delivData='';
+	    	if ($this->current->localfile) {
+	    		$fs = get_file_storage();
+	    		$files = $fs->get_area_files($modcontext->id, 'mod_project', 'deliverablelocalfile', $this->current->id, 'sortorder DESC, id ASC', false);
+	    		if(!empty($files)){
+	    			$file = reset($files);
+	    			$path = '/'.$modcontext->id.'/mod_project/deliverablelocalfile/'.$file->get_itemid().$file->get_filepath().$file->get_filename();
+	    			$url = moodle_url::make_file_url('/pluginfile.php', $path, '');
+	    			$delivData .= html_writer::link($url, $this->current->abstract);
+	    		}else{
+	    			$delivData .= $this->current->abstract;
+	    		}
+	    	}elseif(!empty($this->current->url)){
+	    		$delivData .= "<a href=\"{$this->current->url}\" target=\"_blank\">{$this->current->url}</a>";
+	    	}else{
+	    		$delivData .= "Pas de fichier à télécharger ou à voir.";
+	    	}
+	    	$mform->addElement('html', $delivData);
+	    	$this->add_action_buttons(false,'Retour');
+	    }else{
+	    	if(isset($milestonetmp->statut)){
+	    		if(!$canEdit && $this->current->typeelm==1 && $milestonetmp->statut==1){
+				//si l'user peut pas editer mais que c'est un livrable => étudiant qui voir le livrable , mais si c'est un livrable d'une étape en cours de validation, on bloque l'accès.
+	    			$mform->addElement("html", "<p>L'étape associée a ce livrable est en cours de validation, il ne peut pas être modifié.</p>");
+	    			$this->add_action_buttons(false,'Retour');
+	    		}else{
+	    			$mform->addElement('text', 'url', get_string('url','project'));
+	    			$mform->addElement('static', 'or', '', get_string('oruploadfile','project'));
+	    			$mform->addElement('filemanager', 'localfile_filemanager', get_string('uploadfile', 'project'), null, $this->attachmentoptions);
+	    			$this->add_action_buttons(true);
+	    		}
+	    	}else{
+	    		$mform->addElement('text', 'url', get_string('url','project'));
+	    		$mform->addElement('static', 'or', '', get_string('oruploadfile','project'));
+	    		$mform->addElement('filemanager', 'localfile_filemanager', get_string('uploadfile', 'project'), null, $this->attachmentoptions);
+	    		$this->add_action_buttons(true);
+	    	}
+	    }
+	}
+
+	function set_data($defaults){
 		//var_dump($defaults);die();
 		$context = context_module::instance($this->project->cmid);
 
@@ -214,6 +226,6 @@ class Deliverable_Form extends moodleform {
 		
 		$defaults->description = array('text' => $currenttext, 'format' => $defaults->descriptionformat, 'itemid' => $draftid_editor);
 
-    	parent::set_data($defaults);
-    }
+		parent::set_data($defaults);
+	}
 }

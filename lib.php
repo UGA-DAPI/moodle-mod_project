@@ -169,11 +169,14 @@ function project_check_dates($project) {
 */
 function project_update_instance($project){
 	global $CFG, $DB;
+	//var_dump($project);
+
 	$project->timemodified = time();
 
 	if (!project_check_dates($project)) {
 		return get_string('invaliddates', 'project');
 	}
+
 
 	$project->id = $project->instance;
 	//$draftitemid = $project->introimg;

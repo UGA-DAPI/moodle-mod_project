@@ -78,7 +78,7 @@
     <?php
     	project_print_bloc_elem($project, $currentGroupId, 0, $cm->id,0);
         if ($USER->editmode == 'on' && has_capability('mod/project:editressources', $context) && $project->etat==0) {
-    		echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0'>".get_string('address','project')."</a>&nbsp; ";
+    		echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0&amp;typeelm=0'>".get_string('address','project')."</a>&nbsp; ";
     	}
     ?>
     </form>
