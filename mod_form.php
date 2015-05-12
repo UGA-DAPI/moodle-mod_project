@@ -80,11 +80,12 @@ class mod_project_mod_form extends moodleform_mod {
         $mform->addElement('select', 'useriskcorrection', get_string('useriskcorrection', 'project'), $yesnooptions); 
         $mform->addHelpButton('useriskcorrection', 'useriskcorrection', 'project');
         $mform->addElement('header', 'features', get_string('features', 'project'));
-        $mform->addElement('checkbox', 'projectusesrequs', get_string('requirements', 'project'));
-        $mform->addElement('checkbox', 'projectusestasks', get_string('tasks', 'project')); 
-        $mform->addElement('checkbox', 'projectusesspecs', get_string('specifications', 'project')); 
-        $mform->addElement('checkbox', 'projectusesdelivs', get_string('deliverables', 'project')); 
-        $mform->addElement('checkbox', 'projectusesvalidations', get_string('validations', 'project'));
+        //note that those are advannced checkbox because we want it to return 0 when unchecked, and not nothing like a regular checkbox do
+        $mform->addElement('advcheckbox', 'projectusesrequs', get_string('requirements', 'project'));
+        $mform->addElement('advcheckbox', 'projectusestasks', get_string('tasks', 'project')); 
+        $mform->addElement('advcheckbox', 'projectusesspecs', get_string('specifications', 'project')); 
+        $mform->addElement('advcheckbox', 'projectusesdelivs', get_string('ressources', 'project')." & ".get_string('deliverables', 'project')); 
+        $mform->addElement('advcheckbox', 'projectusesvalidations', get_string('validations', 'project'));
         $mform->addElement('header', 'headeraccess', get_string('access', 'project'));
         $mform->addElement('select', 'guestsallowed', get_string('guestsallowed', 'project'), $yesnooptions); 
         $mform->addHelpButton('guestsallowed', 'guestsallowed', 'project');
@@ -105,7 +106,7 @@ class mod_project_mod_form extends moodleform_mod {
 
         $this->standard_grading_coursemodule_elements();
         $this->add_action_buttons();
-        
+
     }
     function set_data($defaults){
         $introimgoptions = array('maxbytes' =>2000000, 'maxfiles'=> 1,'accepted_types' => array('.jpeg', '.jpg', '.png','return_types'=>FILE_INTERNAL));
@@ -114,5 +115,4 @@ class mod_project_mod_form extends moodleform_mod {
         parent::set_data($defaults);
     }
 }
-
 ?>

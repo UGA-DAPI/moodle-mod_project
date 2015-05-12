@@ -84,13 +84,7 @@ if(!has_capability('mod/project:view', $context)){
     notice("Accès interdit ce projet est confidentiel.", "$CFG->wwwroot/course/view.php?id=$course->id");
     exit;
 }
-else{
-    if(!has_capability('mod/project:view', $context)){
-        notice("Vous n'avez pas accès à ce projet.", "$CFG->wwwroot/course/view.php?id=$course->id");
-        exit;
-    }
-}
- // ...display header...
+// ...display header...
 $url = $CFG->wwwroot."/mod/project/view.php?id=$id";
 $PAGE->set_title(format_string($project->name));
 $PAGE->set_url($url);

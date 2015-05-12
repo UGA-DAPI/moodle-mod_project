@@ -16,14 +16,14 @@
     include_once '../../lib/uploadlib.php';
 
 /// Controller
-	if ($work == 'add' || $work == 'update'){
-		 include 'edit_deliverable.php';
+    if ($work == 'add' || $work == 'update'){
+         include 'edit_deliverable.php';
 /// Group operation form *********************************************************
 
-	} elseif ($work == "groupcmd") {
-		echo $pagebuffer;
-	    $ids = required_param('ids', PARAM_INT);
-	    $cmd = required_param('cmd', PARAM_ALPHA);
+    } elseif ($work == "groupcmd") {
+        echo $pagebuffer;
+        $ids = required_param('ids', PARAM_INT);
+        $cmd = required_param('cmd', PARAM_ALPHA);
     ?>
     <center>
     <?php echo $OUTPUT->heading(get_string('groupoperations', 'project')); ?>
@@ -59,11 +59,11 @@
     </form>
     </center>
     <?php
-	} else {
-		if ($work){
-			include 'deliverables.controller.php';
-		}
-		echo $pagebuffer;
+    } else {
+        if ($work){
+            include 'deliverables.controller.php';
+        }
+        echo $pagebuffer;
     ?>
     <script type="text/javascript">
     //<![CDATA[
@@ -76,10 +76,10 @@
     <input type="hidden" name="id" value="<?php p($cm->id) ?>" />
     <input type="hidden" name="work" value="groupcmd" />
     <?php
-    	project_print_bloc_elem($project, $currentGroupId, 0, $cm->id,0);
+        project_print_bloc_elem($project, $currentGroupId, 0, $cm->id,0);
         if ($USER->editmode == 'on' && has_capability('mod/project:editressources', $context) && $project->etat==0) {
-    		echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0&amp;typeelm=0'>".get_string('address','project')."</a>&nbsp; ";
-    	}
+            echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0&amp;typeelm=0'>".get_string('address','project')."</a>&nbsp; ";
+        }
     ?>
     </form>
     <?php

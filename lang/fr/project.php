@@ -118,6 +118,7 @@ $string['deletetask'] = 'Supprimer la tâche';
 $string['deliv_status'] = 'Etat de livrable';
 $string['deliverable'] = 'Livrable';
 $string['ressources'] = 'Ressources';
+$string['ressource'] = 'Ressource';
 $string['deliverables'] = 'Livrables';
 $string['deliverablesrate'] = 'Taux de couverture des livrables';
 $string['deliverableswithbindings'] = 'Livrables autoliés';
