@@ -58,7 +58,7 @@
 		include 'milestones.controller.php';
 	}
 	echo $pagebuffer;
-	//messages de changement de satut des étapes !!
+	//messages de changement de statut des étapes !!
 	if($work =='askvalider'){
 		echo $OUTPUT->confirm("Votre étape a bien été soumise à la validation. Vous pouvez, de plus, commenter cette demande de validation.<br /><br />Voulez-vous laisser un commentaire sur cette demande dans la partie messages ?", $url, $urlretour);
 	}elseif($work =='refuser'){
