@@ -59,9 +59,10 @@ class Deliverable_Form extends moodleform {
         $mform->setDefault('work', $this->mode);
 
         if($canEdit){
-        //si l'user peut editer la ressource/livrable
-            //ajout du select de type ressource ou livrable
-            
+            $deliverytypes = array();
+            $deliverytypes[] = 'Ressource';
+            $deliverytypes[] = 'Livrable';
+
             if(isset($_GET['typeelm']) && $_GET['typeelm']==1){
                 $mform->addElement('text', 'abstract', get_string('delivtitle', 'project'), array('size' => "100%"));
             }else{
@@ -77,36 +78,29 @@ class Deliverable_Form extends moodleform {
             $mform->addHelpButton('status', 'deliv_status', 'project');
             */
             $mform->addElement('hidden', 'status','CRE');
-            //modif w3c2i pour associer étape au lirable/ressource
-            //if ($this->mode == 'update'){
-
-            $query = "
-            SELECT
-            id,
-            abstract,
-            ordering
-            FROM
-            {project_milestone}
-            WHERE
-            projectid = {$this->project->id} AND
-            groupid = {$currentGroup}
-            ORDER BY
-            ordering
-            ";
+            $query = "SELECT id, abstract, ordering FROM {project_milestone} WHERE projectid = {$this->project->id} AND groupid = {$currentGroup} ORDER BY ordering";
             $milestones = $DB->get_records_sql($query);
             $milestonesoptions = array();
+            // le $nomilestone va servir a afficher une alerte si aucune étape n'estt définie pour la duplication
+            $nomilestone=false;
             if(count($milestones)>0){
                 foreach($milestones as $aMilestone){
                     $milestonesoptions[$aMilestone->id] = format_string($aMilestone->abstract);
                 }
+                $nomilestone=false;
             }else{
+                $nomilestone=true;
                 $milestonesoptions[0] = get_string('nomilestone', 'project');
             }
             $mform->addElement('select', 'milestoneid', get_string('milestone', 'project'), $milestonesoptions);
-            $deliverytypes = array();
-            $deliverytypes[] = 'Ressource';
-            $deliverytypes[] = 'Livrable';
-
+            if ($nomilestone) {
+                if ($_GET['typeelm']==1) {
+                    $mform->addElement('html', "<p>Attention, aucune étape n'est définie pour ce projet. Si vous dupliquez le projet, ce livrable sera perdu.</p>");
+                }
+                else{
+                    $mform->addElement('html', "<p>Attention, aucune étape n'est définie pour ce projet. Si vous dupliquez le projet, cette ressource sera perdue.</p>");      
+                }
+            }
             if (isset($this->current)){
                 $mform->addElement('html', '<div hidden>');
                 $select = $mform->addElement('select', 'typeelm', get_string('typeelm', 'project'), $deliverytypes);
@@ -155,10 +149,10 @@ class Deliverable_Form extends moodleform {
             $mform->addElement('header', 'headerupload', get_string('downloadressource', 'project'));
         }else{
             if ($_GET['typeelm']==0) {
-            $mform->addElement('header', 'headerupload', get_string('ressource', 'project'));
+                $mform->addElement('header', 'headerupload', get_string('ressource', 'project'));
             }
             else{
-            $mform->addElement('header', 'headerupload', get_string('delivered', 'project'));
+                $mform->addElement('header', 'headerupload', get_string('delivered', 'project'));
             }
         }               
         /*

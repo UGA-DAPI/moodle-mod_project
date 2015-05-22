@@ -28,8 +28,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/mod/vodeclic/backup/moodle2/backup_vodeclic_settingslib.php'); // Because it exists (must)
-require_once($CFG->dirroot . '/mod/vodeclic/backup/moodle2/backup_vodeclic_stepslib.php'); // Because it exists (must)
+//require_once($CFG->dirroot . '/mod/vodeclic/backup/moodle2/backup_vodeclic_settingslib.php'); // Because it exists (must)
+//require_once($CFG->dirroot . '/mod/vodeclic/backup/moodle2/backup_vodeclic_stepslib.php'); // Because it exists (must)
+require_once($CFG->dirroot.'/mod/project/backup/moodle2/backup_project_stepslib.php');
 
 /**
  * vodeclic backup task that provides all the settings and steps to perform one
@@ -63,11 +64,11 @@ class backup_project_activity_task extends backup_activity_task {
 
         // Link to the list of projects
         $search = "/(".$base."\/mod\/project\/index.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@projectINDEX*$2@$', $content);
+        $content = preg_replace($search, '$@projectindex*$2@$', $content);
 
         // Link to project view by moduleid
         $search = "/(".$base."\/mod\/project\/view.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@projectVIEWBYID*$2@$', $content);
+        $content = preg_replace($search, '$@projectviewbyid*$2@$', $content);
 
         return $content;
     }

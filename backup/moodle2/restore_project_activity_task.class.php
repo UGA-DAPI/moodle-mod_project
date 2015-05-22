@@ -79,8 +79,8 @@ class restore_project_activity_task extends restore_activity_task {
     static public function define_decode_rules() {
         $rules = array();
 
-        $rules[] = new restore_decode_rule('projectINDEX', '/mod/project/index.php?id=$1', 'course');
-        $rules[] = new restore_decode_rule('projectVIEWBYID', '/mod/project/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('projectindex', '/mod/project/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule('projectviewbyid', '/mod/project/view.php?id=$1', 'course_module');
 
         return array();
     }

@@ -18,7 +18,8 @@
 * Requires and includes
 */
 if (file_exists($CFG->libdir.'/openlib.php')){
-    require_once($CFG->libdir.'/openlib.php');//openmod lib by rick chaides
+	require_once($CFG->libdir.'/openlib.php');
+    //openmod lib by rick chaides
 }
 
 /**
@@ -75,44 +76,58 @@ function project_add_instance($project){
 
     return $returnid;
 }
+
 /**
 * Créé une copie des données du type de projet choisi dans l'objet $project vers le nouveau projet
 * Params : les données du projet et l'id du projet qui recoit la copie
 */
-function project_instance_from_typeprojet($project,$returnid){
+function project_duplicate($project,$returnid){
 	global $DB,$CFG,$USER;
 	//copie info introimg projet
 	
-	$projetFrom = $DB->get_record('project', array('id' => $project->typeprojet));//projet à copier
+	$projetFrom = $DB->get_record('project', array('id' => $project->id));
+
+	//projet à copier
 	$moduleid = $DB->get_record('modules', array('name' => 'project'));
-	$coursemoduleid = $DB->get_record('course_modules', array('module' => $moduleid->id,'instance' => $projetFrom->id));//projet à copier
-	$contextFrom = context_module::instance($coursemoduleid->id);//contexte du type projet a copier
+	$coursemoduleid = $DB->get_record('course_modules', array('module' => $moduleid->id,'instance' => $projetFrom->id));
+	//projet à copier
+	$contextFrom = context_module::instance($coursemoduleid->id);
+	//contexte du type projet a copier
+
+
 	
-	$context = context_module::instance($project->coursemodule);//contexte du projet en cours de création
+
+	/*
+	
+	$context = context_module::instance($project->coursemodule);
+	//contexte du projet en cours de création
 	$project->id=$returnid;
 	$project->projectgrpid = $projetFrom->projectgrpid;
-	if(!$project->introimg){//si le projet na pas d'image mais que le type copié en a une on la récupère
-	if((int)$projetFrom->introimg ==1){
-		$fs = get_file_storage();
+	if(!$project->introimg){
+	//si le projet na pas d'image mais que le type copié en a une on la récupère
+		if((int)$projetFrom->introimg ==1){
+			$fs = get_file_storage();
 			//on récupère l'intro img du type projet
-		$files = $fs->get_area_files($contextFrom->id, 'mod_project', 'introimg', $projetFrom->id, 'sortorder DESC, id ASC', false);
-		if(!empty($files)){
-			$file = reset($files);
-			$file_record = array('contextid'=>$context->id, 'component'=>'mod_project', 'filearea'=>'introimg',
-				'itemid'=>$returnid, 'filepath'=>'/', 'filename'=>$file->get_filename(),
-				'timecreated'=>time(), 'timemodified'=>time());
-			$fs->create_file_from_string($file_record, $file->get_content());
+			$files = $fs->get_area_files($contextFrom->id, 'mod_project', 'introimg', $projetFrom->id, 'sortorder DESC, id ASC', false);
+			if(!empty($files)){
+				$file = reset($files);
+				$file_record = array('contextid'=>$context->id, 'component'=>'mod_project', 'filearea'=>'introimg',
+					'itemid'=>$returnid, 'filepath'=>'/', 'filename'=>$file->get_filename(),
+					'timecreated'=>time(), 'timemodified'=>time());
+				$fs->create_file_from_string($file_record, $file->get_content());
 				//on update le projet avec l'introimg en +
-			$project->introimg=1;
-			$project->id = $returnid;
+				$project->introimg=1;
+				$project->id = $returnid;
+			}
 		}
 	}
-}
-$returnidtmp = $DB->update_record('project', $project);
+	$returnidtmp = $DB->update_record('project', $project);
 	//copie des étapes
-	$typemilestones = $DB->get_records('project_milestone', array('projectid' => $project->typeprojet));//étapes
+	$typemilestones = $DB->get_records('project_milestone', array('projectid' => $project->id));
+	//étapes
 	foreach($typemilestones as $milestonetocopy){
-		$milestonetocopy->projectid = $returnid;//on set l'id du projet pour l'étape
+		$milestonetocopy->projectid = $returnid;
+		//on set l'id du projet pour l'étape
 		$milestonetocopy->userid = $USER->id;
 		$milestonetocopy->created = time();
 		$milestonetocopy->modified = time();
@@ -120,7 +135,8 @@ $returnidtmp = $DB->update_record('project', $project);
 		$milestonetocopy->numversion = 0;
 		if ($milestoneid = $DB->insert_record('project_milestone', $milestonetocopy)){
 			//Une fois l'étape crée on s'occupe des ressources/livrables associés
-			$deliverables = $DB->get_records('project_deliverable', array('milestoneid'=>$milestonetocopy->id,'projectid' => $project->typeprojet));//étapes
+			$deliverables = $DB->get_records('project_deliverable', array('milestoneid'=>$milestonetocopy->id,'projectid' => $project->id));
+			//étapes
 			foreach($deliverables as $deliverabletocopy){
 				$deliverabletocopy->userid = $USER->id;
 				$deliverabletocopy->modified = time();
@@ -129,7 +145,8 @@ $returnidtmp = $DB->update_record('project', $project);
 				$deliverabletocopy->projectid = $returnid;
 				$deliverabletocopy->milestoneid = $milestoneid;
 				if ($deliverableid = $DB->insert_record('project_deliverable', $deliverabletocopy)){
-					if($deliverabletocopy->typeelm==0 && $deliverabletocopy->localfile==1){//si un fichier est déposé pour une ressource on la copie aussi
+					if($deliverabletocopy->typeelm==0 && $deliverabletocopy->localfile==1){
+					//si un fichier est déposé pour une ressource on la copie aussi
 						$fs = get_file_storage();
 						$files = $fs->get_area_files($contextFrom->id, 'mod_project', 'deliverablelocalfile', $deliverabletocopy->id, 'sortorder DESC, id ASC', false);
 						if(!empty($files)){
@@ -146,8 +163,79 @@ $returnidtmp = $DB->update_record('project', $project);
 					}
 				}
 			}
+			//taches avec une étape
+			$typetask = $DB->get_records('project_tasks', array('milestoneid'=>$milestonetocopy->id,'projectid' => $project->id));
+			foreach ($typetask as $tasktocopy) {
+				$tasktocopy->modified = time();
+				$tasktocopy->created = time();
+				$tasktocopy->assignee = false;
+				$tasktocopy->owner = $USER->id;
+				$tasktocopy->projectid = $returnid;
+				$tasktocopy->milestoneid = $milestoneid;
+				$DB->insert_record('project_tasks', $tasktocopy);
+			}
 		}
 	}
+	//messages de la partie forum
+	$typemessages = $DB->get_records('project_messages', array('projectid' => $project->id));
+	foreach ($typemessages as $messagetocopy) {
+		$messagetocopy->modified = time();
+		$messagetocopy->created = time();
+		$messagetocopy->projectid = $returnid;
+		$DB->insert_record('project_messages', $messagetocopy);
+	}
+	//taches sans étapes
+	$typetaskn = $DB->get_records('project_tasks', array('milestoneid'=>0,'projectid' => $project->id));
+	foreach ($typetaskn as $taskntocopy) {
+		$taskntocopy->modified = time();
+		$taskntocopy->created = time();
+		$taskntocopy->assignee = false;
+		$taskntocopy->owner = $USER->id;
+		$taskntocopy->projectid = $returnid;
+		$DB->insert_record('project_tasks', $taskntocopy);
+	}
+	//specs
+	$typespecs = $DB->get_records('project_specification', array('projectid' => $project->id));
+	foreach ($typespecs as $specstocopy) {
+		$specstocopy->modified = time();
+		$specstocopy->created = time();
+		$specstocopy->projectid = $returnid;
+		$DB->insert_record('project_specification', $specstocopy);
+	}
+	//requirements
+	$typerequ = $DB->get_records('project_requirement', array('projectid' => $project->id));
+	foreach ($typerequ as $requtocopy) {
+		$requtocopy->modified = time();
+		$requtocopy->created = time();
+		$requtocopy->projectid = $returnid;
+		$DB->insert_record('project_requirement', $requtocopy);
+	}
+	//heading
+	$typehead = $DB->get_records('project_heading', array('projectid' => $project->id));
+	foreach ($typehead as $headtocopy) {
+		$headtocopy->projectid = $returnid;
+		$DB->insert_record('project_heading', $headtocopy);
+	}
+
+	/* those are hard (impossible) to duplicate ??
+	$DB->delete_records('project_task_to_spec', array('projectid' => $project->id));
+	$DB->delete_records('project_task_dependency', array('projectid' => $project->id));
+	$DB->delete_records('project_task_to_deliv', array('projectid' => $project->id));
+	$DB->delete_records('project_spec_to_req', array('projectid' => $project->id));
+
+    // delete domain subrecords
+	$DB->delete_records('project_qualifier', array('projectid' => $project->id));
+	$DB->delete_records('project_assessment', array('projectid' => $project->id));
+	$DB->delete_records('project_criterion', array('projectid' => $project->id));
+
+	/* Delete any event associate with the project 
+	$DB->delete_records('event', array('modulename' => 'project', 'instance' => $project->id));
+	}
+
+
+
+	*/
+
 }
 /**
 * some consistency check over dates
@@ -245,6 +333,7 @@ function project_delete_instance($id){
 	/* Delete subrecords here */
 	$DB->delete_records('project_heading', array('projectid' => $project->id));
 	$DB->delete_records('project_task', array('projectid' => $project->id));
+	$DB->delete_records('project_messages', array('projectid' => $project->id));
 	$DB->delete_records('project_specification', array('projectid' => $project->id));
 	$DB->delete_records('project_requirement', array('projectid' => $project->id));
 	$DB->delete_records('project_milestone', array('projectid' => $project->id));
@@ -376,32 +465,23 @@ function project_reset_userdata($data) {
 	if ($data->reset_project_grades or $data->reset_project_criteria or $data->reset_project_groups){
 		$sql = "
 		DELETE FROM
-		{project_assessment}
+		{project_assessment} WHERE projectid IN ( SELECT c.id FROM {project} AS c WHERE c.course={$data->courseid} )";
+		if ($DB->execute($sql)){
+			$status[] = array('component' => $componentstr, 'item' => get_string('resetting_grades','project'), 'error' => false);
+		}
+	}
+
+	if ($data->reset_project_criteria){
+		$sql = "
+		DELETE FROM
+		{project_criterion}
 		WHERE
 		projectid IN ( SELECT 
 			c.id 
 			FROM 
 			{project} AS c
 			WHERE 
-			c.course={$data->courseid} )
-";
-if ($DB->execute($sql)){
-	$status[] = array('component' => $componentstr, 'item' => get_string('resetting_grades','project'), 'error' => false);
-}
-}
-
-if ($data->reset_project_criteria){
-	$sql = "
-	DELETE FROM
-	{project_criterion}
-	WHERE
-	projectid IN ( SELECT 
-		c.id 
-		FROM 
-		{project} AS c
-		WHERE 
-		c.course={$data->courseid} )
-";
+			c.course={$data->courseid} )";
 if($DB->execute($sql)){
 	$status[] = array('component' => $componentstr, 'item' => get_string('resetting_criteria','project'), 'error' => false);
 }
@@ -1091,4 +1171,11 @@ function project_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
 
     // finally send the file
     send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+}
+function project_supports($feature) {
+    switch($feature) {
+        case FEATURE_BACKUP_MOODLE2:          return true;
+
+        default: return null;
+    }
 }
