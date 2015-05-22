@@ -75,7 +75,7 @@ class restore_project_activity_structure_step extends restore_activity_structure
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->projectstart = $this->apply_date_offset($data->projectstart);
-        $data->assessmentstart = $this->apply_date_offset($data->assesmentstart);
+        $data->assessmentstart = $this->apply_date_offset($data->assessmentstart);
         $data->projectend = $this->apply_date_offset($data->projectend);
 
         // insert the label record
