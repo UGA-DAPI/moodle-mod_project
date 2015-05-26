@@ -151,7 +151,7 @@ class restore_project_activity_structure_step extends restore_activity_structure
         $data->lastuserid = $this->get_mappingid('user', $data->lastuserid);
         $data->modified = $this->apply_date_offset($data->modified);
         $data->created = $this->apply_date_offset($data->created);
-        if ($data->deadlineenabled){
+        if ($data->deadlineenable){
 	        $data->deadline = $this->apply_date_offset($data->deadline);
 	    }
 
@@ -315,7 +315,7 @@ class restore_project_activity_structure_step extends restore_activity_structure
         $this->set_mapping('project_valid_session', $oldid, $newitemid, false); // Has no related files
     }
 
-    protected function process_project_globalqualifier($data) {
+    protected function process_project_globalqualifiers($data) {
     	global $DB;
     	
         $data = (object)$data;
@@ -331,7 +331,7 @@ class restore_project_activity_structure_step extends restore_activity_structure
 	    }
     }
 
-    protected function process_project_qualifier($data) {
+    protected function process_project_qualifiers($data) {
     	global $DB;
     	
         $data = (object)$data;

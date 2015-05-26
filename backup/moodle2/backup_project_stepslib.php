@@ -42,11 +42,12 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
 
         // Define each element separated
         $project = new backup_nested_element('project', array('id'), array(
-            'name', 'intro', 'introformat', 'projectstart', 'assessmentstart', 'projectend', 
-            'timemodified','timecreated', 'allowdeletewhenassigned', 'timeunit', 'costunit', 'guestsallowed', 
+            'name', 'intro', 'introformat', 'timecreated', 'timemodified', 'projectstart', 'assessmentstart', 'projectend', 
+             'allowdeletewhenassigned', 'timeunit', 'costunit', 'guestsallowed', 
             'guestscanuse', 'ungroupedsees', 'grade', 'teacherusescriteria', 'allownotifications', 
-            'autogradingenabled', 'autogradingweight', 'enablecvs', 'useriskcorrection', 'projectusesrequs', 
-            'projectusesspecs', 'projectusesdelivs','projectusestasks', 'projectusesvalidations', 'xslfilter', 'cssfilter'));
+            'autogradingenabled', 'autogradingweight', 'enablecvs', 'useriskcorrection', 'projectusestasks', 
+            'projectusesrequs', 'projectusesspecs', 'projectusesdelivs', 'projectusesvalidations', 'xslfilter', 
+            'cssfilter', 'projectconfidential', 'commanditaire', 'introimg', 'etat'));
 
         $globaldomains = new backup_nested_element('globaldomains');
         $globalqualifier = new backup_nested_element('globalqualifier', array('id'), array(
@@ -68,7 +69,7 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
 
         $tasks = new backup_nested_element('tasks');
         $task = new backup_nested_element('task', array('id'), array(
-            'fatherid', 'ordering', 'owner', 'assignee', 'groupid', 'userid', 
+            'fatherid', 'ordering', 'owner', 'assignee', 'groupid', 'projectid', 'userid', 
             'created', 'modified', 'lastuserid', 'abstract', 'description', 
             'descriptionformat', 'worktype', 'status', 'costrate', 'planned', 'done', 
             'used', 'quoted', 'spent', 'risk', 'milestoneid', 'taskstartenable', 
@@ -76,14 +77,14 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
 
         $milestones = new backup_nested_element('milestones');
         $milestone = new backup_nested_element('milestone', array('id'), array(
-            'ordering', 'groupid', 'userid', 'created', 'modified', 'lastuserid', 
+            'ordering', 'groupid','projectid', 'userid', 'created', 'modified', 'lastuserid', 
             'abstract', 'description', 'descriptionformat', 'covered', 'cost', 'timetocomplete', 'deadline', 
-            'deadlineenable'));
+            'deadlineenable','statut', 'numversion'));
 
         $deliverables = new backup_nested_element('deliverables');
         $deliverable = new backup_nested_element('deliverable', array('id'), array(
-            'fatherid', 'ordering', 'groupid', 'userid', 'created', 'modified', 
-            'lastuserid', 'abstract', 'description', 'descriptionformat', 'status', 'milestoneid', 
+            'fatherid', 'ordering', 'groupid', 'commentaire', 'projectid', 'userid', 'created', 'modified', 
+            'lastuserid', 'abstract', 'description', 'descriptionformat', 'commentaireformat', 'status', 'milestoneid', 
             'localfile', 'url', 'typeelm'));
 
         $validations = new backup_nested_element('validations');
