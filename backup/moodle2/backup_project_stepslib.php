@@ -43,10 +43,10 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
         // Define each element separated
         $project = new backup_nested_element('project', array('id'), array(
             'name', 'intro', 'introformat', 'projectstart', 'assessmentstart', 'projectend', 
-            'timemodified', 'allowdeletewhenassigned', 'timeunit', 'costunit', 'guestsallowed', 
+            'timemodified','timecreated', 'allowdeletewhenassigned', 'timeunit', 'costunit', 'guestsallowed', 
             'guestscanuse', 'ungroupedsees', 'grade', 'teacherusescriteria', 'allownotifications', 
             'autogradingenabled', 'autogradingweight', 'enablecvs', 'useriskcorrection', 'projectusesrequs', 
-            'projectusesspecs', 'projectusesdelivs', 'projectusesvalidations', 'xslfilter', 'cssfilter'));
+            'projectusesspecs', 'projectusesdelivs','projectusestasks', 'projectusesvalidations', 'xslfilter', 'cssfilter'));
 
         $globaldomains = new backup_nested_element('globaldomains');
         $globalqualifier = new backup_nested_element('globalqualifier', array('id'), array(
@@ -84,7 +84,7 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
         $deliverable = new backup_nested_element('deliverable', array('id'), array(
             'fatherid', 'ordering', 'groupid', 'userid', 'created', 'modified', 
             'lastuserid', 'abstract', 'description', 'descriptionformat', 'status', 'milestoneid', 
-            'localfile', 'url'));
+            'localfile', 'url', 'typeelm'));
 
         $validations = new backup_nested_element('validations');
         $validationsession = new backup_nested_element('validationsession', array('id'), array(
@@ -144,8 +144,8 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
         $project->add_child($milestones);
         $milestones->add_child($milestone);
 
-        $project->add_child($delivs);
-        $delivs->add_child($delivs);
+        $project->add_child($deliverables);
+        $deliverables->add_child($deliverable);
 
         $project->add_child($validationsessions);
         $validationsessions->add_child($validationsession);
@@ -153,9 +153,6 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
         $validationresults->add_child($validationresult);
 
         $project->add_child($links);
-        $links->add_child($spectoreqs);
-        $spectoreqs->add_child($spectoreq);
-
         $links->add_child($spectoreqs);
         $spectoreqs->add_child($spectoreq);
 
@@ -173,7 +170,7 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
 
         // Define sources
         $project->set_source_table('project', array('id' => backup::VAR_ACTIVITYID));
-        $globalqualifier->set_source_table('project_qualifier', array('projectid' => 0));
+        //$globalqualifier->set_source_table('project_qualifier', array('projectid' => 0));  tis is causing a bug because is doesn't accept set values and will seek a path with that (VERY BAD)
 
         if ($userinfo) {
             $heading->set_source_table('project_heading', array('projectid' => backup::VAR_ACTIVITYID));
@@ -186,7 +183,7 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
             $spectoreq->set_source_table('project_spec_to_req', array('projectid' => backup::VAR_ACTIVITYID));
             $tasktospec->set_source_table('project_task_to_spec', array('projectid' => backup::VAR_ACTIVITYID));
             $tasktodeliv->set_source_table('project_task_to_deliv', array('projectid' => backup::VAR_ACTIVITYID));
-            $tasktdep->set_source_table('project_task_dependency', array('projectid' => backup::VAR_ACTIVITYID));
+            $taskdep->set_source_table('project_task_dependency', array('projectid' => backup::VAR_ACTIVITYID));
 
             $assessment->set_source_table('project_assessment', array('projectid' => backup::VAR_ACTIVITYID));
 
@@ -194,20 +191,13 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
             $validationresult->set_source_table('project_valid_state', array('projectid' => backup::VAR_ACTIVITYID, 'validationsessionid' => backup::VAR_PARENTID));
 
 			// we need take default and local qualifiers.
-			$sql = "
-				SELECT
-					*
-				FROM
-					{project_qualifier}
-				WHERE
-					projectid = ? OR
-					projectid = 0
-			"; 
-        	$qualifier->set_source_sql($sql, array(backup::VAR_ACTIVITYID)));
+			$sql = " SELECT * FROM {project_qualifier} WHERE projectid = ? OR projectid = 0 "; 
+        	$qualifier->set_source_sql($sql, array(backup::VAR_ACTIVITYID));
 
-        } else {
-        	$qualifier->set_source_table('project_qualifier', array('projectid' => 0));
-        }
+        } 
+        //else {
+        //$qualifier->set_source_table('project_qualifier', array('projectid' => 0)); same as up there
+        //}
 
         // Define id annotations
         // (none)
