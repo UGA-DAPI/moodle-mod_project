@@ -1099,3 +1099,8 @@ $string['unspecifiedtasks_help'] = '
 <p>Priority is given to the specification, whuch stands for a more pregannt project component to do before others. Tasks that have no assignation to
 any specification cannot resolve their priority. They remain within an "unassigned set".
 '; 
+$string['settings'] ='Settings';
+$string['editingteacherreplacement'] ='Tutoring teacher';
+$string['editingteacherreplacementexplain'] ='Select what role should replace editingteacher.';
+$string['teacherreplacement'] ='Tutor';
+$string['teacherreplacementexplain'] ='Select what role should replace teacher.';

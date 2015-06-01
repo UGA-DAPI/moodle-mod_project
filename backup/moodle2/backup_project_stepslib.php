@@ -69,7 +69,7 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
 
         $tasks = new backup_nested_element('tasks');
         $task = new backup_nested_element('task', array('id'), array(
-            'fatherid', 'ordering', 'owner', 'assignee', 'groupid', 'projectid', 'userid', 
+            'fatherid', 'ordering', 'owner', 'assignee', 'groupid' , 'userid', 
             'created', 'modified', 'lastuserid', 'abstract', 'description', 
             'descriptionformat', 'worktype', 'status', 'costrate', 'planned', 'done', 
             'used', 'quoted', 'spent', 'risk', 'milestoneid', 'taskstartenable', 
@@ -77,13 +77,13 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
 
         $milestones = new backup_nested_element('milestones');
         $milestone = new backup_nested_element('milestone', array('id'), array(
-            'ordering', 'groupid','projectid', 'userid', 'created', 'modified', 'lastuserid', 
+            'ordering', 'groupid', 'userid', 'created', 'modified', 'lastuserid', 
             'abstract', 'description', 'descriptionformat', 'covered', 'cost', 'timetocomplete', 'deadline', 
-            'deadlineenable','statut', 'numversion'));
+            'deadlineenable', 'statut', 'numversion'));
 
         $deliverables = new backup_nested_element('deliverables');
         $deliverable = new backup_nested_element('deliverable', array('id'), array(
-            'fatherid', 'ordering', 'groupid', 'commentaire', 'projectid', 'userid', 'created', 'modified', 
+            'fatherid', 'ordering', 'groupid', 'commentaire' , 'userid', 'created', 'modified', 
             'lastuserid', 'abstract', 'description', 'descriptionformat', 'commentaireformat', 'status', 'milestoneid', 
             'localfile', 'url', 'typeelm'));
 

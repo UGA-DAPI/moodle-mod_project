@@ -77,7 +77,7 @@
 		// on génére les flux en fonction du groupe de projet et non pas d'une instance d'un projet
 		echo "<a href='".rss_get_url($context->id, $USER->id, 'mod_project',$project->projectgrpid)."'>".get_string('projectsrss','project')."</a>";
 		echo rss_get_link($context->id, $USER->id, 'mod_project',$project->projectgrpid, get_string('projectsrss','project'));
-		echo "<br /><a href='view.php?expxml=1&amp;grpid=".$project->projectgrpid."'>".get_string('projectsexport','project')."</a>";
+		echo "<br /><a href='view.php?expxml=1'>".get_string('projectsexport','project')."</a>";
 		echo "<br /><i>Seul les projets clos et non confidentiels sont exportés</i></p>";
     	//project_print_group_commands();
     ?>

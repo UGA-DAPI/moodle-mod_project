@@ -41,11 +41,15 @@
 *
 */
 
+$config = get_config('project');
+$teacher = $config->teacher_role;
+$tutor = $config->tutor_role;
+
 $capabilities = array(
 
 	//PROJET////////////////////////////////////////////////////
 
-    //create & edit a project (blueprint or true project).
+    //create & edit a project.
 	'mod/project:addinstance' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_COURSE,
@@ -54,7 +58,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-    //make a project blueprint. TODO
+    //make a project blueprint. deprecated
 	'mod/project:addtypeinstance' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,

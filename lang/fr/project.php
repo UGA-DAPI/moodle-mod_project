@@ -585,7 +585,7 @@ $string['downloadressource'] = 'Télécharger ou voir la ressource';
 $string['projects'] = 'Ensemble des projets';
 $string['projectsexport'] = 'Export XML des projets';
 $string['projectsrss'] = 'Flux RSS des projets';
-$string['vueprojetstitle'] = 'Liste des projets pour le groupe ';
+$string['vueprojetstitle'] = 'Liste des projets';
 
 $string['choixprojet_help'] = '
 <p>Choix du genre :<br />Le type de project sert de modèle à la création d\'un projet.<br />Le projet est créé avec le modèle d\'un type de projet choisi.</p>
@@ -944,3 +944,8 @@ projet par un étudiant hors groupe renvoie un message d\'erreur.</p>
 $string['weight_help'] = '
 <p>Le poids permet d\'équilibrer les influences des différents critères. Les critères sont équilibrés de façon "barycentrique" : la somme de l\'ensemble des valeurs de poids du jeu de critère vaut pour 100% de la note de référence.</p>
 ';
+$string['settings'] ='Options';
+$string['editingteacherreplacement'] ='Tuteur enseignant';
+$string['editingteacherreplacementexplain'] ='Choisir un role personalisé pour remplacer le role basique editingteacher.';
+$string['teacherreplacement'] ='Tuteur entreprise';
+$string['teacherreplacementexplain'] ='Choisir un role personalisé pour remplacer le role basique teacher.';

@@ -74,27 +74,28 @@ echo $OUTPUT->box_start('center', '100%');
     <?php
 //récupération des rôles et des users affectés
 	//list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
-    $assignableroles = $DB->get_records('role', array(), '', 'id,name,shortname');
-    $roles = array('student','editingteacher','teacher');
-    $rolesName = array('Etudiants Projet','Tuteurs enseignant','Tuteurs entreprise');
+    $config = get_config('project');
+    $teacher = $config->teacher_role;
+    $tutor = $config->tutor_role;
+    //$roles = array('student','editingteacher','teacher');
+    $roles = array('student',$teacher,$tutor); //need to hardcode custom role id --'
+    //$rolesName = array('Etudiants Projet','Tuteurs enseignant','Tuteurs entreprise');
+    $rolesName = array('Etudiants Projet','Tuteurs enseignants','Tuteurs entreprise');
     for ($i=0;$i<3;$i++){
         $rolempty = true;
-        $roleNom = $rolesName[$i];
-        foreach ($assignableroles as $role) {
-            if($role->shortname==$roles[$i]){
-                $roleusers = '';
-                $roleusers = get_role_users($role->id, $context, false, 'u.id, u.firstname, u.lastname, u.email');
-                if (!empty($roleusers)) {
-                    $rolempty = false;
-                    $listeUsers ='';
-                    $mailtoUsers = array();
-                    foreach ($roleusers as $user) {
-                        $mailtoUsers[] = $user->email;
-                        $listeUsers .= '<li><a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '" >' . fullname($user) . '</a></li>';
-                    }
-                }
+        $roleNom = $rolesName[$i];   
+        $roleusers = '';
+        $roleusers = get_users_by_role($cm,$roles[$i],true);
+        if (!empty($roleusers)) {
+            $rolempty = false;
+            $listeUsers ='';
+            $mailtoUsers = array();
+            foreach ($roleusers as $user) {
+                $mailtoUsers[] = $user->email;
+                $listeUsers .= '<li><a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '" >' . fullname($user) . '</a></li>';
             }
         }
+
         if(!$rolempty){
             echo "<p class='summary-email'><a href='mailto:".implode(',',$mailtoUsers)."' title='Envoyer un email à tous'><img src='".$OUTPUT->pix_url('/new_mail', 'project')."' alt=\"Envoyer un email à tous\" /></a>".$roleNom." :</p>";
             echo "<ul class='summary-list'>";
@@ -102,26 +103,12 @@ echo $OUTPUT->box_start('center', '100%');
             echo "</ul>";
         }
         else{
-            echo "<p class='summary-email-empty'>".$roleNom." :</p><p class='summary-list'>Aucun rôle attribué.</p>";
+            echo "<p class='summary-email-empty'>".$roleNom." :</p><p class='summary-list'>Aucun utilisateur n'a été attribué pour ce rôle.</p>";
         }
     }
     echo $OUTPUT->box_end();
     global $COURSE;
 	$contextss = get_context_instance(CONTEXT_COURSE, $COURSE->id);//context du cours
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //TO CHANGE WITH A GROUP ALLOCATION 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//if(has_capability('mod/project:addtypeinstance', $contextss)){//capacité system d'ajouter un type projet !
- // echo "<p style='text-align:left;'><a href=\"{$CFG->wwwroot}/admin/roles/assign.php?contextid={$context->id}\" title=\"Gérer l'attribution des rôles\">Gérer l'attribution des rôles pour le projet</a></p>";
-
     echo '</center>';
 
     ?>

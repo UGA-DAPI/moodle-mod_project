@@ -84,7 +84,14 @@ $work = optional_param('work', '', PARAM_ALPHA);
     }
     */
     //
-var_dump($project);
+
+
+
+//var_dump($project);
+
+
+
+
     $tabs[0][] = new tabobject('description', "view.php?id={$cm->id}&amp;view=description", get_string('description', 'project'));  
     $tabs[0][] = new tabobject('views', "view.php?id={$cm->id}&amp;view=summary", $tabEquipePicto. get_string('views', 'project'),get_string('views', 'project'));
     $tabs[0][] = new tabobject('milestones', "view.php?id={$cm->id}&amp;view=milestones", $tabEtapePicto.get_string('milestones', 'project'), get_string('milestones', 'project'));

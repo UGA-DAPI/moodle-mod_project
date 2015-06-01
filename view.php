@@ -6,36 +6,37 @@ require_once($CFG->dirroot.'/mod/project/locallib.php');
 require_once($CFG->dirroot.'/mod/project/notifylib.php');
 
 $PAGE->requires->js('/mod/project/js/js.js');
-    //ajout w3c2i include de css
+//ajout w3c2i include de css
 $PAGE->requires->css( new moodle_url('/mod/project/styles.css'));
- // fixes locale for all date printing.
+// fixes locale for all date printing.
 setLocale(LC_TIME, substr(current_language(), 0, 2));
- // action pour export xml
+// action pour export xml
 $exportxml = optional_param('expxml',0, PARAM_INT);
- //cas de l'export XML des projets
+//cas de l'export XML des projets
 if($exportxml==1){
-    $grpid = required_param('grpid', PARAM_INT);
-    project_print_projects_xml($grpid);
+    project_print_projects_xml();
 }
-    $id = required_param('id', PARAM_INT);// module id
-    $view = optional_param('view', @$_SESSION['currentpage'], PARAM_CLEAN);// viewed page id
-    $nohtmleditorneeded = true;
-    $editorfields = '';
+$id = required_param('id', PARAM_INT);
+// module id
+$view = optional_param('view', @$_SESSION['currentpage'], PARAM_CLEAN);
+    // viewed page id
+$nohtmleditorneeded = true;
+$editorfields = '';
 
-    $timenow = time();
+$timenow = time();
     // get some useful stuff...
-    if (! $cm = get_coursemodule_from_id('project', $id)) {
-        print_error('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
-    }
-    if (! $project = $DB->get_record('project', array('id' => $cm->instance))) {
-        print_error('invalidprojectid', 'project');
-    }
-    $project->cmid = $cm->id;
+if (! $cm = get_coursemodule_from_id('project', $id)) {
+    print_error('invalidcoursemodule');
+}
+if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
+    print_error('coursemisconf');
+}
+if (! $project = $DB->get_record('project', array('id' => $cm->instance))) {
+    print_error('invalidprojectid', 'project');
+}
+$project->cmid = $cm->id;
 
-    require_login($course->id, false, $cm);
+require_login($course->id, false, $cm);
     /*
     if (@$CFG->enableajax){
     $PAGE->requires->yui2_lib('yui_yahoo');
@@ -66,7 +67,8 @@ if($exportxml==1){
         $currentGroupId = 0;
     } 
     else {
-    $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;// Group change requested?
+        $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;
+    // Group change requested?
     if (isguestuser()){ // for guests, use session
         if ($changegroup >= 0){
             $_SESSION['guestgroup'] = $changegroup;
