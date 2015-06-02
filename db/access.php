@@ -40,10 +40,14 @@
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
+$tutor='teacher'
+try{
+	$config = get_config('project');
+	/*$teacher = $config->teacher_role;*/
+	$tutor = $config->tutor_role;
+} catch (Exception $e) {
 
-$config = get_config('project');
-/*$teacher = $config->teacher_role;*/
-$tutor = $config->tutor_role;
+}
 
 $capabilities = array(
 
@@ -73,7 +77,7 @@ $capabilities = array(
 		'contextlevel' => CONTEXT_COURSE,
 		'legacy' => array(
 			'editingteacher' => CAP_ALLOW,
-			'teacher' => CAP_ALLOW,
+			$tutor => CAP_ALLOW,
 			'student' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)
@@ -106,7 +110,7 @@ $capabilities = array(
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
 			'student' => CAP_ALLOW,
-			'teacher' => CAP_ALLOW,
+			$tutor => CAP_ALLOW,
 			'editingteacher' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)
@@ -117,7 +121,7 @@ $capabilities = array(
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
 			'student' => CAP_PROHIBIT,
-			'teacher' => CAP_ALLOW,
+			$tutor => CAP_ALLOW,
 			'editingteacher' => CAP_ALLOW,
 			'manager' => CAP_ALLOW
 			)
@@ -128,7 +132,7 @@ $capabilities = array(
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
 			'student' => CAP_ALLOW,
-			'teacher' => CAP_PROHIBIT,
+			$tutor => CAP_PROHIBIT,
 			'editingteacher' => CAP_PROHIBIT,
 			'manager' => CAP_PROHIBIT
 			)
@@ -151,7 +155,7 @@ $capabilities = array(
 		'legacy' => array(
 			'student' => CAP_ALLOW,
 			'editingteacher' => CAP_ALLOW,
-			'teacher' => CAP_PREVENT,
+			$tutor => CAP_PREVENT,
 			'manager' => CAP_ALLOW
 			)
 		),
@@ -170,7 +174,7 @@ $capabilities = array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
 		'legacy' => array(
-			'teacher' => CAP_ALLOW,
+			$tutor => CAP_ALLOW,
 			'editingteacher' => CAP_ALLOW,
 			'student' => CAP_ALLOW,
 			'manager' => CAP_ALLOW

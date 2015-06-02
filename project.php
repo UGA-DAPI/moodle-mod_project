@@ -87,7 +87,7 @@ $work = optional_param('work', '', PARAM_ALPHA);
 
 
 
-var_dump($project);
+//var_dump($project);
 
 
 

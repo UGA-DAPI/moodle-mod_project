@@ -1100,8 +1100,8 @@ $string['unspecifiedtasks_help'] = '
 any specification cannot resolve their priority. They remain within an "unassigned set".
 '; 
 $string['settings'] ='Settings';
-$string['editingteacherreplacement'] ='Tutoring teacher';
+$string['editingteacherreplacement'] ='Tutoring teacher.';
 $string['editingteacherreplacementexplain'] ='Select what role should replace editingteacher.';
 $string['teacherreplacement'] ='Tutor';
-$string['teacherreplacementexplain'] ='Select what role should replace teacher.';
+$string['teacherreplacementexplain'] ='Select what role should replace teacher. Require a database update';
 $string['exportdeliv'] ='Export the most recent deliverable.';
