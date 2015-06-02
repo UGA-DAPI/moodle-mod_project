@@ -27,11 +27,11 @@ if ($ADMIN->fulltree) {
 	foreach ($rolelist as $roleobject) {
 		$role[] = $roleobject->shortname;
 	}
-
+/*
     $settings->add(new admin_setting_configselect('project/teacher_role',
         get_string('editingteacherreplacement', 'project'), get_string('editingteacherreplacementexplain', 'project'), 'editingteacher',
         $role));
-
+*/
     $settings->add(new admin_setting_configselect('project/tutor_role',
         get_string('teacherreplacement', 'project'), get_string('teacherreplacementexplain', 'project'), 'teacher',
         $role));

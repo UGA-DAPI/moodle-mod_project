@@ -21,6 +21,7 @@ if (file_exists($CFG->libdir.'/openlib.php')){
 	require_once($CFG->libdir.'/openlib.php');
     //openmod lib by rick chaides
 }
+require_once($CFG->dirroot.'/calendar/lib.php');
 
 /**
 * Given an object containing all the necessary data,
@@ -1173,9 +1174,9 @@ function project_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
     send_stored_file($file, 0, 0, true); // download MUST be forced - security!
 }
 function project_supports($feature) {
-    switch($feature) {
-        case FEATURE_BACKUP_MOODLE2:          return true;
+	switch($feature) {
+		case FEATURE_BACKUP_MOODLE2:          return true;
 
-        default: return null;
-    }
+		default: return null;
+	}
 }

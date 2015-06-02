@@ -949,3 +949,4 @@ $string['editingteacherreplacement'] ='Tuteur enseignant';
 $string['editingteacherreplacementexplain'] ='Choisir un role personalisé pour remplacer le role basique editingteacher.';
 $string['teacherreplacement'] ='Tuteur entreprise';
 $string['teacherreplacementexplain'] ='Choisir un role personalisé pour remplacer le role basique teacher.';
+$string['exportdeliv'] ='Exporter le livrable le plus récent.';

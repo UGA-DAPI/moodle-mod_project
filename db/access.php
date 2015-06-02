@@ -42,7 +42,7 @@
 */
 
 $config = get_config('project');
-$teacher = $config->teacher_role;
+/*$teacher = $config->teacher_role;*/
 $tutor = $config->tutor_role;
 
 $capabilities = array(

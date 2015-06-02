@@ -13,9 +13,7 @@ setLocale(LC_TIME, substr(current_language(), 0, 2));
 // action pour export xml
 $exportxml = optional_param('expxml',0, PARAM_INT);
 //cas de l'export XML des projets
-if($exportxml==1){
-    project_print_projects_xml();
-}
+
 $id = required_param('id', PARAM_INT);
 // module id
 $view = optional_param('view', @$_SESSION['currentpage'], PARAM_CLEAN);
@@ -35,7 +33,9 @@ if (! $project = $DB->get_record('project', array('id' => $cm->instance))) {
     print_error('invalidprojectid', 'project');
 }
 $project->cmid = $cm->id;
-
+if($exportxml==1){
+    project_print_projects_xml($cm->course);
+}
 require_login($course->id, false, $cm);
     /*
     if (@$CFG->enableajax){

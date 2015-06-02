@@ -1104,3 +1104,4 @@ $string['editingteacherreplacement'] ='Tutoring teacher';
 $string['editingteacherreplacementexplain'] ='Select what role should replace editingteacher.';
 $string['teacherreplacement'] ='Tutor';
 $string['teacherreplacementexplain'] ='Select what role should replace teacher.';
+$string['exportdeliv'] ='Export the most recent deliverable.';
