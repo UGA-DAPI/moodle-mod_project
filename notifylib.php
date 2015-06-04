@@ -263,10 +263,9 @@ function project_notify_milestone_change(&$project, $milestoneid, $typeDemande, 
 		'MILESTONELINK' => $CFG->wwwroot."/mod/project/view.php?id={$cmid}&view=milestones&group={$currentgroupid}"
 		), 'project');
 	$roleusers = get_role_users($role->id, $context, false);
-	$groupeName = $DB->get_record('role', array('id' => $project->projectgrpid));//nom du groupe auquel le projet est associé
 	if (!empty($roleusers)) {
 		foreach ($roleusers as $userto) {
-			email_to_user ($userto,$USER, $groupeName->name.' - '.$subject, html_to_text($message), $message);
+			email_to_user ($userto,$USER, $subject, html_to_text($message), $message);
 			//email_to_user($otheruser, $supportuser, $subject, $message, $messagehtml);
 		}
 	}

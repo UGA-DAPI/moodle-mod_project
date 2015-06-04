@@ -77,8 +77,8 @@
 		echo "<p>";
 		//detournement des fonctions moodle, utilisation du projectgroupid ala place du projectid pour générer les flux :
 		// on génére les flux en fonction du groupe de projet et non pas d'une instance d'un projet
-		echo "<a href='".rss_get_url($context->id, $USER->id, 'mod_project',$project->projectgrpid)."'>".get_string('projectsrss','project')."</a>";
-		echo rss_get_link($context->id, $USER->id, 'mod_project',$project->projectgrpid, get_string('projectsrss','project'));
+		echo "<a href='".rss_get_url($context->id, $USER->id, 'mod_project',$project->id)."'>".get_string('projectsrss','project')."</a>";
+		echo rss_get_link($context->id, $USER->id, 'mod_project',$project->id, get_string('projectsrss','project'));
 		echo "<br /><a href='view.php?expxml=1&amp;id={$cm->id}'>".get_string('projectsexport','project')."</a>";
 		//echo "<br /><i>Seul les projets clos et non confidentiels sont exportés</i></p>";
     	//project_print_group_commands();

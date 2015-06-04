@@ -31,14 +31,13 @@ class Deliverable_Form extends moodleform {
 
     function definition(){
         global $COURSE, $DB, $PAGE;
-        var_dump($this->current);
 
         $mform = $this->_form;
         
         $PAGE->requires->js( new moodle_url('/mod/project/js/formdeliv.js'));
         
         $modcontext = context_module::instance($this->project->cmid);
-        $canEdit==false; // just in case
+        $canEdit=false; // just in case
         if ($_GET['typeelm']==0) {
             $canEdit = has_capability('mod/project:editressources', $modcontext);
         }else{

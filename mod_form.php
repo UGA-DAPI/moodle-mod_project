@@ -63,7 +63,6 @@ class mod_project_mod_form extends moodleform_mod {
         $mform->setDefault('projectend', time()+90*DAYSECS);
         //projet confidentiel ou non ?
         $mform->addElement('select', 'projectconfidential', get_string('CONFIDENTIAL', 'project'), $yesnooptions);
-        $mform->addElement('hidden', 'projectgrpid','0');
         $this->standard_coursemodule_elements();
         $mform->addElement('date_time_selector', 'assessmentstart', get_string('assessmentstart', 'project'), array('optional'=>true));
         $mform->setDefault('assessmentstart', time()+75*DAYSECS);

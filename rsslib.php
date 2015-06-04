@@ -106,7 +106,7 @@ function project_rss_get_sql($projectid, $newsince=0) {
 
 	$sql = "SELECT *
 	FROM {project}
-	WHERE projectgrpid = {$projectid} AND etat = 1
+	WHERE id = {$projectid} AND etat = 1
 	
 	ORDER BY $projectsort";
 	return array($sql, $params);
@@ -130,7 +130,7 @@ function project_rss_feed_contents($projectid, $sql, $params) {
 
 	$status = true;
 
-	$recs = $DB->get_records('project', array('projectgrpid' => $projectid,'etat' => 1));
+	$recs = $DB->get_records('project', array('id' => $projectid,'etat' => 1));
     //set a flag. Are we displaying discussions or posts?
 
 

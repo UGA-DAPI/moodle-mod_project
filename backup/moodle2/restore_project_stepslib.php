@@ -43,22 +43,25 @@ class restore_project_activity_structure_step extends restore_activity_structure
         $project = new restore_path_element('project', '/activity/project');
         $paths[] = $project;
         
+        
+        $paths[] = new restore_path_element('project_globalqualifiers', '/activity/project/globalqualifiers/globalqualifier');
+        $paths[] = new restore_path_element('project_qualifiers', '/activity/project/qualifiers/qualifier');
+        $paths[] = new restore_path_element('project_criterion', '/activity/project/criteria/criterion');
+        $paths[] = new restore_path_element('project_requirement', '/activity/project/requirements/requirement');
+        $paths[] = new restore_path_element('project_specification', '/activity/project/specifications/specification');
+        $paths[] = new restore_path_element('project_milestone', '/activity/project/milestones/milestone');
+        $paths[] = new restore_path_element('project_assessment', '/activity/project/assessments/assessment');
+        $paths[] = new restore_path_element('project_spectoreq', '/activity/project/spectoreqs/spectoreq');
+        $paths[] = new restore_path_element('project_deliverable', '/activity/project/deliverables/deliverable');
+        $paths[] = new restore_path_element('project_validationsession', '/activity/project/validationsessions/validationsession');
+        $paths[] = new restore_path_element('project_validationresult', '/activity/project/validationsessions/validationsession/validationresults/validationresult');
+        
+        //like in backup, we'll only restore those elements if they come from a regular backup, and not the duplication method
         if ($userinfo){
-	        $paths[] = new restore_path_element('project_globalqualifiers', '/activity/project/globalqualifiers/globalqualifier');
-	        $paths[] = new restore_path_element('project_qualifiers', '/activity/project/qualifiers/qualifier');
-	        $paths[] = new restore_path_element('project_criterion', '/activity/project/criteria/criterion');
-	        $paths[] = new restore_path_element('project_requirement', '/activity/project/requirements/requirement');
-	        $paths[] = new restore_path_element('project_specification', '/activity/project/specifications/specification');
-	        $paths[] = new restore_path_element('project_task', '/activity/project/tasks/task');
-	        $paths[] = new restore_path_element('project_milestone', '/activity/project/milestones/milestone');
-	        $paths[] = new restore_path_element('project_deliverable', '/activity/project/deliverables/deliverable');
-	        $paths[] = new restore_path_element('project_assessment', '/activity/project/assessments/assessment');
-	        $paths[] = new restore_path_element('project_spectoreq', '/activity/project/spectoreqs/spectoreq');
-	        $paths[] = new restore_path_element('project_tasktospec', '/activity/project/tasktospecs/tasktospec');
-	        $paths[] = new restore_path_element('project_tasktodeliv', '/activity/project/tasktodelivs/tasktodeliv');
-	        $paths[] = new restore_path_element('project_taskdependency', '/activity/project/taskdeps/taskdep');
-	        $paths[] = new restore_path_element('project_validationsession', '/activity/project/validationsessions/validationsession');
-	        $paths[] = new restore_path_element('project_validationresult', '/activity/project/validationsessions/validationsession/validationresults/validationresult');
+            $paths[] = new restore_path_element('project_task', '/activity/project/tasks/task');
+            $paths[] = new restore_path_element('project_tasktodeliv', '/activity/project/tasktodelivs/tasktodeliv');
+            $paths[] = new restore_path_element('project_tasktospec', '/activity/project/tasktospecs/tasktospec');
+            $paths[] = new restore_path_element('project_taskdependency', '/activity/project/taskdeps/taskdep');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -152,8 +155,8 @@ class restore_project_activity_structure_step extends restore_activity_structure
         $data->modified = $this->apply_date_offset($data->modified);
         $data->created = $this->apply_date_offset($data->created);
         if ($data->deadlineenable){
-	        $data->deadline = $this->apply_date_offset($data->deadline);
-	    }
+            $data->deadline = $this->apply_date_offset($data->deadline);
+        }
 
         // The data is actually inserted into the database later in inform_new_usage_id.
         $newitemid = $DB->insert_record('project_milestone', $data);
@@ -165,20 +168,20 @@ class restore_project_activity_structure_step extends restore_activity_structure
     	
         $data = (object)$data;
         $oldid = $data->id;
-
         $data->projectid = $this->get_new_parentid('project');
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->groupid = $this->get_mappingid('group', $data->groupid);
         $data->lastuserid = $this->get_mappingid('user', $data->lastuserid);
         $data->modified = $this->apply_date_offset($data->modified);
         $data->created = $this->apply_date_offset($data->created);
-        $data->milestoneid = $this->get_mappingid('project_milestone', $data->milestoneid);
-
+        $data->milestoneid = $this->get_mappingid('project_milestone', $data->milestoneid);  
         // The data is actually inserted into the database later in inform_new_usage_id.
+        //print_r($data);
         $newitemid = $DB->insert_record('project_deliverable', $data);
         $this->set_mapping('project_deliverable', $oldid, $newitemid, false); // Has no related files
-
         $this->add_related_files('mod_project', 'deliverable', 'localfile');
+        //debugging(print_r($data));
+        //debugging('item numéro '.$data->id.' fonctionne XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
     }
 
     protected function process_project_spectoreq($data) {
@@ -326,7 +329,7 @@ class restore_project_activity_structure_step extends restore_activity_structure
         // do not averride pre-existing global qualifiers
         if (!$DB->exist_record('project_qualifier', array('domain', $data->domain, 'code' => $data->code))){
 	        // The data is actually inserted into the database later in inform_new_usage_id.
-	        $newitemid = $DB->insert_record('project_qualifier', $data);
+           $newitemid = $DB->insert_record('project_qualifier', $data);
 	        $this->set_mapping('project_qualifier', $oldid, $newitemid, false); // Has no related files
 	    }
     }
@@ -365,11 +368,18 @@ class restore_project_activity_structure_step extends restore_activity_structure
 	protected function remap_tree($entity, $treekey, $projectid){
 		global $DB;
 		
-		if ($entities = $DB->get_records('project_'.$entity, array('id' => $projectid))){
+		/*if ($entities = $DB->get_records('project_'.$entity, array('projectid' => $projectid))){
 			foreach ($entities as $rec){
-				$newtreeid = $this->get_mappingid('project_'.$entity, $rec->$treekey);
-				$DB->set_field('project_'.$entity, $treekey, $newtreeid, array('id', $rec->id));
+                $newtreeid = $this->get_mappingid('project_'.$entity, $rec->$treekey);
+                $DB->set_field('project_'.$entity, $treekey, $newtreeid, array('projectid', $rec->id));
 			}
-		}
+		}*/
+        $rs = $DB->get_recordset('project_'.$entity, array('projectid' => $projectid),
+                                 '', 'id',$treekey);
+        foreach ($rs as $rec) {
+            $rec->$treekey = (empty($rec->treekey)) ? 0 : $this->get_mappingid('project_'.$entity, $rec->$treekey);
+            $DB->update_record('project_'.$entity, $rec);
+        }
+        $rs->close();
 	}
 }

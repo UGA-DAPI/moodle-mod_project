@@ -43,7 +43,7 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
         // Define each element separated
         $project = new backup_nested_element('project', array('id'), array(
             'name', 'intro', 'introformat', 'timecreated', 'timemodified', 'projectstart', 'assessmentstart', 'projectend', 
-             'allowdeletewhenassigned', 'timeunit', 'costunit', 'guestsallowed', 
+            'allowdeletewhenassigned', 'timeunit', 'costunit', 'guestsallowed', 
             'guestscanuse', 'ungroupedsees', 'grade', 'teacherusescriteria', 'allownotifications', 
             'autogradingenabled', 'autogradingweight', 'enablecvs', 'useriskcorrection', 'projectusestasks', 
             'projectusesrequs', 'projectusesspecs', 'projectusesdelivs', 'projectusesvalidations', 'xslfilter', 
@@ -171,34 +171,32 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
 
         // Define sources
         $project->set_source_table('project', array('id' => backup::VAR_ACTIVITYID));
-        //$globalqualifier->set_source_table('project_qualifier', array('projectid' => 0));  tis is causing a bug because is doesn't accept set values and will seek a path with that (VERY BAD)
+        //$globalqualifier->set_source_table('project_qualifier', array('projectid' => array('sqlparam' => '0')));
 
+
+        //if you do a duplication from course page, $userinfo is null. so we can use this fact to filter what do we want to keep for the new project
         if ($userinfo) {
-            $heading->set_source_table('project_heading', array('projectid' => backup::VAR_ACTIVITYID));
-            $requirement->set_source_table('project_requirement', array('projectid' => backup::VAR_ACTIVITYID));
-            $specification->set_source_table('project_specification', array('projectid' => backup::VAR_ACTIVITYID));
             $task->set_source_table('project_task', array('projectid' => backup::VAR_ACTIVITYID));
-            $milestone->set_source_table('project_milestone', array('projectid' => backup::VAR_ACTIVITYID));
-            $deliverable->set_source_table('project_deliverable', array('projectid' => backup::VAR_ACTIVITYID));
-
-            $spectoreq->set_source_table('project_spec_to_req', array('projectid' => backup::VAR_ACTIVITYID));
             $tasktospec->set_source_table('project_task_to_spec', array('projectid' => backup::VAR_ACTIVITYID));
             $tasktodeliv->set_source_table('project_task_to_deliv', array('projectid' => backup::VAR_ACTIVITYID));
             $taskdep->set_source_table('project_task_dependency', array('projectid' => backup::VAR_ACTIVITYID));
-
-            $assessment->set_source_table('project_assessment', array('projectid' => backup::VAR_ACTIVITYID));
-
-            $validationsession->set_source_table('project_valid_session', array('projectid' => backup::VAR_ACTIVITYID));
-            $validationresult->set_source_table('project_valid_state', array('projectid' => backup::VAR_ACTIVITYID, 'validationsessionid' => backup::VAR_PARENTID));
-
-			// we need take default and local qualifiers.
-			$sql = " SELECT * FROM {project_qualifier} WHERE projectid = ? OR projectid = 0 "; 
-        	$qualifier->set_source_sql($sql, array(backup::VAR_ACTIVITYID));
-
-        } 
-        //else {
-        //$qualifier->set_source_table('project_qualifier', array('projectid' => 0)); same as up there
-        //}
+            $deliverable->set_source_table('project_deliverable', array('projectid' => backup::VAR_ACTIVITYID));
+        }
+        else{
+            //if duplication, only take ressources and not deliverables from the table
+            $deliverable->set_source_table('project_deliverable', array('projectid' => backup::VAR_ACTIVITYID,'typeelm' => array('sqlparam' => '0')));
+        }
+        $heading->set_source_table('project_heading', array('projectid' => backup::VAR_ACTIVITYID));
+        $requirement->set_source_table('project_requirement', array('projectid' => backup::VAR_ACTIVITYID));
+        $specification->set_source_table('project_specification', array('projectid' => backup::VAR_ACTIVITYID));
+        $milestone->set_source_table('project_milestone', array('projectid' => backup::VAR_ACTIVITYID));
+        $spectoreq->set_source_table('project_spec_to_req', array('projectid' => backup::VAR_ACTIVITYID));
+        $assessment->set_source_table('project_assessment', array('projectid' => backup::VAR_ACTIVITYID));
+        $validationsession->set_source_table('project_valid_session', array('projectid' => backup::VAR_ACTIVITYID));
+        $validationresult->set_source_table('project_valid_state', array('projectid' => backup::VAR_ACTIVITYID, 'validationsessionid' => backup::VAR_PARENTID));
+        // we need take default and local qualifiers.
+        $sql = " SELECT * FROM {project_qualifier} WHERE projectid = ? OR projectid = 0 "; 
+        $qualifier->set_source_sql($sql, array(backup::VAR_ACTIVITYID)); 
 
         // Define id annotations
         // (none)
@@ -225,10 +223,10 @@ class backup_project_activity_structure_step extends backup_activity_structure_s
         $tasktospec->annotate_ids('group', 'groupid');
         $tasktodeliv->annotate_ids('group', 'groupid');
         $taskdep->annotate_ids('group', 'groupid');
-		$validationsession->annotate_ids('group', 'groupid');
-		$validationresult->annotate_ids('group', 'groupid');
+        $validationsession->annotate_ids('group', 'groupid');
+        $validationresult->annotate_ids('group', 'groupid');
         $assessment->annotate_ids('group', 'groupid');
-		
+
         // Define file annotations
         $project->annotate_files('mod_project', 'intro', null); // This file area hasn't itemid
         $project->annotate_files('mod_project', 'abstract', null); // This file area hasn't itemid
