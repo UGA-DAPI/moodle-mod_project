@@ -16,12 +16,18 @@ require_once($CFG->dirroot."/mod/project/forms/form_deliverable.class.php");
 $delivid = optional_param('delivid', '', PARAM_INT);
 
 $mode = ($delivid) ? 'update' : 'add' ;
+$pageparam = required_param('typeelm', PARAM_INT);
+$viewpage = ($pageparam == 0) ? 'ressources' : 'deliverables';
 
-$url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$delivid;
+$url = $CFG->wwwroot.'/mod/project/view.php?view='.$viewpage.'&id='.$id.'#node'.$delivid;
 
-if($mode=='add' && (!has_capability('mod/project:editdeliverables', $context) || !has_capability('mod/project:editressources', $context))){
-    //si un étudiant tente de créer un libvrable/ressource on le redirige
-    redirect($url);
+if($mode=='add'){
+    if ($pageparam = 0 && !has_capability('mod/project:editressources', $context)) {
+        redirect($url);
+    }
+    elseif ($pageparam = 1 && !has_capability('mod/project:editdeliverables', $context)) {
+        redirect($url);
+    }
 }
 $mform = new Deliverable_Form($url, $mode, $project, $delivid);
 
@@ -111,7 +117,7 @@ if ($data = $mform->get_data()){
                 project_notify_new_deliverable($project, $cm->id, $data, $currentGroupId);
             }
             */
-           }
+        }
         $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);// <== on fait le lien entre le fichier et la ressource/livrable par l'id de la ressource/livrable qui est en tant qu'itemid dans la table _files
         //une fois le localfile set a 1 si il y a eu upload on update le record
         $DB->update_record('project_deliverable', $data);

@@ -69,40 +69,41 @@ require_login($course->id, false, $cm);
     else {
         $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;
     // Group change requested?
-    if (isguestuser()){ // for guests, use session
-        if ($changegroup >= 0){
-            $_SESSION['guestgroup'] = $changegroup;
+        if (isguestuser()){
+    // for guests, use session
+            if ($changegroup >= 0){
+                $_SESSION['guestgroup'] = $changegroup;
+            }
+            $currentGroupId = 0 + @$_SESSION['guestgroup'];
         }
-        $currentGroupId = 0 + @$_SESSION['guestgroup'];
-    }
-    else { 
+        else { 
     // for normal users, change current group
-        $currentGroupId = 0 + groups_get_activity_group($cm, true);
-        if (!groups_is_member($currentGroupId , $USER->id) && !is_siteadmin($USER->id)) $USER->editmode = "off";
+            $currentGroupId = 0 + groups_get_activity_group($cm, true);
+            if (!groups_is_member($currentGroupId , $USER->id) && !is_siteadmin($USER->id)) $USER->editmode = "off";
+        }
     }
-}
     //check des droits d'access
-if(!has_capability('mod/project:view', $context)){
-    notice("Accès interdit ce projet est confidentiel.", "$CFG->wwwroot/course/view.php?id=$course->id");
-    exit;
-}
+    if(!has_capability('mod/project:view', $context)){
+        notice("Accès interdit ce projet est confidentiel.", "$CFG->wwwroot/course/view.php?id=$course->id");
+        exit;
+    }
 // ...display header...
-$url = $CFG->wwwroot."/mod/project/view.php?id=$id";
-$PAGE->set_title(format_string($project->name));
-$PAGE->set_url($url);
-$PAGE->set_heading('');
-$PAGE->set_focuscontrol('');
-$PAGE->set_cacheable(true);
-$PAGE->set_button(update_module_button($cm->id, $course->id, $strproject));
-$pagebuffer = $OUTPUT->header();
+    $url = $CFG->wwwroot."/mod/project/view.php?id=$id";
+    $PAGE->set_title(format_string($project->name));
+    $PAGE->set_url($url);
+    $PAGE->set_heading('');
+    $PAGE->set_focuscontrol('');
+    $PAGE->set_cacheable(true);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strproject));
+    $pagebuffer = $OUTPUT->header();
 
-$pagebuffer .= "<div align=\"right\">";
-$pagebuffer .= project_edition_enable_button($cm, $course, $project, $USER->editmode);
-$pagebuffer .= "</div>";
+    $pagebuffer .= "<div align=\"right\">";
+    $pagebuffer .= project_edition_enable_button($cm, $course, $project, $USER->editmode);
+    $pagebuffer .= "</div>";
  // ...and if necessary set default action
 
     //Permet d'initialiser le mode admin et afficher les boutons d'action
-if (has_capability('mod/project:addinstance', $context)) {
+    if (has_capability('mod/project:addinstance', $context)) {
     if (empty($action)) { // no action specified, either go straight to elements page else the admin page
         $action = 'teachersview';
     }
@@ -147,29 +148,29 @@ $pagebuffer .= "</script>";
 
 /****************** display final grade (for students) ************************************/
 if ($action == 'displayfinalgrade' ) {
-   echo $pagebuffer;
-   echo get_string('endofproject', 'project');
-   /****************** assignment not available (for students)***********************/
+ echo $pagebuffer;
+ echo get_string('endofproject', 'project');
+ /****************** assignment not available (for students)***********************/
 } elseif ($action == 'notavailable') {
-   echo $pagebuffer;
-   echo $OUTPUT->heading(get_string('notavailable', 'project'));
+ echo $pagebuffer;
+ echo $OUTPUT->heading(get_string('notavailable', 'project'));
 
-   /****************** student's view***********************/
+ /****************** student's view***********************/
 } elseif ($action == 'studentsview') {
 
         if ($timenow > $project->projectend) { // if project is over, just cannot change anything more
-           $pagebuffer .= $OUTPUT->box('<span class="inconsistency">'.get_string('projectisover','project').'</span>', 'center', '70%');
-           $USER->editmode = 'off';
-       }
+         $pagebuffer .= $OUTPUT->box('<span class="inconsistency">'.get_string('projectisover','project').'</span>', 'center', '70%');
+         $USER->editmode = 'off';
+     }
 /// Print settings and things in a table across the top
-       $pagebuffer .= '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
+     $pagebuffer .= '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
 
 /// Allow the student to change groups (for this session), seeing other's work
 if ($groupmode){ // if group are used
     $groups = groups_get_all_groups($course->id);
     if ($groups){
-       $grouptable = array();
-       foreach($groups as $aGroup){
+     $grouptable = array();
+     foreach($groups as $aGroup){
 // i can see only the groups i belong to
         if (($groupmode == SEPARATEGROUPS) && !groups_is_member($aGroup->id, $USER->id)) continue;
 // mark group as mine if i am member
@@ -186,9 +187,9 @@ $pagebuffer .= '</table>';
 // in visible mode, student from other groups cannot edit our material.
 if ($groupmode != SEPARATEGROUPS && (!$currentGroupId || !groups_is_member($currentGroupId, $USER->id))) {
     if (!$project->ungroupedsees){
-       $USER->editmode = 'off';
-   }
-   include('project.php');
+     $USER->editmode = 'off';
+ }
+ include('project.php');
     } else { // just view unique project workspace
         include('project.php');
     }
@@ -234,22 +235,22 @@ include('project.php');
 } elseif ($action == 'teachersview') {
 /// Check to see if groups are being used in this workshop
 /// and if so, set $currentGroupId to reflect the current group
-   $currentGroupId = 0 + groups_get_course_group($course, true); 
+ $currentGroupId = 0 + groups_get_course_group($course, true); 
 /// Print settings and things in a table across the top
-   $pagebuffer .= '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
+ $pagebuffer .= '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
 
 /// Allow the teacher to change groups (for this session)
-   if ($groupmode) {
+ if ($groupmode) {
     $groups = groups_get_all_groups($course->id);
     if (!empty($groups)){
         $grouptable = array();
         foreach($groups as $aGroup){
-           $grouptable[$aGroup->id] = $aGroup->name;
-       }
-       $pagebuffer .= '<td>';
-       $pagebuffer .= groups_print_activity_menu($cm, $url, true);
-       $pagebuffer .= '</td>';
-   }
+         $grouptable[$aGroup->id] = $aGroup->name;
+     }
+     $pagebuffer .= '<td>';
+     $pagebuffer .= groups_print_activity_menu($cm, $url, true);
+     $pagebuffer .= '</td>';
+ }
 }     
 $pagebuffer .= '</tr></table>'; 
 if (empty($currentGroupId)){
@@ -259,21 +260,21 @@ include('project.php');
 
 /****************** show description************/
 } elseif ($action == 'showdescription') {
-   echo $pagebuffer;
-   project_print_assignement_info($project);
-   echo $OUTPUT->box(format_text($project->description, $project->format), 'center', '70%', '', 5, 'generalbox', 'intro');
-   echo $OUTPUT->continue_button($_SERVER["HTTP_REFERER"]);
+ echo $pagebuffer;
+ project_print_assignement_info($project);
+ echo $OUTPUT->box(format_text($project->description, $project->format), 'center', '70%', '', 5, 'generalbox', 'intro');
+ echo $OUTPUT->continue_button($_SERVER["HTTP_REFERER"]);
 
-   /*************** student is not in a group **************************************/
+ /*************** student is not in a group **************************************/
 } elseif ($action == 'notingroup') {
-   echo $pagebuffer;
-   echo $OUTPUT->box(format_text(get_string('notingroup', 'project'), 'HTML'), 'center', '70%', '', 5, 'generalbox', 'intro');
-   echo $OUTPUT->continue_button($_SERVER["HTTP_REFERER"]);
+ echo $pagebuffer;
+ echo $OUTPUT->box(format_text(get_string('notingroup', 'project'), 'HTML'), 'center', '70%', '', 5, 'generalbox', 'intro');
+ echo $OUTPUT->continue_button($_SERVER["HTTP_REFERER"]);
 
-   /*************** no man's land **************************************/
+ /*************** no man's land **************************************/
 } else {
-   echo $pagebuffer;
-   print_error('errorfatalaction', 'project', $action);
+ echo $pagebuffer;
+ print_error('errorfatalaction', 'project', $action);
 }
 echo "<p style='text-align:right;font-size:88%;'>Module d'activié développé par <i>Yann ducruy</i>, version 2015041600</p>";
 echo $OUTPUT->footer($course);

@@ -35,10 +35,10 @@ class Deliverable_Form extends moodleform {
         $mform = $this->_form;
         
         $PAGE->requires->js( new moodle_url('/mod/project/js/formdeliv.js'));
-        
+        $typeelm = required_param('typeelm', PARAM_INT);
         $modcontext = context_module::instance($this->project->cmid);
         $canEdit=false; // just in case
-        if ($_GET['typeelm']==0) {
+        if ($typeelm==0) {
             $canEdit = has_capability('mod/project:editressources', $modcontext);
         }else{
             $canEdit = has_capability('mod/project:editdeliverables', $modcontext);
@@ -62,7 +62,7 @@ class Deliverable_Form extends moodleform {
             $deliverytypes[] = 'Ressource';
             $deliverytypes[] = 'Livrable';
 
-            if(isset($_GET['typeelm']) && $_GET['typeelm']==1){
+            if(isset($typeelm) && $typeelm==1){
                 $mform->addElement('text', 'abstract', get_string('delivtitle', 'project'), array('size' => "100%"));
             }else{
                 $mform->addElement('text', 'abstract', get_string('ressourcetitle', 'project'), array('size' => "100%"));
@@ -92,14 +92,6 @@ class Deliverable_Form extends moodleform {
                 $milestonesoptions[0] = get_string('nomilestone', 'project');
             }
             $mform->addElement('select', 'milestoneid', get_string('milestone', 'project'), $milestonesoptions);
-            if ($nomilestone) {
-                if ($_GET['typeelm']==1) {
-                    $mform->addElement('html', "<p>Attention, aucune étape n'est définie pour ce projet. Si vous dupliquez le projet, ce livrable sera perdu.</p>");
-                }
-                else{
-                    $mform->addElement('html', "<p>Attention, aucune étape n'est définie pour ce projet. Si vous dupliquez le projet, cette ressource sera perdue.</p>");      
-                }
-            }
             if (isset($this->current)){
                 $mform->addElement('html', '<div hidden>');
                 $select = $mform->addElement('select', 'typeelm', get_string('typeelm', 'project'), $deliverytypes);
@@ -110,7 +102,7 @@ class Deliverable_Form extends moodleform {
             else{
                 $mform->addElement('html', '<div hidden>');
                 $select = $mform->addElement('select', 'typeelm', get_string('typeelm', 'project'), $deliverytypes);
-                $select->setSelected($_GET['typeelm']);
+                $select->setSelected($typeelm);
                 $mform->addHelpButton('typeelm', 'typeelm', 'project');
                 $mform->addElement('html', '</div>');
             }
@@ -147,7 +139,7 @@ class Deliverable_Form extends moodleform {
         if(!$canEdit && $this->current->typeelm==0){
             $mform->addElement('header', 'headerupload', get_string('downloadressource', 'project'));
         }else{
-            if ($_GET['typeelm']==0) {
+            if ($typeelm==0) {
                 $mform->addElement('header', 'headerupload', get_string('ressource', 'project'));
             }
             else{
