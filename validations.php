@@ -7,9 +7,9 @@
 	*
 	* @package mod-project
 	* @category mod
-	* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-	* @date 30/09/2013
-	* @version 3.0
+	* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+	* @date 12/06/2015
+	* @version 3.2
 	* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 	*
 	*/
@@ -39,7 +39,7 @@
 
 		// pre add validation session record		
 		$validation->id = $DB->insert_record('project_valid_session', $validation);
-        add_to_log($course->id, 'project', 'validationsession', "view.php?id={$cm->id}&amp;view=validations&amp;group={$currentGroupId}", 'create', $cm->id);
+        //add_to_log($course->id, 'project', 'validationsession', "view.php?id={$cm->id}&amp;view=validations&amp;group={$currentGroupId}", 'create', $cm->id);
 
 		$validation->untracked = 0;
 		$validation->refused = 0;
@@ -86,7 +86,7 @@
 		$validation->dateclosed = time();
 
 		$res = $DB->update_record('project_valid_session', $validation);
-        add_to_log($course->id, 'project', 'validationsession', "view.php?id={$cm->id}&amp;view=validations&amp;group={$currentGroupId}", 'close', $cm->id);
+        //add_to_log($course->id, 'project', 'validationsession', "view.php?id={$cm->id}&amp;view=validations&amp;group={$currentGroupId}", 'close', $cm->id);
 	}
 	elseif ($work == 'dodelete') {
 		$validid = required_param('validid', PARAM_INT);
@@ -94,7 +94,7 @@
         // delete all related records
 		$DB->delete_records('project_valid_state', array('validationsessionid' => $validid));
 		$DB->delete_records('project_valid_session', array('id' => $validid));
-        add_to_log($course->id, 'project', 'validationsession', "view.php?id={$cm->id}&amp;view=requirements&amp;group={$currentGroupId}", 'delete', $cm->id);
+        //add_to_log($course->id, 'project', 'validationsession', "view.php?id={$cm->id}&amp;view=requirements&amp;group={$currentGroupId}", 'delete', $cm->id);
 	}
 
 /// view

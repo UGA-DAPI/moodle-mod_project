@@ -7,9 +7,9 @@
 	*
 	* @package mod-project
 	* @category mod
-	* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-	* @date 30/09/2013
-	* @version 3.0
+	* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+	* @date 12/06/2015
+	* @version 3.2
 	* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 	*
 	*/
@@ -27,7 +27,7 @@
 		$escaped = str_replace('>', '&gt;', $escaped);
 		echo $OUTPUT->heading(get_string('xmlexport', 'project'));
 		echo $OUTPUT->box("<pre>$escaped</pre>");
-		add_to_log($course->id, 'project', 'readdescription', "view.php?id={$cm->id}&amp;view=description&amp;group={$currentGroupId}", 'export', $cm->id);
+		//add_to_log($course->id, 'project', 'readdescription', "view.php?id={$cm->id}&amp;view=description&amp;group={$currentGroupId}", 'export', $cm->id);
 		echo $OUTPUT->continue_button("view.php?view=description&amp;id=$cm->id");
 		return;
 	}

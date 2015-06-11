@@ -4,9 +4,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -29,7 +29,7 @@ if($mode=='add'){
         redirect($url);
     }
 }
-$mform = new Deliverable_Form($url, $mode, $project, $delivid);
+$mform = new Deliverable_Form($url, $mode, $project, $delivid, $currentGroupId);
 
 if ($mform->is_cancelled()){
     redirect($url);
@@ -87,7 +87,7 @@ if ($data = $mform->get_data()){
         //cas d'une edition
             $data->id = $data->delivid; // id is course module id
             $DB->update_record('project_deliverable', $data);
-            add_to_log($course->id, 'project', 'changedeliverable', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'update', $cm->id);
+            //add_to_log($course->id, 'project', 'changedeliverable', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'update', $cm->id);
 
             /*
             $tasktodeliv = optional_param_array('tasktodeliv', null, PARAM_INT);
@@ -110,7 +110,7 @@ if ($data = $mform->get_data()){
             $data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_deliverable', true, $data->fatherid) + 1;
             unset($data->id); // id is course module id
             $data->id = $DB->insert_record('project_deliverable', $data);
-            add_to_log($course->id, 'project', 'adddeliv', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'add', $cm->id);
+            //add_to_log($course->id, 'project', 'adddeliv', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'add', $cm->id);
             
             /*
             if( $project->allownotifications){

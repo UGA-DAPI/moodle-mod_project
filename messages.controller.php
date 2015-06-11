@@ -3,9 +3,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -25,7 +25,7 @@
         if (!empty($message->abstract)){
             $message->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_messages', true, $message->parent) + 1;
 		    $returnid = $DB->insert_record('project_messages', $message);
-            add_to_log($course->id, 'project', 'changemessage', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'add', $cm->id);
+            //add_to_log($course->id, 'project', 'changemessage', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'add', $cm->id);
 		}
 	} elseif ($work == 'doupdate') {
 		$message->id = required_param('messageid', PARAM_INT);
@@ -38,12 +38,12 @@
         $deliverable->localfile = $uploader->get_new_filename();
 		if (!empty($deliverable->abstract)){
     		$res = $DB->update_record('project_messages', $message );
-            add_to_log($course->id, 'project', 'changemessage', "view.php?id={$cm->id}&amp;view=messages&amp;group={$currentGroupId}", 'update', $cm->id);
+            //add_to_log($course->id, 'project', 'changemessage', "view.php?id={$cm->id}&amp;view=messages&amp;group={$currentGroupId}", 'update', $cm->id);
     	}
 	} elseif ($work == 'dodelete' || $work == 'delete') {
 		$messageid = required_param('messageid', PARAM_INT);
 		project_tree_delete_messages($messageid, 'project_messages');
-        add_to_log($course->id, 'project', 'changemessage', "view.php?id={$cm->id}&amp;view=messages&amp;group={$currentGroupId}", 'delete', $cm->id);
+        //add_to_log($course->id, 'project', 'changemessage', "view.php?id={$cm->id}&amp;view=messages&amp;group={$currentGroupId}", 'delete', $cm->id);
 	} elseif ($work == 'domove' || $work == 'docopy') {
 		$ids = required_param('ids', PARAM_INT);
 		$to = required_param('to', PARAM_ALPHA);
@@ -54,7 +54,7 @@
 		    case 'deliv' : { $table2 = 'project_messages'; $redir = 'deliverable'; } break;
 		}
 		project_tree_copy_set($ids, 'project_messages', $table2);
-        add_to_log($course->id, 'project', 'change{$redir}', "view.php?id={$cm->id}&amp;view={$redir}s&amp;group={$currentGroupId}", 'copy/move', $cm->id);
+        //add_to_log($course->id, 'project', 'change{$redir}', "view.php?id={$cm->id}&amp;view={$redir}s&amp;group={$currentGroupId}", 'copy/move', $cm->id);
 		if ($work == 'domove'){
 		    // bounce to deleteitems
 		    $work = 'dodeleteitems';
@@ -83,7 +83,7 @@
             // delete all related records
     		$DB->delete_records('project_messages', array('parent' => $anItem));
     	}
-        add_to_log($course->id, 'project', 'changemessage', "view.php?id={$cm->id}&amp;view=messages&amp;group={$currentGroupId}", 'deleteItems', $cm->id);
+        //add_to_log($course->id, 'project', 'changemessage', "view.php?id={$cm->id}&amp;view=messages&amp;group={$currentGroupId}", 'deleteItems', $cm->id);
     	if (isset($withredirect) && $withredirect){
 		    redirect("{$CFG->wwwroot}/mod/project/view.php?id={$cm->id}&amp;view={$redir}s", get_string('redirectingtoview', 'project') . ' : ' . get_string($redir, 'project'));
 		}
@@ -108,7 +108,7 @@
 	    $escaped = str_replace('>', '&gt;', $escaped);
 	    echo $OUTPUT->heading(get_string('xmlexport', 'project'));
 	    print_simple_box("<pre>$escaped</pre>");
-        add_to_log($course->id, 'project', 'readmessage', "view.php?id={$cm->id}&amp;view=messages&amp;group={$currentGroupId}", 'export', $cm->id);
+        //add_to_log($course->id, 'project', 'readmessage', "view.php?id={$cm->id}&amp;view=messages&amp;group={$currentGroupId}", 'export', $cm->id);
         echo $OUTPUT->continue_button("view.php?view=messages&amp;id=$cm->id");
         return;
 	} elseif ($work == 'up') {

@@ -3,14 +3,13 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
 /// Controller
-
 if ($work == 'new') {
     $deliverable->groupid = $currentGroupId;
     $deliverable->projectid = $project->id;
@@ -24,11 +23,10 @@ if ($work == 'new') {
     $deliverable->modified = time();
     $deliverable->lastuserid = $USER->id;
     $deliverable->typeelm = required_param('typeelm', PARAM_INT);
-
     if (!empty($deliverable->abstract)){
         $deliverable->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_deliverable', true, $deliverable->fatherid) + 1;
         $returnid = $DB->insert_record('project_deliverable', $deliverable);
-        add_to_log($course->id, 'project', 'changedeliverable', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'add', $cm->id);
+        //add_to_log($course->id, 'project', 'changedeliverable', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'add', $cm->id);
     }
 
     // if notifications allowed notify project managers
@@ -72,16 +70,16 @@ if ($work == 'new') {
     if (!empty($deliverable->localfile)){
         $uploader->save_files("{$course->id}/moddata/project/{$project->id}/".md5("project{$project->id}_{$currentGroupId}"));
         $deliverable->url = '';
-        add_to_log($course->id, 'project', 'submit', "view.php?id={$cm->id}&amp;view=view_detail&amp;objectId={$deliverable->id}&amp;objectClass=deliverable&amp;group={$currentGroupId}", $project->id, $cm->id);
+        //add_to_log($course->id, 'project', 'submit', "view.php?id={$cm->id}&amp;view=view_detail&amp;objectId={$deliverable->id}&amp;objectClass=deliverable&amp;group={$currentGroupId}", $project->id, $cm->id);
     }
     if (!empty($deliverable->abstract)){
         $res = $DB->update_record('project_deliverable', $deliverable );
-        add_to_log($course->id, 'project', 'changedeliverable', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'update', $cm->id);
+        //add_to_log($course->id, 'project', 'changedeliverable', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'update', $cm->id);
     }
 } elseif ($work == 'dodelete' || $work == 'delete') {
     $delivid = required_param('delivid', PARAM_INT);
     project_tree_delete($delivid, 'project_deliverable');
-    add_to_log($course->id, 'project', 'changedeliverable', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'delete', $cm->id);
+    //add_to_log($course->id, 'project', 'changedeliverable', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'delete', $cm->id);
 } elseif ($work == 'domove' || $work == 'docopy') {
     $ids = required_param('ids', PARAM_INT);
     $to = required_param('to', PARAM_ALPHA);
@@ -92,7 +90,7 @@ if ($work == 'new') {
         case 'deliv' : { $table2 = 'project_deliverable'; $redir = 'deliverable'; } break;
     }
     project_tree_copy_set($ids, 'project_deliverable', $table2);
-    add_to_log($course->id, 'project', 'change{$redir}', "view.php?id={$cm->id}&amp;view={$redir}s&amp;group={$currentGroupId}", 'copy/move', $cm->id);
+    //add_to_log($course->id, 'project', 'change{$redir}', "view.php?id={$cm->id}&amp;view={$redir}s&amp;group={$currentGroupId}", 'copy/move', $cm->id);
     if ($work == 'domove'){
             // bounce to deleteitems
         $work = 'dodeleteitems';
@@ -121,7 +119,7 @@ if ($work == 'dodeleteitems') {
             // delete all related records
         $DB->delete_records('project_task_to_deliv', array('delivid' => $anItem));
     }
-    add_to_log($course->id, 'project', 'changedeliverable', "view.php?id={$cm->id}&amp;view=deliverable&amp;group={$currentGroupId}", 'deleteItems', $cm->id);
+    //add_to_log($course->id, 'project', 'changedeliverable', "view.php?id={$cm->id}&amp;view=deliverable&amp;group={$currentGroupId}", 'deleteItems', $cm->id);
     if (isset($withredirect) && $withredirect){
         redirect("{$CFG->wwwroot}/mod/project/view.php?id={$cm->id}&amp;view={$redir}s", get_string('redirectingtoview', 'project') . ' : ' . get_string($redir, 'project'));
     }
@@ -146,7 +144,7 @@ if ($work == 'dodeleteitems') {
     $escaped = str_replace('>', '&gt;', $escaped);
     echo $OUTPUT->heading(get_string('xmlexport', 'project'));
     print_simple_box("<pre>$escaped</pre>");
-    add_to_log($course->id, 'project', 'readdeliverable', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'export', $cm->id);
+    //add_to_log($course->id, 'project', 'readdeliverable', "view.php?id={$cm->id}&amp;view=deliverables&amp;group={$currentGroupId}", 'export', $cm->id);
     echo $OUTPUT->continue_button("view.php?view=deliverables&amp;id=$cm->id");
     return;
 } elseif ($work == 'up') {

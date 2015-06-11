@@ -7,9 +7,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -50,7 +50,16 @@ function project_add_instance($project){
     if ($draftitemid) {
         file_save_draft_area_files($draftitemid, $context->id, 'mod_project', 'introimg', 0, array('subdirs'=>true));
     }*/
-
+    if ($project->projectconfidential==1) {
+    	//role id has been hardcoded because the get_role_id was not finishing for whatever reasons
+    	//role_change_permission(4, $context, 'moodle/course:viewhiddenactivities', CAP_PROHIBIT);
+    	$roles = get_archetype_roles('teacher');
+    	foreach ($roles as $value) {
+    		role_change_permission($value->id, $context, 'moodle/course:viewhiddenactivities', CAP_PROHIBIT);
+    		role_change_permission($value->id, $context, 'moodle/site:accessallgroups', CAP_PROHIBIT);
+    		
+    	}
+    }
     if ($returnid = $DB->insert_record('project', $project)) {
     	$event = new StdClass;
     	$event->name        = get_string('projectstartevent','project', $project->name);
@@ -70,6 +79,16 @@ function project_add_instance($project){
     	calendar_event::create($event);
 
     }	
+    if (!empty($project->howtoworktype)) {
+    	$worktypes = explode(';', $project->howtoworktype);
+    	foreach ($worktypes as $worktype) {
+    		$code = substr($worktype, 1,3);
+    		$name = substr($worktype, 5);
+    		//prepare the insert. blahblah is theorically unused but mut be not null so ...
+    		$insert= array('projectid' => $returnid,'domain'=>'worktype','code'=>$code,'label'=>$name,'description'=>'blahblah');
+    		$DB->insert_record('project_qualifier', $insert);
+    	}
+    }
 
 	//gestion du champ introimg
     $introimgoptions = array('maxbytes' =>2000000, 'maxfiles'=> 1,'accepted_types' => array('.jpeg', '.jpg', '.png','return_types'=>FILE_INTERNAL));
@@ -118,7 +137,16 @@ function project_update_instance($project){
     $project = file_postupdate_standard_filemanager($project, 'introimg', $introimgoptions, $context, 'mod_project', 'introimg', $project->id);
 
     if ($returnid = $DB->update_record('project', $project)) {
-
+    	if (!empty($project->howtoworktype)) {
+    		$worktypes = explode(';', $project->howtoworktype);
+    		foreach ($worktypes as $worktype) {
+    			$code = substr($worktype, 1,3);
+    			$name = substr($worktype, 5);
+    			//prepare the insert. blahblah is theorically unused but mut be not null so ...
+    			$insert= array('projectid' => $returnid,'domain'=>'worktype','code'=>$code,'label'=>$name,'description'=>'blahblah');
+    			$DB->insert_record('project_qualifier', $insert);
+    		}
+    	}
     	$dates = array(
     		'projectstart' => $project->projectstart,
     		'projectend' => $project->projectend,
@@ -313,94 +341,67 @@ function project_reset_userdata($data) {
 	}
 
 	if ($data->reset_project_criteria){
-		$sql = "
-		DELETE FROM
-		{project_criterion}
-		WHERE
-		projectid IN ( SELECT 
-			c.id 
-			FROM 
-			{project} AS c
-			WHERE 
-			c.course={$data->courseid} )";
-if($DB->execute($sql)){
-	$status[] = array('component' => $componentstr, 'item' => get_string('resetting_criteria','project'), 'error' => false);
-}
-}
+		$sql = " DELETE FROM {project_criterion} WHERE projectid IN ( SELECT c.id FROM {project} AS c WHERE c.course={$data->courseid} )";
+		if($DB->execute($sql)){
+			$status[] = array('component' => $componentstr, 'item' => get_string('resetting_criteria','project'), 'error' => false);
+		}
+	}
 
-if ($data->reset_project_groups){
-	$subsql = "
-	WHERE
-	projectid IN ( SELECT 
-		c.id 
-		FROM 
-		{project} AS c
-		WHERE 
-		c.course={$data->courseid} ) AND
-groupid != 0
-";
+	if ($data->reset_project_groups){
+		$subsql = " WHERE projectid IN ( SELECT c.id FROM {project} AS c WHERE c.course={$data->courseid} ) AND groupid != 0 ";
 
-$deletetables = array('spec_to_req', 
-	'task_to_spec', 
-	'task_to_deliv', 
-	'task_dependency', 
-	'requirement', 
-	'specification', 
-	'task', 
-	'deliverable',
-	'heading');
+		$deletetables = array('spec_to_req', 
+			'task_to_spec', 
+			'task_to_deliv', 
+			'task_dependency', 
+			'requirement', 
+			'specification', 
+			'task', 
+			'deliverable',
+			'heading');
 
-if ($data->reset_project_milestones){
-	$deletetables[] = 'milestone';
-}
-foreach($deletetables as $atable){
-	$sql = "
-	DELETE FROM
-	{project_{$atable}}
-	{$subsql}
-	";
-	$DB->execute($sql);
-}        
+		if ($data->reset_project_milestones){
+			$deletetables[] = 'milestone';
+		}
+		foreach($deletetables as $atable){
+			$sql = "
+			DELETE FROM
+			{project_{$atable}}
+			{$subsql}
+			";
+			$DB->execute($sql);
+		}        
 
-$status[] = array('component' => $componentstr, 'item' => get_string('resetting_groupprojects','project'), 'error' => false);
-}
+		$status[] = array('component' => $componentstr, 'item' => get_string('resetting_groupprojects','project'), 'error' => false);
+	}
 
-if ($data->reset_project_group0){
-	$subsql = "
-	WHERE
-	projectid IN ( SELECT 
-		c.id 
-		FROM 
-		{project} AS c
-		WHERE 
-		c.course={$data->courseid} ) AND
-groupid = 0
-";
+	if ($data->reset_project_group0){
+		$subsql = "WHERE projectid IN ( SELECT c.id FROM {project} AS c WHERE c.course={$data->courseid} ) AND groupid = 0 ";
 
-$deletetables = array('spec_to_req', 
-	'task_to_spec', 
-	'task_to_deliv', 
-	'task_dependency', 
-	'requirement', 
-	'specification', 
-	'task', 
-	'deliverable',
-	'heading');
+		$deletetables = array('spec_to_req', 
+			'task_to_spec', 
+			'task_to_deliv', 
+			'task_dependency', 
+			'requirement', 
+			'specification', 
+			'task', 
+			'deliverable',
+			'heading');
 
-if ($data->reset_project_milestones){
-	$deletetables[] = 'milestone';
-}
-foreach($deletetables as $atable){
-	$sql = "
-	DELETE FROM
-	{project_{$atable}}
-	{$subsql}
-	";
-	$DB->execute($sql);
-}
-$status[] = array('component' => $componentstr, 'item' => get_string('resetting_courseproject','project'), 'error' => false);
-}
-return $status;
+		if ($data->reset_project_milestones){
+			$deletetables[] = 'milestone';
+		}
+		foreach($deletetables as $atable){
+			$sql = "
+			DELETE FROM
+			{project_{$atable}}
+			{$subsql}
+			";
+			$DB->execute($sql);
+		}
+		$status[] = array('component' => $componentstr, 'item' => get_string('resetting_courseproject','project'), 'error' => false);
+	}
+	return $status;
 }
 
 
@@ -411,11 +412,6 @@ function project_cron(){
     // TODO : may cleanup some old group rubish ??
 
 }
-
-/**
-*
-*/
-
 
 /**
 * get the "grade" entries for this user and add the first and last names (of project owner, 
@@ -461,7 +457,7 @@ function project_get_grade_logs($course, $timestart) {
 	return $DB->get_records_sql($query);
 }
 
-/*
+/**
 * get the log entries by a particular change in entities, 
 * @uses $CFG
 * @param object $course the current course
@@ -573,15 +569,14 @@ function project_print_recent_activity($course, $isteacher, $timestart){
                         $log->firstname = $course->student;
                         $log->lastname = '';
                     }
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                    	$CFG->wwwroot.'/mod/project/'.$log->url);
+                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,$CFG->wwwroot.'/mod/project/'.$log->url);
                 }
             }
         }
     }
 }
 
-    // have a look for what has changed in specs
+   // have a look for what has changed in specs
 $changespeccontent = false;
     if (!$isteacher) { // teachers only need to see project
     	if ($logs = project_get_entitychange_logs($course, $timestart, 'changespec')) {
@@ -1016,7 +1011,6 @@ function project_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
 function project_supports($feature) {
 	switch($feature) {
 		case FEATURE_BACKUP_MOODLE2:          return true;
-
 		default: return null;
 	}
 }

@@ -4,9 +4,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -41,7 +41,7 @@
 		if ($data->reqid) {
 			$data->id = $data->reqid; // id is course module id
 			$DB->update_record('project_requirement', $data);
-            add_to_log($course->id, 'project', 'changerequirement', "view.php?id=$cm->id&view=requirements&group={$currentGroupId}", 'update', $cm->id);
+            //add_to_log($course->id, 'project', 'changerequirement', "view.php?id=$cm->id&view=requirements&group={$currentGroupId}", 'update', $cm->id);
 
     		$spectoreq = optional_param_array('spectoreq', null, PARAM_INT);
     		if (count($spectoreq) > 0){
@@ -62,7 +62,7 @@
     		$data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_requirement', true, $data->fatherid) + 1;
 			unset($data->id); // id is course module id
 			$data->id = $DB->insert_record('project_requirement', $data);
-        	add_to_log($course->id, 'project', 'addreq', "view.php?id=$cm->id&view=requirements&group={$currentGroupId}", 'add', $cm->id);
+        	//add_to_log($course->id, 'project', 'addreq', "view.php?id=$cm->id&view=requirements&group={$currentGroupId}", 'add', $cm->id);
 
        		if( $project->allownotifications){
        		    project_notify_new_requirement($project, $cm->id, $data, $currentGroupId);

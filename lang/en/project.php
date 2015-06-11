@@ -1105,3 +1105,7 @@ $string['editingteacherreplacementexplain'] ='Select what role should replace ed
 $string['teacherreplacement'] ='Tutor';
 $string['teacherreplacementexplain'] ='Select what role should replace teacher. Require a database update';
 $string['exportdeliv'] ='Export the most recent deliverable.';
+$string['noaccess'] ='You do not have access to this project';
+$string['howtoworktype_help'] = "if this field if filled then the default work type will be replaced by those one.
+Please note that you have to type them like this : [code in three letters]type of work (without ') : '[COD]type1;[ECT]type2;[TST]type3'";
+$string['howtoworktype'] = 'Task work type';

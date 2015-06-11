@@ -12,7 +12,7 @@
    	    $oldtask = $DB->get_record('project_task', array('id' => $taskid));
         // delete all related records
    		project_tree_delete($taskid, 'project_task');
-        add_to_log($course->id, 'project', 'changetask', "view.php?id={$cm->id}&amp;view=tasks&amp;group={$currentGroupId}", 'delete', $cm->id);
+        //add_to_log($course->id, 'project', 'changetask', "view.php?id={$cm->id}&amp;view=tasks&amp;group={$currentGroupId}", 'delete', $cm->id);
         //reset indicators 
         $oldtask->done      = 0;
         $oldtask->planned   = 0;
@@ -111,7 +111,7 @@
    		    	break;
    		}
    		project_tree_copy_set($ids, 'project_task', $table2, 'description,format,abstract,projectid,groupid,ordering', $autobind, $bindtable);
-           add_to_log($course->id, 'project', 'change{$redir}', "view.php?id={$cm->id}&amp;view={$redir}s&amp;group={$currentGroupId}", 'copy/move', $cm->id);
+           //add_to_log($course->id, 'project', 'change{$redir}', "view.php?id={$cm->id}&amp;view={$redir}s&amp;group={$currentGroupId}", 'copy/move', $cm->id);
    		if ($work == 'domove'){
    		    // bounce to deleteitems
    		    $work = 'dodeleteitems';
@@ -173,7 +173,7 @@
        		}
                // delete record for this item
        		$DB->delete_records('project_task', array('id' => $anItem));
-            add_to_log($course->id, 'project', 'changetask', "view.php?id={$cm->id}&amp;view=tasks&amp;group={$currentGroupId}", 'deleteItems', $cm->id);
+            //add_to_log($course->id, 'project', 'changetask', "view.php?id={$cm->id}&amp;view=tasks&amp;group={$currentGroupId}", 'deleteItems', $cm->id);
 
                // delete all related records
        		$DB->delete_records('project_task_to_spec', array('projectid' => $project->id, 'groupid' => $currentGroupId, 'taskid' => $anItem));
@@ -204,7 +204,7 @@
    		$DB->delete_records('project_task_to_spec', array('projectid' => $project->id, 'groupid' => $currentGroupId));
    		$DB->delete_records('project_task_to_deliv', array('projectid' => $project->id, 'groupid' => $currentGroupId));
    		$DB->delete_records('project_task_dependency', array('projectid' => $project->id, 'groupid' => $currentGroupId));
-           add_to_log($course->id, 'project', 'changetask', "view.php?id={$cm->id}&amp;view=tasks&amp;group={$currentGroupId}", 'clear', $cm->id);
+           //add_to_log($course->id, 'project', 'changetask', "view.php?id={$cm->id}&amp;view=tasks&amp;group={$currentGroupId}", 'clear', $cm->id);
    	} elseif ($work == 'doexport') {
    	    $ids = required_param('ids', PARAM_INT);
    	    $idlist = implode("','", $ids);
@@ -228,7 +228,7 @@
    	    $escaped = str_replace('>', '&gt;', $escaped);
    	    echo $OUTPUT->heading(get_string('xmlexport', 'project'));
    	    print_simple_box("<pre>$escaped</pre>");
-           add_to_log($course->id, 'project', 'readtask', "view.php?id={$cm->id}&amp;view=tasks&amp;group={$currentGroupId}", 'export', $cm->id);
+           //add_to_log($course->id, 'project', 'readtask', "view.php?id={$cm->id}&amp;view=tasks&amp;group={$currentGroupId}", 'export', $cm->id);
            echo $OUTPUT->continue_button("view.php?view=tasks&amp;id=$cm->id");
            return;
 

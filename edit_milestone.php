@@ -4,9 +4,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -42,14 +42,14 @@
 		if ($data->milestoneid) {
 			$data->id = $data->milestoneid; // id is course module id
 			$DB->update_record('project_milestone', $data);
-            add_to_log($course->id, 'project', 'changemilestone', "view.php?id=$cm->id&view=milestones&group={$currentGroupId}", 'update', $cm->id);
+            //add_to_log($course->id, 'project', 'changemilestone', "view.php?id=$cm->id&view=milestones&group={$currentGroupId}", 'update', $cm->id);
 
 		} else {
 			$data->created = time();
     		$data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_milestone', false) + 1;
 			unset($data->id); // id is course module id
 			$data->id = $DB->insert_record('project_milestone', $data);
-        	add_to_log($course->id, 'project', 'addmile', "view.php?id=$cm->id&view=milestones&group={$currentGroupId}", 'add', $cm->id);
+        	//add_to_log($course->id, 'project', 'addmile', "view.php?id=$cm->id&view=milestones&group={$currentGroupId}", 'add', $cm->id);
 
        		if( $project->allownotifications){
        		    project_notify_new_milestone($project, $cm->id, $data, $currentGroupId);

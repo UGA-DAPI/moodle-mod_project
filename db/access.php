@@ -34,13 +34,12 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
-'teacher'='teacher'
 
 $capabilities = array(
 
@@ -194,8 +193,10 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
+
+
+
 	//////OTHERS, PROBABLY NOT IMPLEMENTED YET
-	
 
 	//cvs handling. unused
 	'mod/project:cvs' => array(
@@ -227,7 +228,7 @@ $capabilities = array(
 			)
 		),
 
-	//tasks handling. unused at the moment
+	//tasks handling.
 	'mod/project:changetasks' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,
@@ -237,7 +238,7 @@ $capabilities = array(
 			'manager' => CAP_ALLOW
 			)
 		),
-	//get task assigned to you. not used yet
+	//get task assigned to you.
 	'mod/project:beassignedtasks' => array(
 		'captype' => 'write',
 		'contextlevel' => CONTEXT_MODULE,

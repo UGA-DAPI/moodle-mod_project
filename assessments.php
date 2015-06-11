@@ -7,9 +7,9 @@
 	*
 	* @package mod-project
 	* @category mod
-	* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-	* @date 30/09/2013
-	* @version 3.0
+	* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+	* @date 12/06/2015
+	* @version 3.2
 	* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 	*
 	*/
@@ -84,7 +84,7 @@
             if ($oldrecord = $DB->get_record_select('project_assessment', "projectid = {$project->id} AND userid = {$aStudent->id} AND itemid = 0 AND itemclass='auto'")){
                 $assessment->id = $oldrecord->id;
                 $DB->update_record('project_assessment', $assessment);
-                add_to_log($course->id, 'project', 'grade', "view.php?id=$cm->id&view=view_summary", $project->id, $cm->id, $aStudent->id);
+                //add_to_log($course->id, 'project', 'grade', "view.php?id=$cm->id&view=view_summary", $project->id, $cm->id, $aStudent->id);
             } else {
                 $DB->insert_record('project_assessment', $assessment);
             }
@@ -119,7 +119,7 @@
                 if ($oldrecord = $DB->get_record_select('project_assessment', "projectid = {$project->id} AND userid = {$aStudent->id} AND itemid = '{$assessment->itemid}' AND itemclass='{$assessment->itemclass}'")){
                     $assessment->id = $oldrecord->id;
                     $DB->update_record('project_assessment', $assessment);
-                    add_to_log($course->id, 'project', 'grade', "view.php?id={$cm->id}&view=view_summary&group={$currentGroupId}", $project->id, $cm->id, $aStudent->id);
+                    //add_to_log($course->id, 'project', 'grade', "view.php?id={$cm->id}&view=view_summary&group={$currentGroupId}", $project->id, $cm->id, $aStudent->id);
                 } else {
                     $DB->insert_record('project_assessment', $assessment);
                 }
@@ -168,14 +168,14 @@
                     $DB->insert_record('project_assessment', $assessment);
                 }
             }
-            add_to_log($course->id, 'project', 'grade', "view.php?id=$cm->id&view=view_summary&group={$currentGroupId}", $project->id, $cm->id, $aStudent->id);
+            //add_to_log($course->id, 'project', 'grade', "view.php?id=$cm->id&view=view_summary&group={$currentGroupId}", $project->id, $cm->id, $aStudent->id);
         }
     }
     elseif ($work == 'doerase'){
         foreach($groupStudents as $aStudent){
             $DB->delete_records('project_assessment', array('projectid' => $project->id, 'userid' => $aStudent->id));
-            add_to_log($course->id, 'project', 'grade', "view.php?id=$cm->id&view=view_summary&group={$currentGroupId}", 'erase', $cm->id, $aStudent->id);
-            add_to_log($course->id, 'project', 'grade', "view.php?id=$cm->id&view=view_summary&group={$currentGroupId}", 'erase', $cm->id);
+            //add_to_log($course->id, 'project', 'grade', "view.php?id=$cm->id&view=view_summary&group={$currentGroupId}", 'erase', $cm->id, $aStudent->id);
+            //add_to_log($course->id, 'project', 'grade', "view.php?id=$cm->id&view=view_summary&group={$currentGroupId}", 'erase', $cm->id);
         }
     }
     if ($project->teacherusescriteria){

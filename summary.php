@@ -4,12 +4,13 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
+/*
 /// counting tasks
 
 $tasks = $DB->get_records_select('project_task', "projectid = $project->id AND groupid = $currentGroupId AND fatherid = 0 ", array($project->id, $currentGroupId), '', 'id,abstract');
@@ -34,8 +35,8 @@ if ($deliverables){
     $leafDelivList = implode("','", $leafDelivs);
 }
 $countdeliv = count($leafDelivs);
-
-$projectheading = $DB->get_record('project_heading', array('projectid' => $project->id, 'groupid' => $currentGroupId));
+*/
+$projectheading = $DB->get_record('project_heading', array('projectid' => $project->id));
 // if missing create one
 if (!$projectheading){
     $projectheading = new stdClass;
@@ -72,15 +73,24 @@ echo $OUTPUT->box_start('center', '100%');
     </table>
     
     <?php
-//récupération des rôles et des users affectés
+    //récupération des rôles et des users affectés
 	//list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
     $config = get_config('project');
-    $teacher = $config->teacher_role;
-    $tutor = $config->tutor_role;
-    //$roles = array('student','editingteacher','teacher');
-    $roles = array('student',$teacher,$tutor); //need to hardcode custom role id --'
-    //$rolesName = array('Etudiants Projet','Tuteurs enseignant','Tuteurs entreprise');
-    $rolesName = array('Etudiants Projet','Tuteurs enseignants','Tuteurs entreprise');
+    $roles = array('student','editingteacher','teacher');
+
+    //this is needed to tell custom role names defined in course
+    $allroles= get_all_roles($context);
+    foreach ($allroles as $rolecheck) {
+        if ($rolecheck->shortname=='student') {
+            $student=$rolecheck;
+        }elseif ($rolecheck->shortname=='editingteacher') {
+            $editingteacher=$rolecheck;
+        }elseif ($rolecheck->shortname=='teacher') {
+            $teacher=$rolecheck;
+        }
+    }
+    $rolesName = array(role_get_name($student,$context,ROLENAME_BOTH),role_get_name($editingteacher,$context,ROLENAME_BOTH),role_get_name($teacher,$context,ROLENAME_BOTH));
+    
     for ($i=0;$i<3;$i++){
         $rolempty = true;
         $roleNom = $rolesName[$i];   

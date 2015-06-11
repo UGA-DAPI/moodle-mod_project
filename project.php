@@ -4,9 +4,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -35,7 +35,7 @@ $work = optional_param('work', '', PARAM_ALPHA);
 
 
 /*
-//Print groupe name
+//Print groupe name. deprecated
     
     if ($currentGroupId) {
         $group = $DB->get_record("groups", array("id" => $currentGroupId));
@@ -85,12 +85,8 @@ $work = optional_param('work', '', PARAM_ALPHA);
     */
     //
 
-
-
+//debug : dump all project data on each page of the activity
 //var_dump($project);
-
-
-
 
     $tabs[0][] = new tabobject('description', "view.php?id={$cm->id}&amp;view=description", get_string('description', 'project'));  
     $tabs[0][] = new tabobject('views', "view.php?id={$cm->id}&amp;view=summary", $tabEquipePicto. get_string('views', 'project'),get_string('views', 'project'));

@@ -4,9 +4,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -47,7 +47,7 @@
 			$data->id = $data->taskid; // id is course module id
    			$oldAssigneeId = $DB->get_field('project_task', 'assignee', array('id' => $data->id));
 			$DB->update_record('project_task', $data);
-            add_to_log($course->id, 'project', 'changetask', "view.php?id=$cm->id&view=tasks&group={$currentGroupId}", 'update', $cm->id);
+            //add_to_log($course->id, 'project', 'changetask', "view.php?id=$cm->id&view=tasks&group={$currentGroupId}", 'update', $cm->id);
 
     		$tasktospec = optional_param_array('taskospec', null, PARAM_INT);
     		if (count($tasktospec) > 0){
@@ -107,7 +107,7 @@
 
 			$data->id = $DB->insert_record('project_task', $data);
 
-        	add_to_log($course->id, 'project', 'addtask', "view.php?id=$cm->id&view=tasks&group={$currentGroupId}", 'add', $cm->id);
+        	//add_to_log($course->id, 'project', 'addtask', "view.php?id=$cm->id&view=tasks&group={$currentGroupId}", 'add', $cm->id);
 
        		if( $project->allownotifications){
        		    project_notify_new_task($project, $cm->id, $data, $currentGroupId);

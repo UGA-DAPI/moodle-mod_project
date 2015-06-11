@@ -4,9 +4,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -21,7 +21,7 @@ if ($work == 'dodelete') {
     	// cleans up any assigned deliverable
     	$query = "UPDATE {project_deliverable} SET milestoneid = NULL WHERE milestoneid = $milestoneid";
     	$DB->execute($query);
-    	add_to_log($course->id, 'project', 'changemilestone', "view.php?id=$cm->id&view=milestone&group={$currentGroupId}", 'delete', $cm->id);
+    	//add_to_log($course->id, 'project', 'changemilestone', "view.php?id=$cm->id&view=milestone&group={$currentGroupId}", 'delete', $cm->id);
     } elseif ($work == 'doclearall') {
         // delete all records. POWERFUL AND DANGEROUS COMMAND.
     	$DB->delete_records('project_milestone', array('projectid' => $project->id));
@@ -49,7 +49,7 @@ if ($work == 'dodelete') {
     	groupid = {$currentGroupId}
     	";
     	$DB->execute($query);
-    	add_to_log($course->id, 'project', 'changemilestones', "view.php?id=$cm->id&view=milestone&group={$currentGroupId}", 'clear', $cm->id);
+    	//add_to_log($course->id, 'project', 'changemilestones', "view.php?id=$cm->id&view=milestone&group={$currentGroupId}", 'clear', $cm->id);
     } elseif ($work == 'up') {
     	$milestoneid = required_param('milestoneid', PARAM_INT);
     	project_tree_up($project, $currentGroupId,$milestoneid, 'project_milestone', 0);

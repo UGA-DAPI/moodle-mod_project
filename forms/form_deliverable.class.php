@@ -3,9 +3,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -17,12 +17,14 @@ class Deliverable_Form extends moodleform {
     var $project;
     var $current;
     var $descriptionoptions;
+    var $currentGroupId;
 
-    function __construct($action, $mode, &$project, $delivid){
+    function __construct($action, $mode, &$project, $delivid, $currentGroupId){
         global $DB;
         
         $this->mode = $mode;
         $this->project = $project;
+        $this->currentGroupId = $currentGroupId;
         if ($delivid){
             $this->current = $DB->get_record('project_deliverable', array('id' => $delivid));
         }
@@ -36,6 +38,7 @@ class Deliverable_Form extends moodleform {
         
         $PAGE->requires->js( new moodle_url('/mod/project/js/formdeliv.js'));
         $typeelm = required_param('typeelm', PARAM_INT);
+        $groupid = required_param('groupid', PARAM_INT);
         $modcontext = context_module::instance($this->project->cmid);
         $canEdit=false; // just in case
         if ($typeelm==0) {
@@ -49,10 +52,11 @@ class Deliverable_Form extends moodleform {
         $this->descriptionoptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'context' => $modcontext);
         $this->attachmentoptions = array('subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
 
-        $currentGroup = 0 + groups_get_course_group($COURSE);
+        
 
         $mform->addElement('hidden', 'id');
         $mform->addElement('hidden', 'fatherid');
+        $mform->addElement('hidden', 'groupid', $groupid);
         $mform->addElement('hidden', 'delivid');
         $mform->addElement('hidden', 'work');
         $mform->setDefault('work', $this->mode);
@@ -77,7 +81,7 @@ class Deliverable_Form extends moodleform {
             $mform->addHelpButton('status', 'deliv_status', 'project');
             */
             $mform->addElement('hidden', 'status','CRE');
-            $query = "SELECT id, abstract, ordering FROM {project_milestone} WHERE projectid = {$this->project->id} AND groupid = {$currentGroup} ORDER BY ordering";
+            $query = "SELECT id, abstract, ordering FROM {project_milestone} WHERE projectid = {$this->project->id} AND groupid = {$this->currentGroupId} ORDER BY ordering";
             $milestones = $DB->get_records_sql($query);
             $milestonesoptions = array();
             // le $nomilestone va servir a afficher une alerte si aucune étape n'estt définie pour la duplication

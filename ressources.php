@@ -4,9 +4,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -78,7 +78,7 @@
     <?php
         project_print_bloc_elem($project, $currentGroupId, 0, $cm->id,0);
         if ($USER->editmode == 'on' && has_capability('mod/project:editressources', $context) && $project->etat==0) {
-            echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0&amp;typeelm=0'>".get_string('address','project')."</a>&nbsp; ";
+            echo "<br/><a href='view.php?id={$cm->id}&amp;work=add&amp;fatherid=0&amp;typeelm=0&amp;groupid={$currentGroupId}'>".get_string('address','project')."</a>&nbsp; ";
         }
     ?>
     </form>

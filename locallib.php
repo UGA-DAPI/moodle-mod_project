@@ -7,9 +7,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -1113,7 +1113,7 @@ echo "<tr><td>".$controls."</td><td></td><td></td></tr>";
 	echo "<div class='sepbloc'></div>";
 }*/
 
-function project_print_bloc_elem($project, $group,$fatherid, $cmid, $typeelm, $propagated=null){
+function project_print_bloc_elem($project, $group, $fatherid, $cmid, $typeelm, $propagated=null){
 	global $CFG, $USER, $DB, $OUTPUT;
 	static $level = 0;
 	static $startuplevelchecked = false;
@@ -1145,7 +1145,8 @@ d.id = c.entryid AND
 c.entity = 'deliverables' AND
 c.userid = $USER->id
 WHERE 
-d.groupid = {$group} AND 
+(d.groupid = 0 OR
+d.groupid = {$group}) AND 
 d.projectid = {$project->id} AND 
 d.fatherid = {$fatherid} AND
 d.typeelm = {$typeelm}
@@ -1426,33 +1427,34 @@ function project_print_resume($project, $currentGroupId, $fatherid, $numresume){
 function project_get_options($domain, $projectid){
 	global $DB;
 	
-  if (!function_exists('getLocalized')){
-    function getLocalized(&$var){
-      $var->label = get_string($var->label, 'project');
-      $var->description = get_string($var->description, 'project');
-  }
+    if (!function_exists('getLocalized')){
+        function getLocalized(&$var){
+            $var->label = get_string($var->label, 'project');
+            $var->description = get_string($var->description, 'project');
+        }
 
-  function getFiltered(&$var){
-      $var->label = format_string($var->label, 'project');
-      $var->description = format_string($var->description, 'project');
-  }
-}
+        function getFiltered(&$var){
+            $var->label = format_string($var->label, 'project');
+            $var->description = format_string($var->description, 'project');
+        }
+    }
 
-if (!$options = $DB->get_records_select('project_qualifier', " domain = ? AND    projectid = ? ", array($domain,$projectid))){
- if ($siteoptions = $DB->get_records_select('project_qualifier', " domain = ? AND    projectid = 0 ", array($domain))){
-   $options = array_values($siteoptions);
-   for($i = 0 ; $i < count($options) ; $i++){
-     getLocalized($options[$i]);
- }
-} else {
-    $options = array();
-}
-} else {
-  for($i = 0 ; $i < count($options) ; $i++){
-    getFiltered($options[$i]);
-}
-}
-return $options;
+    if (!$options = $DB->get_records_select('project_qualifier', " domain = ? AND    projectid = ? ", array($domain,$projectid))){
+        if ($siteoptions = $DB->get_records_select('project_qualifier', " domain = ? AND    projectid = 0 ", array($domain))){
+            $options = array_values($siteoptions);
+            for($i = 0 ; $i < count($options) ; $i++){
+                getLocalized($options[$i]);
+            }
+        } else {
+            $options = array();
+        }
+    } else {
+        //doesn't work
+        /*for($i = 0 ; $i < count($options) ; $i++){
+            getFiltered($options[$i]);
+        }*/
+    }
+    return $options;
 }
 
 /**
@@ -1562,7 +1564,7 @@ function project_print_entitycount($table1, $table2, $projectid, $groupid, $what
  WHERE
  {$what}id IN ('{$whatList}') AND
  projectid = {$projectid} AND
- groupid = {$groupid}
+ (groupid = {$groupid} OR groupid = 0)
  ";
  $res = $DB->get_record_sql($query);
  $subcount = "[" . $res->subs . "]";
@@ -1578,7 +1580,7 @@ function project_print_entitycount($table1, $table2, $projectid, $groupid, $what
  ON
  t1.id = t2.{$what}Id
  WHERE 
- t1.groupid = {$groupid} AND 
+ (t1.groupid = {$groupid} OR t1.groupid = 0) AND 
  t1.projectid = {$projectid} AND 
  t1.id = {$id}
  GROUP BY 
@@ -2857,6 +2859,13 @@ function project_print_projects_xml($cmid){
     exit;
 }
 
+/**
+* return an array containing the user that have access to the project have the role passed in param
+* @param role the searched role
+* @param cm the current coursemodule (useful for making urls)
+* others params are not called specifically and must keep their defaults valuess
+* WARNING : users having the viewhiddenactivities will be in the array, because of the filter_user_list function
+*/
 function get_users_by_role($cm, $role, $parent = false, $group = '', $all=NULL) {
     global $DB;
     $allnames = get_all_user_name_fields(true, 'u');
@@ -2921,11 +2930,11 @@ function get_users_by_role($cm, $role, $parent = false, $group = '', $all=NULL) 
 }
 
 
-/*
-This function take a project in parameter and return a link to the last deliverable (the most up-to-date so far)
-it could be modifiied to open the link too, effectively making you donload the file.
+/**
+* return a link to the last file of the project
+* @param project the current project
+* @param cmid the current coursemodule (useful for making urls)
 */
-
 function project_export_last_deliverable($project,$cmid=null){
     //the $cmid serve only to make me able to create link in two locations 
     if (!isset($cmid)) {

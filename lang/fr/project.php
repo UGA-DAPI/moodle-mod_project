@@ -160,6 +160,7 @@ $string['evidentdesc'] = 'Trivial. En un clin d\'oeil.';
 $string['exportallforcurrentgroup'] = 'Exporter l\'ensemble du projet de ce groupe en XML brut';
 $string['exportheadingtoXML'] = 'Exporter le cartouche en XML';
 $string['exports'] = 'Fonctions d\'export';
+$string['features'] = 'Options';
 $string['fix'] = 'Réparation';
 $string['fixdesc'] = 'Attention, cette ressource peut contenir des erreurs.'; 
 $string['fixingforeignkeys'] = 'Réassignation des clefs étrangères';
@@ -950,3 +951,7 @@ $string['editingteacherreplacementexplain'] ='Choisir un role personalisé pour 
 $string['teacherreplacement'] ='Role tuteur';
 $string['teacherreplacementexplain'] ='Choisir un role personalisé pour remplacer le role basique teacher. Necessite une mise a jour de la BDD';
 $string['exportdeliv'] ='Exporter le livrable le plus récent.';
+$string['noaccess'] = "Vous n'avez pas accès a ce projet";
+$string['howtoworktype_help'] = "si ce champ est rempli, alors les valeurs par défaut des types de taches seront celle indiquées ici.
+Veuillez séparer les options et leur code associé de cette manière (sans ') : '[REU]réunion;[PLA]planification;[TST]tests'";
+$string['howtoworktype'] = 'Type de taches';

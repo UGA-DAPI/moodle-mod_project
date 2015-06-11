@@ -8,7 +8,7 @@
 
         // delete related records
 		$DB->delete_records('project_spec_to_req', array('specid' => $specid));
-        add_to_log($course->id, 'project', 'changespecification', "view.php?id=$cm->id&amp;view=specifications&amp;group={$currentGroupId}", 'delete', $cm->id);
+        //add_to_log($course->id, 'project', 'changespecification', "view.php?id=$cm->id&amp;view=specifications&amp;group={$currentGroupId}", 'delete', $cm->id);
 	}
 /** ********************** **/
 	elseif ($work == 'domove' || $work == 'docopy') {
@@ -47,7 +47,7 @@
 		    	break;
 		}
 		project_tree_copy_set($ids, 'project_specification', $table2, 'description,format,abstract,projectid,groupid,ordering', $autobind, $bindtable);
-        add_to_log($course->id, 'project', "change{$redir}", "view.php?id={$cm->id}&amp;view={$redir}s&amp;group={$currentGroupId}", 'copy/move', $cm->id);
+        //add_to_log($course->id, 'project', "change{$redir}", "view.php?id={$cm->id}&amp;view={$redir}s&amp;group={$currentGroupId}", 'copy/move', $cm->id);
 		if ($work == 'domove'){
 		    // bounce to deleteitems
 		    $work = 'dodeleteitems';
@@ -95,7 +95,7 @@
     		$DB->delete_records('project_spec_to_req', array('projectid' => $project->id, 'groupid' => $currentGroupId, 'specid' => $anItem));
     		$DB->delete_records('project_task_to_spec', array('projectid' => $project->id, 'groupid' => $currentGroupId, 'specid' => $anItem));
     	}
-        add_to_log($course->id, 'project', 'deletespecification', "view.php?id={$cm->id}&amp;view=specifications&amp;group={$currentGroupId}", 'deleteItems', $cm->id);
+        //add_to_log($course->id, 'project', 'deletespecification', "view.php?id={$cm->id}&amp;view=specifications&amp;group={$currentGroupId}", 'deleteItems', $cm->id);
     	if (isset($withredirect) && $withredirect){
 		    redirect("{$CFG->wwwroot}/mod/project/view.php?id={$cm->id}&amp;view={$redir}s", get_string('redirectingtoview', 'project') . ' : ' . get_string($redir, 'project'));
 		}
@@ -106,7 +106,7 @@
 		$DB->delete_records('project_specification', array('projectid' => $project->id));
 		$DB->delete_records('project_task_to_spec', array('projectid' => $project->id));
 		$DB->delete_records('project_spec_to_req', array('projectid' => $project->id));
-        add_to_log($course->id, 'project', 'changespecification', "view.php?id={$cm->id}&amp;view=specifications&amp;group={$currentGroupId}", 'clear', $cm->id);
+        //add_to_log($course->id, 'project', 'changespecification', "view.php?id={$cm->id}&amp;view=specifications&amp;group={$currentGroupId}", 'clear', $cm->id);
 	}
 /** ********************** **/
 	elseif ($work == 'doexport') {
@@ -137,7 +137,7 @@
 	    $escaped = str_replace('>', '&gt;', $escaped);
 	    echo $OUTPUT->heading(get_string('xmlexport', 'project'));
 	    print_simple_box("<pre>$escaped</pre>");
-        add_to_log($course->id, 'project', 'readspecification', "view.php?id={$cm->id}&amp;view=specifications&amp;group={$currentGroupId}", 'export', $cm->id);
+        //add_to_log($course->id, 'project', 'readspecification', "view.php?id={$cm->id}&amp;view=specifications&amp;group={$currentGroupId}", 'export', $cm->id);
         echo $OUTPUT->continue_button("view.php?view=specifications&amp;id=$cm->id");
         return;
 	}

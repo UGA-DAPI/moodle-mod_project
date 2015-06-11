@@ -3,9 +3,9 @@
 *
 * @package mod-project
 * @category mod
-* @author Yohan Thomas - W3C2i (support@w3c2i.com)
-* @date 30/09/2013
-* @version 3.0
+* @author Yann Ducruy (yann[dot]ducruy[at]gmail[dot]com). Contact me if needed
+* @date 12/06/2015
+* @version 3.2
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 */
@@ -61,8 +61,6 @@ class mod_project_mod_form extends moodleform_mod {
         $mform->setDefault('projectstart', time());
         $mform->addElement('date_time_selector', 'projectend', get_string('projectend', 'project'), array('optional'=>true));
         $mform->setDefault('projectend', time()+90*DAYSECS);
-        //projet confidentiel ou non ?
-        $mform->addElement('select', 'projectconfidential', get_string('CONFIDENTIAL', 'project'), $yesnooptions);
         $this->standard_coursemodule_elements();
         $mform->addElement('date_time_selector', 'assessmentstart', get_string('assessmentstart', 'project'), array('optional'=>true));
         $mform->setDefault('assessmentstart', time()+75*DAYSECS);
@@ -78,13 +76,20 @@ class mod_project_mod_form extends moodleform_mod {
         $mform->addHelpButton('enablecvs', 'enablecvs', 'project');
         $mform->addElement('select', 'useriskcorrection', get_string('useriskcorrection', 'project'), $yesnooptions); 
         $mform->addHelpButton('useriskcorrection', 'useriskcorrection', 'project');
+        //features category. affect directly the project.
         $mform->addElement('header', 'features', get_string('features', 'project'));
-        //note that those are advannced checkbox because we want it to return 0 when unchecked, and not nothing like a regular checkbox do
-        $mform->addElement('advcheckbox', 'projectusesrequs', get_string('requirements', 'project'));
+        //note that those are advanced checkbox because we want it to return 0 when unchecked, and a regular checkbox don't do that.
+        $mform->addElement('advcheckbox', 'projectconfidential', get_string('CONFIDENTIAL', 'project'));
+        $mform->addElement('advcheckbox', 'projectusesrequs', get_string('requirements', 'project')); //the page related to this is broken
         $mform->addElement('advcheckbox', 'projectusestasks', get_string('tasks', 'project')); 
-        $mform->addElement('advcheckbox', 'projectusesspecs', get_string('specifications', 'project')); 
+        $mform->addElement('advcheckbox', 'projectusesspecs', get_string('specifications', 'project'));  //the page related to this is broken
         $mform->addElement('advcheckbox', 'projectusesdelivs', get_string('ressources', 'project')." & ".get_string('deliverables', 'project')); 
-        $mform->addElement('advcheckbox', 'projectusesvalidations', get_string('validations', 'project'));
+        $mform->addElement('advcheckbox', 'projectusesvalidations', get_string('validations', 'project')); //the page related to this is broken
+        //this serve to customize the worktype options, replacing the default one that are suited for informatic modules
+        $mform->addElement('text', 'howtoworktype', get_string('howtoworktype', 'project'));
+        $mform->addHelpButton('howtoworktype', 'howtoworktype', 'project');
+
+        /* Access options, i feel it's useless considering we have strict access rules
         $mform->addElement('header', 'headeraccess', get_string('access', 'project'));
         $mform->addElement('select', 'guestsallowed', get_string('guestsallowed', 'project'), $yesnooptions); 
         $mform->addHelpButton('guestsallowed', 'guestsallowed', 'project');
@@ -95,6 +100,9 @@ class mod_project_mod_form extends moodleform_mod {
         $mform->addElement('select', 'allowdeletewhenassigned', get_string('allowdeletewhenassigned', 'project'), $yesnooptions); 
         $mform->addHelpButton('allowdeletewhenassigned', 'allowdeletewhenassigned', 'project');
         $mform->addElement('static', 'studentscanchange', get_string('studentscanchange', 'project'), get_string('seecapabilitysettings', 'project'));
+        */
+
+        /* Grading. useable ?
         $mform->addElement('header', 'headergrading', get_string('grading', 'project'));
         $mform->addElement('select', 'teacherusescriteria', get_string('teacherusescriteria', 'project'), $yesnooptions); 
         $mform->addHelpButton('teacherusescriteria', 'teacherusescriteria', 'project');
@@ -102,7 +110,7 @@ class mod_project_mod_form extends moodleform_mod {
         $mform->addHelpButton('autogradingenabled', 'autogradingenabled', 'project');
         $mform->addElement('text', 'autogradingweight', get_string('autogradingweight', 'project')); 
         $mform->addHelpButton('autogradingweight', 'autogradingweight', 'project');
-
+        */
         $this->standard_grading_coursemodule_elements();
         $this->add_action_buttons();
 

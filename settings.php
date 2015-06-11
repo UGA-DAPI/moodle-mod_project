@@ -21,19 +21,25 @@ $ADMIN->add('project', new admin_externalpage('settings', get_string('settings',
         'moodle/site:config'));*/
 
 
+
+
+//In the actual version of the plugin, those settings are useless. i'll comment this for now, but you can use this later 
+
+/*
+
 if ($ADMIN->fulltree) {
 	$rolelist = get_all_roles();
 	//print_r($rolelist);
 	foreach ($rolelist as $roleobject) {
 		$role[] = $roleobject->shortname;
 	}
-/*
+
     $settings->add(new admin_setting_configselect('project/teacher_role',
         get_string('editingteacherreplacement', 'project'), get_string('editingteacherreplacementexplain', 'project'), 'editingteacher',
         $role));
-*/
+
     $settings->add(new admin_setting_configselect('project/tutor_role',
         get_string('teacherreplacement', 'project'), get_string('teacherreplacementexplain', 'project'), 'teacher',
         $role));
 
-}
+}*/
