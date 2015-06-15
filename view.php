@@ -40,18 +40,6 @@ if($exportxml==1){
     project_print_projects_xml($cm->course);
 }
 
-
-$whitelist = array_merge(get_users_by_role($cm,'student',true),get_users_by_role($cm,'teacher',true),get_users_by_role($cm,'editingteacher',true));
-$access=false;
-foreach ($whitelist as $whitelisted) {
-    if ($whitelisted->username == $USER->username) {
-        $access=true;
-    }
-}
-if (!$access) {
-    notice(get_string('noaccess','project'), "$CFG->wwwroot/course/view.php?id=$course->id");
-    exit;
-}
 require_login($course->id, false, $cm);
 /*
 if (@$CFG->enableajax){
@@ -106,7 +94,7 @@ printf("id du groupe actuel : ".$currentGroupId);
 
 //check des droits d'access
 if(!has_capability('mod/project:view', $context)){
-    notice("Accès interdit ce projet est confidentiel.", "$CFG->wwwroot/course/view.php?id=$course->id");
+    notice("Accès interdit.", "$CFG->wwwroot/course/view.php?id=$course->id");
     exit;
 }
 // ...display header...

@@ -84,32 +84,47 @@ if ($data = $mform->get_data()){
 
     
     if ($data->delivid) {
-        //cas d'une edition
-            $data->id = $data->delivid; // id is course module id
-            $DB->update_record('project_deliverable', $data);
-            //add_to_log($course->id, 'project', 'changedeliverable', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'update', $cm->id);
-
-            /*
-            $tasktodeliv = optional_param_array('tasktodeliv', null, PARAM_INT);
-            if (count($tasktodeliv) > 0){
-                // removes previous mapping
-                $DB->delete_records('project_task_to_deliv', array('projectid' => $project->id, 'groupid' => $currentGroupId, 'delivid' => $data->id));
-                // stores new mapping
-                foreach($tasktodeliv as $aTask){
-                    $amap->id = 0;
-                    $amap->projectid = $project->id;
-                    $amap->groupid = $currentGroupId;
-                    $amap->taskid = $aTask;
-                    $amap->delivid = $data->id;
-                    $res = $DB->insert_record('project_task_to_deliv', $amap);
-                }
-                
-            }*/
-        } else {
-            $data->created = time();
-            $data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_deliverable', true, $data->fatherid) + 1;
+    //cas d'une edition
+        $data->id = $data->delivid; // id is course module id
+        $DB->update_record('project_deliverable', $data);
+        $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);// <== on fait le lien entre le fichier et la ressource/livrable par l'id de la ressource/livrable qui est en tant qu'itemid dans la table _files
+        //add_to_log($course->id, 'project', 'changedeliverable', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'update', $cm->id);
+        $DB->update_record('project_deliverable', $data);
+        /*
+        $tasktodeliv = optional_param_array('tasktodeliv', null, PARAM_INT);
+        if (count($tasktodeliv) > 0){
+             // removes previous mapping
+            $DB->delete_records('project_task_to_deliv', array('projectid' => $project->id, 'groupid' => $currentGroupId, 'delivid' => $data->id));
+            // stores new mapping
+            foreach($tasktodeliv as $aTask){
+                $amap->id = 0;
+                $amap->projectid = $project->id;
+                $amap->groupid = $currentGroupId;
+                $amap->taskid = $aTask;
+                $amap->delivid = $data->id;
+                $res = $DB->insert_record('project_task_to_deliv', $amap);
+            }
+            
+        }*/
+    } 
+    else {
+        $data->created = time();
+        $data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_deliverable', true, $data->fatherid) + 1;
             unset($data->id); // id is course module id
-            $data->id = $DB->insert_record('project_deliverable', $data);
+            if ($data->groupid == 0) {
+                $groups = groups_get_all_groups($COURSE->id);
+                foreach ($groups as $group) {
+                    $data->groupid = $group->id;
+                    $data->id = $DB->insert_record('project_deliverable', $data);
+                    $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);
+                    $DB->update_record('project_deliverable', $data);
+                }
+            }
+            else{
+                $data->id = $DB->insert_record('project_deliverable', $data);
+                $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);
+                $DB->update_record('project_deliverable', $data);
+            }
             //add_to_log($course->id, 'project', 'adddeliv', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'add', $cm->id);
             
             /*
@@ -118,9 +133,6 @@ if ($data = $mform->get_data()){
             }
             */
         }
-        $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);// <== on fait le lien entre le fichier et la ressource/livrable par l'id de la ressource/livrable qui est en tant qu'itemid dans la table _files
-        //une fois le localfile set a 1 si il y a eu upload on update le record
-        $DB->update_record('project_deliverable', $data);
         
         redirect($url);
     }

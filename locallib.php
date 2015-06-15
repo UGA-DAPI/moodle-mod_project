@@ -1145,8 +1145,7 @@ d.id = c.entryid AND
 c.entity = 'deliverables' AND
 c.userid = $USER->id
 WHERE 
-(d.groupid = 0 OR
-d.groupid = {$group}) AND 
+d.groupid = {$group} AND 
 d.projectid = {$project->id} AND 
 d.fatherid = {$fatherid} AND
 d.typeelm = {$typeelm}
@@ -1564,7 +1563,7 @@ function project_print_entitycount($table1, $table2, $projectid, $groupid, $what
  WHERE
  {$what}id IN ('{$whatList}') AND
  projectid = {$projectid} AND
- (groupid = {$groupid} OR groupid = 0)
+ groupid = {$groupid}
  ";
  $res = $DB->get_record_sql($query);
  $subcount = "[" . $res->subs . "]";
@@ -1580,7 +1579,7 @@ function project_print_entitycount($table1, $table2, $projectid, $groupid, $what
  ON
  t1.id = t2.{$what}Id
  WHERE 
- (t1.groupid = {$groupid} OR t1.groupid = 0) AND 
+ t1.groupid = {$groupid} AND 
  t1.projectid = {$projectid} AND 
  t1.id = {$id}
  GROUP BY 
@@ -2863,10 +2862,10 @@ function project_print_projects_xml($cmid){
 * return an array containing the user that have access to the project have the role passed in param
 * @param role the searched role
 * @param cm the current coursemodule (useful for making urls)
-* others params are not called specifically and must keep their defaults valuess
+* @param group the group selected in the module
 * WARNING : users having the viewhiddenactivities will be in the array, because of the filter_user_list function
 */
-function get_users_by_role($cm, $role, $parent = false, $group = '', $all=NULL) {
+function get_users_by_role($cm, $role, $group = '', $parent = false, $all=NULL) {
     global $DB;
     $allnames = get_all_user_name_fields(true, 'u');
 
@@ -2921,6 +2920,7 @@ function get_users_by_role($cm, $role, $parent = false, $group = '', $all=NULL) 
     LEFT JOIN {role_names} rn ON (rn.contextid = :coursecontext AND rn.roleid = r.id) $groupjoin
     WHERE (ra.contextid = :contextid $parentcontexts)
     $roleselect $groupselect ORDER BY $sort";
+    //printf($sql);
     // join now so that we can just use fullname() later
     $availableusers = $DB->get_records_sql($sql, $params);
     $modinfo = get_fast_modinfo($cm->course);

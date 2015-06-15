@@ -48,6 +48,14 @@
 			$data->created = time();
     		$data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_milestone', false) + 1;
 			unset($data->id); // id is course module id
+			if ($data->groupid == 0) {
+                $groups = groups_get_all_groups($COURSE->id);
+                foreach ($groups as $group) {
+                    $data->groupid = $group->id;
+                    $data->id = $DB->insert_record('project_milestone', $data);                }
+            }
+            else{
+            	$data->id = $DB->insert_record('project_milestone', $data);            }
 			$data->id = $DB->insert_record('project_milestone', $data);
         	//add_to_log($course->id, 'project', 'addmile', "view.php?id=$cm->id&view=milestones&group={$currentGroupId}", 'add', $cm->id);
 

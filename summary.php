@@ -95,7 +95,7 @@ echo $OUTPUT->box_start('center', '100%');
         $rolempty = true;
         $roleNom = $rolesName[$i];   
         $roleusers = '';
-        $roleusers = get_users_by_role($cm,$roles[$i],true);
+        $roleusers = get_users_by_role($cm,$roles[$i],$currentGroupId,true);
         if (!empty($roleusers)) {
             $rolempty = false;
             $listeUsers ='';

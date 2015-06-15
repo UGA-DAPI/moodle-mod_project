@@ -240,8 +240,8 @@ $string['milestonedeadlineenable'] = 'Activer l\'échéance';
 $string['milestones'] = 'Etapes';
 $string['milestonetitle'] = 'Libellé de l\'étape';
 $string['missing'] = 'Manquant';
-$string['modulename'] = 'Projet';
-$string['modulenameplural'] = 'Projets';
+$string['modulename'] = 'Project';
+$string['modulenameplural'] = 'Projects';
 $string['moveselected'] = 'Déplacer les éléments sélectionnés';
 $string['must'] = 'MUST';
 $string['mustdesc'] = 'Doit être dans le produit final. Pas d\'échappatoire !!'; 
@@ -594,9 +594,6 @@ $string['choixprojet_help'] = '
 $string['type_help'] = '
 <p>Le projet sera basé sur le modèle d\'un type de projet, c\'est à dire que les étapes et livrables seront copié depuis le type de projet choisi.</p>
 ';
-$string['modulename_help']=  '<p>Création d\'un projet d\'innovation :
-
-</p>';
 $string['typeelm_help']=  ' 
 <p>Une ressource est un élément concernant l\'étape qui est fournit pour les étudiants.<br />
 Un livrable est un élément attendu par les étudiants pour la validation de l\'étape.</p>
@@ -955,3 +952,10 @@ $string['noaccess'] = "Vous n'avez pas accès a ce projet";
 $string['howtoworktype_help'] = "si ce champ est rempli, alors les valeurs par défaut des types de taches seront celle indiquées ici.
 Veuillez séparer les options et leur code associé de cette manière (sans ') : '[REU]réunion;[PLA]planification;[TST]tests'";
 $string['howtoworktype'] = 'Type de taches';
+
+$string['modulename_help']=  "<p>Création d'un projet d'innovation.
+Un projet est composés d'étapes chacune pouvant contenir des ressources et des livrables.
+il est également possible de créer des tâches a assigner a des personnes (comme un modèle agile)
+il existe un sorte de mini-forum pour chaque projet.
+enfin, il existe une interface pour les enseignants permettant de visualiser tout les projets d'un cours
+</p>";
