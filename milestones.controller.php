@@ -11,15 +11,15 @@
 *
 */
 $context = context_module::instance($cm->id);
-if ($work == 'dodelete') {
+if ($work == 'dodelete' OR $work == 'delete') {
 	$milestoneid = required_param('milestoneid', PARAM_INT);
     	project_tree_delete($milestoneid, 'project_milestone', 0); // uses list option switch
     	// cleans up any assigned task
-    	$query = "UPDATE {project_task} SET milestoneid = NULL WHERE milestoneid = $milestoneid";
+    	$query = "UPDATE {project_task} SET milestoneid = '0' WHERE milestoneid = $milestoneid";
     	$DB->execute($query);
 
     	// cleans up any assigned deliverable
-    	$query = "UPDATE {project_deliverable} SET milestoneid = NULL WHERE milestoneid = $milestoneid";
+    	$query = "UPDATE {project_deliverable} SET milestoneid = '0' WHERE milestoneid = $milestoneid";
     	$DB->execute($query);
     	//add_to_log($course->id, 'project', 'changemilestone', "view.php?id=$cm->id&view=milestone&group={$currentGroupId}", 'delete', $cm->id);
     } elseif ($work == 'doclearall') {

@@ -1002,7 +1002,7 @@ elseif($milestoneActiveForValidate && $canaskvalidatemilestone && count($deliver
 echo "<td>".$actionsEtape."</td></tr>";
 echo "<tr class='milestonedet'><td>";
 //affichage des ressources
-$ressources = $DB->get_records('project_deliverable', array('milestoneid' => $milestone->id, 'projectid' => $project->id,'typeelm' => 0), '', 'abstract,id');
+$ressources = $DB->get_records('project_deliverable', array('milestoneid' => $milestone->id, 'projectid' => $project->id,'typeelm' => 0, 'groupid'=> $group), '', 'id,abstract');
 echo "<table><tbody>";
 $k = 0;
 if(count($ressources)>0){

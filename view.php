@@ -90,7 +90,7 @@ else {
         }
     }
 }
-printf("id du groupe actuel : ".$currentGroupId);
+//printf("id du groupe actuel : ".$currentGroupId);
 
 //check des droits d'access
 if(!has_capability('mod/project:view', $context)){
@@ -123,7 +123,7 @@ elseif (!isguestuser()) {
     if (!$cm->visible) {
         notice(get_string('activityiscurrentlyhidden'));
     }
-    if ($groupmode == SEPARATEGROUPS && !$currentGroupId && !$project->ungroupedsees){
+    if ($groupmode != NOGROUPS && !$currentGroupId && !$project->ungroupedsees){
         $action = 'notingroup';
     }
     if ($timenow < $project->projectstart) {
@@ -247,7 +247,7 @@ include('project.php');
     $pagebuffer .= '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
 
 /// Allow the teacher to change groups (for this session)
-    if ($groupmode == 1) {
+    if ($groupmode != NOGROUPS) {
         $groups = groups_get_all_groups($course->id);
         if (!empty($groups)){
             $pagebuffer .= '<td>';
@@ -259,7 +259,7 @@ include('project.php');
     if (empty($currentGroupId)){
         $currentGroupId = 0;
     }
-    printf("</br>id du groupe actuel avant include project : ".$currentGroupId);
+    //printf("</br>id du groupe actuel avant include project : ".$currentGroupId);
     include('project.php');
 
     /****************** show description************/

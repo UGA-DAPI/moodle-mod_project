@@ -38,7 +38,7 @@ class Deliverable_Form extends moodleform {
         
         $PAGE->requires->js( new moodle_url('/mod/project/js/formdeliv.js'));
         $typeelm = required_param('typeelm', PARAM_INT);
-        $groupid = required_param('groupid', PARAM_INT);
+        $groupid = $this->currentGroupId;
         $modcontext = context_module::instance($this->project->cmid);
         $canEdit=false; // just in case
         if ($typeelm==0) {

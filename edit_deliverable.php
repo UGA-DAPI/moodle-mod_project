@@ -111,10 +111,14 @@ if ($data = $mform->get_data()){
         $data->created = time();
         $data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_deliverable', true, $data->fatherid) + 1;
             unset($data->id); // id is course module id
-            if ($data->groupid == 0) {
+            if ($data->groupid == 0 && $groupmode != NOGROUPS) {
                 $groups = groups_get_all_groups($COURSE->id);
+                //this is a bit hacky and hazardous thing to do, sorry, but i see no other way to do it.
+                $originalmilestone = $DB->get_record('project_milestone', array('id' => $data->milestoneid));
                 foreach ($groups as $group) {
+                    $thegoodmilestone = $DB->get_record('project_milestone', array('projectid' => $originalmilestone->projectid, 'groupid' => $group->id, 'created'=>$originalmilestone->created));
                     $data->groupid = $group->id;
+                    $data->milestoneid = $thegoodmilestone->id;
                     $data->id = $DB->insert_record('project_deliverable', $data);
                     $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);
                     $DB->update_record('project_deliverable', $data);
@@ -126,7 +130,7 @@ if ($data = $mform->get_data()){
                 $DB->update_record('project_deliverable', $data);
             }
             //add_to_log($course->id, 'project', 'adddeliv', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'add', $cm->id);
-            
+
             /*
             if( $project->allownotifications){
                 project_notify_new_deliverable($project, $cm->id, $data, $currentGroupId);

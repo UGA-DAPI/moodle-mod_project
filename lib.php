@@ -135,6 +135,16 @@ function project_update_instance($project){
     $context = context_module::instance($project->coursemodule);
     $introimgoptions = array('maxbytes' =>2000000, 'maxfiles'=> 1,'accepted_types' => array('.jpeg', '.jpg', '.png','return_types'=>FILE_INTERNAL));
     $project = file_postupdate_standard_filemanager($project, 'introimg', $introimgoptions, $context, 'mod_project', 'introimg', $project->id);
+    if ($project->projectconfidential==1) {
+    	//role id has been hardcoded because the get_role_id was not finishing for whatever reasons
+    	//role_change_permission(4, $context, 'moodle/course:viewhiddenactivities', CAP_PROHIBIT);
+    	$roles = get_archetype_roles('teacher');
+    	foreach ($roles as $value) {
+    		role_change_permission($value->id, $context, 'moodle/course:viewhiddenactivities', CAP_PROHIBIT);
+    		role_change_permission($value->id, $context, 'moodle/site:accessallgroups', CAP_PROHIBIT);
+    		
+    	}
+    }
 
     if ($returnid = $DB->update_record('project', $project)) {
     	if (!empty($project->howtoworktype)) {
@@ -176,6 +186,16 @@ function project_update_instance($project){
     			$event->visible     = $DB->get_field('course_modules', 'visible', array('module' => $moduleid, 'instance' => $project->id)); 
     			calendar_event::create($event);
     		}
+    	}
+    }
+    if (!empty($project->howtoworktype)) {
+    	$worktypes = explode(';', $project->howtoworktype);
+    	foreach ($worktypes as $worktype) {
+    		$code = substr($worktype, 1,3);
+    		$name = substr($worktype, 5);
+    		//prepare the insert. blahblah is theorically unused but mut be not null so ...
+    		$insert= array('projectid' => $returnid,'domain'=>'worktype','code'=>$code,'label'=>$name,'description'=>'blahblah');
+    		$DB->insert_record('project_qualifier', $insert);
     	}
     }
     return $returnid;

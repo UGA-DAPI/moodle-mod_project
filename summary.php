@@ -118,7 +118,8 @@ echo $OUTPUT->box_start('center', '100%');
     }
     echo $OUTPUT->box_end();
     global $COURSE;
-	$contextss = get_context_instance(CONTEXT_COURSE, $COURSE->id);//context du cours
+	//$contextss = get_context_instance(CONTEXT_COURSE, $COURSE->id);//context du cours
+    context_course::instance($COURSE->id);
     echo '</center>';
 
     ?>

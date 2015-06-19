@@ -106,7 +106,7 @@ if ($data = $mform->get_data()){
             $data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_task', true, $data->fatherid) + 1;
 			unset($data->id); // id is course module id
 
-			if ($data->groupid == 0) {
+			if ($data->groupid == 0 && $groupmode != NOGROUPS) {
                 $groups = groups_get_all_groups($COURSE->id);
                 foreach ($groups as $group) {
                     $data->groupid = $group->id;
