@@ -222,9 +222,9 @@ function project_phase($project, $style='') {
       } elseif ($dated[$i]->id == 'projectend'){
           return get_string('phaseend', 'project');
       } else {
-       return "M{$dated[$i]->ordering} : {$dated[$i]->abstract} (<font color=\"green\">".format_time($dated[$i]->phasedate - $time)."</font>)";
-   }
-}
+         return "M{$dated[$i]->ordering} : {$dated[$i]->abstract} (<font color=\"green\">".format_time($dated[$i]->phasedate - $time)."</font>)";
+     }
+ }
 
 /**
 * prints a specification entry with its tree branch
@@ -242,47 +242,47 @@ function project_print_specifications($project, $group, $fatherid, $cmid){
 	project_check_startup_level('specification', $fatherid, $level, $startuplevelchecked);
 
 	$query = "
-   SELECT 
-   s.*,
-   c.collapsed
-   FROM 
-   {project_specification} s
-   LEFT JOIN
-   {project_collapse} c
-   ON
-   s.id = c.entryid AND
-   c.entity = 'specifications' AND
-   c.userid = $USER->id
-   WHERE 
-   s.groupid = {$group} and 
-   s.projectid = {$project->id} AND 
-   s.fatherid = {$fatherid}
-   GROUP BY
-   s.id
-   ORDER BY 
-   s.ordering
-   ";	
+ SELECT 
+ s.*,
+ c.collapsed
+ FROM 
+ {project_specification} s
+ LEFT JOIN
+ {project_collapse} c
+ ON
+ s.id = c.entryid AND
+ c.entity = 'specifications' AND
+ c.userid = $USER->id
+ WHERE 
+ s.groupid = {$group} and 
+ s.projectid = {$project->id} AND 
+ s.fatherid = {$fatherid}
+ GROUP BY
+ s.id
+ ORDER BY 
+ s.ordering
+ ";	
 
-   if ($specifications = $DB->get_records_sql($query)) {
-      $i = 1;
-      foreach($specifications as $specification){
-        echo "<div class=\"nodelevel{$level}\">";
-        $level++;
-        project_print_single_specification($specification, $project, $group, $cmid, count($specifications));
-        $expansion = (!$specification->collapsed) ? '' : "style=\"visbility:hidden; display:none\" " ;
-        $visibility = ($specification->collapsed) ? 'display: none' : 'display: block' ; 
-        echo "<div id=\"sub{$specification->id}\" style=\"$visibility\" >";
-        project_print_specifications($project, $group, $specification->id, $cmid);
-        echo "</div>";
-        $level--;
-        echo "</div>";
-    }
+ if ($specifications = $DB->get_records_sql($query)) {
+  $i = 1;
+  foreach($specifications as $specification){
+    echo "<div class=\"nodelevel{$level}\">";
+    $level++;
+    project_print_single_specification($specification, $project, $group, $cmid, count($specifications));
+    $expansion = (!$specification->collapsed) ? '' : "style=\"visbility:hidden; display:none\" " ;
+    $visibility = ($specification->collapsed) ? 'display: none' : 'display: block' ; 
+    echo "<div id=\"sub{$specification->id}\" style=\"$visibility\" >";
+    project_print_specifications($project, $group, $specification->id, $cmid);
+    echo "</div>";
+    $level--;
+    echo "</div>";
+}
 } else {
   if ($level == 0){
-     echo $OUTPUT->box_start();
-     print_string('nospecifications', 'project');
-     echo $OUTPUT->box_end();
- }
+   echo $OUTPUT->box_start();
+   print_string('nospecifications', 'project');
+   echo $OUTPUT->box_end();
+}
 }
 }
 
@@ -302,14 +302,14 @@ function project_print_single_specification($specification, $project, $group, $c
   $canedit = $USER->editmode == 'on' && has_capability('mod/project:changespecs', $context);
   $numspec = implode('.', project_tree_get_upper_branch('project_specification', $specification->id, true, true));
   if (!$fullsingle){
-     if (project_count_subs('project_specification', $specification->id) > 0) {
-       $ajax = $CFG->enableajax && $CFG->enablecourseajax;
-       $hidesub = "<a href=\"javascript:toggle('{$specification->id}','sub{$specification->id}', $ajax, '$CFG->wwwroot');\"><img name=\"img{$specification->id}\" src=\"{$CFG->wwwroot}/mod/project/pix/p/switch_minus.gif\" alt=\"collapse\" /></a>";
-   } else {
+   if (project_count_subs('project_specification', $specification->id) > 0) {
+     $ajax = $CFG->enableajax && $CFG->enablecourseajax;
+     $hidesub = "<a href=\"javascript:toggle('{$specification->id}','sub{$specification->id}', $ajax, '$CFG->wwwroot');\"><img name=\"img{$specification->id}\" src=\"{$CFG->wwwroot}/mod/project/pix/p/switch_minus.gif\" alt=\"collapse\" /></a>";
+ } else {
     $hidesub = "<img src=\"{$CFG->wwwroot}/mod/project/pix/p/empty.gif\" />";
 }
 } else {
-   $hidesub = '';
+ $hidesub = '';
 }
 
 $speclevel = count(explode('.', $numspec)) - 1;
@@ -348,60 +348,60 @@ $complexityoption = project_get_option_by_key('complexity', $project->id, $speci
 	$complexitysignal = "<img src=\"".$OUTPUT->pix_url("/complexity_{$complexityoption->truelabel}", 'project')."\" title=\"{$complexityoption->label}\" />";
 
 	if (!$fullsingle){
-     $hideicon = (!empty($specification->description)) ? 'hide' : 'hide_shadow' ;
-     $hidedesc = "<a href=\"javascript:toggle_show('{$numspec}','{$numspec}', '$CFG->wwwroot');\"><img name=\"eye{$numspec}\" src=\"".$OUTPUT->pix_url("/p/{$hideicon}", 'project')."\" alt=\"collapse\" /></a>";
- } else {
-     $hidedesc = '';
+       $hideicon = (!empty($specification->description)) ? 'hide' : 'hide_shadow' ;
+       $hidedesc = "<a href=\"javascript:toggle_show('{$numspec}','{$numspec}', '$CFG->wwwroot');\"><img name=\"eye{$numspec}\" src=\"".$OUTPUT->pix_url("/p/{$hideicon}", 'project')."\" alt=\"collapse\" /></a>";
+   } else {
+       $hidedesc = '';
+   }
+
+   $head = "<table width=\"100%\" class=\"nodecaption\"><tr><td align='left' width='70%'><b>{$checkbox}{$indent}<span class=\"level{$speclevel}\">{$hidesub} <a name=\"node{$specification->id}\"></a>S{$numspec} - ".format_string($specification->abstract)."</span></b></td><td align='right' width='30%'>{$severitysignal} {$prioritysignal} {$complexitysignal} {$reqcount} {$taskcount} {$completion} {$hidedesc}</td></tr></table>";
+
+   unset($innertable);
+   $innertable = new html_table();
+   $innertable->class = 'unclassed';
+   $innertable->width = '100%';
+   $innertable->style = array('parmname', 'parmvalue');
+   $innertable->align = array ('left', 'left');
+   $innertable->data[] = array(get_string('priority','project'), "<span class=\"scale{$priorityoption->id}\" title=\"{$priorityoption->label}\">{$priorityoption->label}</span>");
+   $innertable->data[] = array(get_string('severity','project'), "<span class=\"scale{$severityoption->id}\" title=\"{$severityoption->label}\">{$severityoption->label}</span>");
+   $parms = project_print_project_table($innertable, true);
+   $description = file_rewrite_pluginfile_urls($specification->description, 'pluginfile.php', $context->id, 'mod_project', 'specificationdescription', $specification->id);
+
+   if (!$fullsingle || $fullsingle === 'HEAD'){
+      $initialDisplay = 'none';
+      $description = close_unclosed_tags(shorten_text(format_text($description, $specification->descriptionformat), 800));
+  } else {
+      $initialDisplay = 'block';
+      $description = format_string(format_text($description, $specification->descriptionformat));
+  }
+  $desc = "<div id='{$numspec}' class='entitycontent' style='display: {$initialDisplay};'>{$parms}".$description;
+  if (!$fullsingle){
+     $desc .= "<br/><a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cmid}&amp;view=view_detail&amp;objectId={$specification->id}&amp;objectClass=specification\" >".get_string('seedetail','project')."</a></p>"; 
  }
+ $desc .= '</div>';
 
- $head = "<table width=\"100%\" class=\"nodecaption\"><tr><td align='left' width='70%'><b>{$checkbox}{$indent}<span class=\"level{$speclevel}\">{$hidesub} <a name=\"node{$specification->id}\"></a>S{$numspec} - ".format_string($specification->abstract)."</span></b></td><td align='right' width='30%'>{$severitysignal} {$prioritysignal} {$complexitysignal} {$reqcount} {$taskcount} {$completion} {$hidedesc}</td></tr></table>";
+ $table = new html_table();
+ $table->class = 'entity';    
+ $table->head    = array ($head);
+ $table->cellpadding = 1;
+ $table->cellspacing = 1;
+ $table->width = '100%';
+ $table->align = array ('left');
+ $table->data[] = array($desc);
+ $table->rowclass[] = 'description';
 
- unset($innertable);
- $innertable = new html_table();
- $innertable->class = 'unclassed';
- $innertable->width = '100%';
- $innertable->style = array('parmname', 'parmvalue');
- $innertable->align = array ('left', 'left');
- $innertable->data[] = array(get_string('priority','project'), "<span class=\"scale{$priorityoption->id}\" title=\"{$priorityoption->label}\">{$priorityoption->label}</span>");
- $innertable->data[] = array(get_string('severity','project'), "<span class=\"scale{$severityoption->id}\" title=\"{$severityoption->label}\">{$severityoption->label}</span>");
- $parms = project_print_project_table($innertable, true);
- $description = file_rewrite_pluginfile_urls($specification->description, 'pluginfile.php', $context->id, 'mod_project', 'specificationdescription', $specification->id);
-
- if (!$fullsingle || $fullsingle === 'HEAD'){
-  $initialDisplay = 'none';
-  $description = close_unclosed_tags(shorten_text(format_text($description, $specification->descriptionformat), 800));
-} else {
-  $initialDisplay = 'block';
-  $description = format_string(format_text($description, $specification->descriptionformat));
-}
-$desc = "<div id='{$numspec}' class='entitycontent' style='display: {$initialDisplay};'>{$parms}".$description;
-if (!$fullsingle){
-   $desc .= "<br/><a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cmid}&amp;view=view_detail&amp;objectId={$specification->id}&amp;objectClass=specification\" >".get_string('seedetail','project')."</a></p>"; 
-}
-$desc .= '</div>';
-
-$table = new html_table();
-$table->class = 'entity';    
-$table->head    = array ($head);
-$table->cellpadding = 1;
-$table->cellspacing = 1;
-$table->width = '100%';
-$table->align = array ('left');
-$table->data[] = array($desc);
-$table->rowclass[] = 'description';
-
-if ($canedit) {
-   $link = array();
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=add&amp;fatherid={$specification->id}&amp;view=specifications'>
-   <img src='".$OUTPUT->pix_url('/p/newnode', 'project')."' alt=\"".get_string('addsubspec', 'project')."\" /></a>";
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=update&amp;specid={$specification->id}&amp;view=specifications'>
-   <img src='".$OUTPUT->pix_url('/t/edit')."' title=\"".get_string('update')."\" /></a>";
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=delete&amp;specid={$specification->id}&amp;view=specifications'>
-   <img src='".$OUTPUT->pix_url('/t/delete')."' title=\"".get_string('delete')."\" /></a>";
-   $templateicon = ($specification->id == @$SESSION->project->spectemplateid) ? "{$CFG->wwwroot}/mod/project/pix/p/activetemplate.gif" : "{$CFG->wwwroot}/mod/project/pix/p/marktemplate.gif" ;
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=domarkastemplate&amp;specid={$specification->id}&amp;view=specifications#node{$specification->id}'>
-   <img src='$templateicon' title=\"".get_string('markastemplate', 'project')."\" /></a>";
-   if ($specification->ordering > 1)
+ if ($canedit) {
+     $link = array();
+     $link[] = "<a href='view.php?id={$cmid}&amp;work=add&amp;fatherid={$specification->id}&amp;view=specifications'>
+     <img src='".$OUTPUT->pix_url('/p/newnode', 'project')."' alt=\"".get_string('addsubspec', 'project')."\" /></a>";
+     $link[] = "<a href='view.php?id={$cmid}&amp;work=update&amp;specid={$specification->id}&amp;view=specifications'>
+     <img src='".$OUTPUT->pix_url('/t/edit')."' title=\"".get_string('update')."\" /></a>";
+     $link[] = "<a href='view.php?id={$cmid}&amp;work=delete&amp;specid={$specification->id}&amp;view=specifications'>
+     <img src='".$OUTPUT->pix_url('/t/delete')."' title=\"".get_string('delete')."\" /></a>";
+     $templateicon = ($specification->id == @$SESSION->project->spectemplateid) ? "{$CFG->wwwroot}/mod/project/pix/p/activetemplate.gif" : "{$CFG->wwwroot}/mod/project/pix/p/marktemplate.gif" ;
+     $link[] = "<a href='view.php?id={$cmid}&amp;work=domarkastemplate&amp;specid={$specification->id}&amp;view=specifications#node{$specification->id}'>
+     <img src='$templateicon' title=\"".get_string('markastemplate', 'project')."\" /></a>";
+     if ($specification->ordering > 1)
       $link[] = "<a href='view.php?id={$cmid}&amp;work=up&amp;specid={$specification->id}&amp;view=specifications#node{$specification->id}'>
   <img src='".$OUTPUT->pix_url('/t/up')."' title=\"".get_string('up', 'project')."\" /></a>";
   if ($specification->ordering < $setSize)
@@ -442,51 +442,51 @@ function project_print_requirements($project, $group, $fatherid, $cmid){
 	project_check_startup_level('requirement', $fatherid, $level, $startuplevelchecked);
 
 	$query = "
-   SELECT 
-   r.*,
-   COUNT(str.specid) as specifs,
-   c.collapsed
-   FROM 
-   {project_requirement} r
-   LEFT JOIN
-   {project_spec_to_req} str
-   ON
-   r.id = str.reqid
-   LEFT JOIN
-   {project_collapse} c
-   ON
-   r.id = c.entryid AND
-   c.entity = 'requirements' AND
-   c.userid = $USER->id
-   WHERE 
-   r.groupid = $group AND 
-   r.projectid = {$project->id} AND 
-   fatherid = $fatherid
-   GROUP BY
-   r.id
-   ORDER BY 
-   ordering
-   ";
-   if ($requirements = $DB->get_records_sql($query)) {
-      $i = 1;
-      foreach($requirements as $requirement){
-        echo "<div class=\"nodelevel{$level}\">";
-        $level++;
-        project_print_single_requirement($requirement, $project, $group, $cmid, count($requirements));
+ SELECT 
+ r.*,
+ COUNT(str.specid) as specifs,
+ c.collapsed
+ FROM 
+ {project_requirement} r
+ LEFT JOIN
+ {project_spec_to_req} str
+ ON
+ r.id = str.reqid
+ LEFT JOIN
+ {project_collapse} c
+ ON
+ r.id = c.entryid AND
+ c.entity = 'requirements' AND
+ c.userid = $USER->id
+ WHERE 
+ r.groupid = $group AND 
+ r.projectid = {$project->id} AND 
+ fatherid = $fatherid
+ GROUP BY
+ r.id
+ ORDER BY 
+ ordering
+ ";
+ if ($requirements = $DB->get_records_sql($query)) {
+  $i = 1;
+  foreach($requirements as $requirement){
+    echo "<div class=\"nodelevel{$level}\">";
+    $level++;
+    project_print_single_requirement($requirement, $project, $group, $cmid, count($requirements));
 
-        $visibility = ($requirement->collapsed) ? 'display: none' : 'display: block' ; 
-        echo "<div id=\"sub{$requirement->id}\" class=\"treenode\" style=\"$visibility\" >";
-        project_print_requirements($project, $group, $requirement->id, $cmid);
-        echo "</div>";
-        $level--;
-        echo "</div>";
-    }
+    $visibility = ($requirement->collapsed) ? 'display: none' : 'display: block' ; 
+    echo "<div id=\"sub{$requirement->id}\" class=\"treenode\" style=\"$visibility\" >";
+    project_print_requirements($project, $group, $requirement->id, $cmid);
+    echo "</div>";
+    $level--;
+    echo "</div>";
+}
 } else {
   if ($level == 0){
-     echo $OUTPUT->box_start();
-     print_string('norequirements', 'project');
-     echo $OUTPUT->box_end();
- }
+   echo $OUTPUT->box_start();
+   print_string('norequirements', 'project');
+   echo $OUTPUT->box_end();
+}
 }
 }
 
@@ -506,14 +506,14 @@ function project_print_single_requirement($requirement, $project, $group, $cmid,
   $canedit = $USER->editmode == 'on' && has_capability('mod/project:changerequs', $context);
   $numrequ = implode('.', project_tree_get_upper_branch('project_requirement', $requirement->id, true, true));
   if (!$fullsingle){
-     if (project_count_subs('project_requirement', $requirement->id) > 0) {
-        $ajax = $CFG->enableajax && $CFG->enablecourseajax;
-        $hidesub = "<a href=\"javascript:toggle('{$requirement->id}','sub{$requirement->id}', '$ajax', '$CFG->wwwroot');\"><img name=\"img{$requirement->id}\" src=\"".$OUTPUT->pix_url('/p/switch_minus', 'project')."\" alt=\"collapse\" /></a>";
-    } else {
-        $hidesub = "<img src=\"".$OUTPUT->pix_url('/p/empty', 'project')."\" />";
-    }
+   if (project_count_subs('project_requirement', $requirement->id) > 0) {
+    $ajax = $CFG->enableajax && $CFG->enablecourseajax;
+    $hidesub = "<a href=\"javascript:toggle('{$requirement->id}','sub{$requirement->id}', '$ajax', '$CFG->wwwroot');\"><img name=\"img{$requirement->id}\" src=\"".$OUTPUT->pix_url('/p/switch_minus', 'project')."\" alt=\"collapse\" /></a>";
 } else {
-   $hidesub = '';
+    $hidesub = "<img src=\"".$OUTPUT->pix_url('/p/empty', 'project')."\" />";
+}
+} else {
+ $hidesub = '';
 }
 $query = "
 SELECT
@@ -546,20 +546,20 @@ $checkbox = ($canedit) ? "<input type=\"checkbox\" id=\"sel{$requirement->id}\" 
 $strengthoption = project_get_option_by_key('strength', $project->id, $requirement->strength);
 $strengthsignal = '';
 if (!empty($requirement->strength)){
-   $strengthsignal = "<span class=\"scale_{$strengthoption->truelabel}\" title=\"{$strengthoption->label}\">s</span>";
+ $strengthsignal = "<span class=\"scale_{$strengthoption->truelabel}\" title=\"{$strengthoption->label}\">s</span>";
 }
 
 $heavynessoption = project_get_option_by_key('heaviness', $project->id, $requirement->heavyness);
 $heavynessclass = '';
 if (!empty($requirement->heavyness)){
-   $heavynessclass = "scale_{$heavynessoption->truelabel}";
+ $heavynessclass = "scale_{$heavynessoption->truelabel}";
 }
 
 if (!$fullsingle){
-   $hideicon = (!empty($requirement->description)) ? 'hide' : 'hide_shadow' ;
-   $hidedesc = "<a href=\"javascript:toggle_show('{$numrequ}','{$numrequ}', '$CFG->wwwroot');\"><img name=\"eye{$numrequ}\" src=\"".$OUTPUT->pix_url("/p/{$hideicon}", 'project')."\" alt=\"collapse\" /></a>";
+ $hideicon = (!empty($requirement->description)) ? 'hide' : 'hide_shadow' ;
+ $hidedesc = "<a href=\"javascript:toggle_show('{$numrequ}','{$numrequ}', '$CFG->wwwroot');\"><img name=\"eye{$numrequ}\" src=\"".$OUTPUT->pix_url("/p/{$hideicon}", 'project')."\" alt=\"collapse\" /></a>";
 } else {
-   $hidedesc = '';
+ $hidedesc = '';
 }
 $head = "<table width='100%' class=\"nodecaption $heavynessclass\"><tr><td align='left' width='70%'><span class=\"level{$requlevel}\">{$checkbox}{$indent}{$hidesub} <a name=\"node{$requirement->id}\"></a>R{$numrequ} - ".format_string($requirement->abstract)."</span></td><td align='right' width='30%'>{$strengthsignal} {$speccount} {$completion} {$hidedesc}</td></tr></table>";
 
@@ -582,7 +582,7 @@ if (!$fullsingle || $fullsingle === 'HEAD'){
 }
 $desc = "<div id='{$numrequ}' class='entitycontent' style='display: {$initialDisplay};'>{$parms}".$description;
 if (!$fullsingle){
-   $desc .= "<br/><a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cmid}&amp;view=view_detail&amp;objectId={$requirement->id}&amp;objectClass=requirement\" >".get_string('seedetail','project')."</a>"; 
+ $desc .= "<br/><a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cmid}&amp;view=view_detail&amp;objectId={$requirement->id}&amp;objectClass=requirement\" >".get_string('seedetail','project')."</a>"; 
 }
 $desc .='</div>';
 
@@ -597,27 +597,27 @@ $table->data[] = array($desc);
 $table->rowclass[] = 'description';
 
 if ($canedit) {
-   $link = array();
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=add&amp;fatherid={$requirement->id}&amp;view=requirements'>
-   <img src='".$OUTPUT->pix_url('/p/newnode', 'project')."' alt=\"".get_string('addsubrequ', 'project')."\" /></a>";
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=update&amp;requid={$requirement->id}&amp;view=requirements'>
-   <img src='".$OUTPUT->pix_url('/t/edit')."' alt=\"".get_string('update')."\" /></a>";
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=delete&amp;requid={$requirement->id}&amp;view=requirements'>
-   <img src='".$OUTPUT->pix_url('/t/delete')."' alt=\"".get_string('delete')."\" /></a>";
-   if ($requirement->ordering > 1)
-      $link[] = "<a href='view.php?id={$cmid}&amp;work=up&amp;requid={$requirement->id}&amp;view=requirements#node{$requirement->id}'>
-  <img src='".$OUTPUT->pix_url('/t/up')."' alt=\"".get_string('up', 'project')."\" /></a>";
-  if ($requirement->ordering < $setSize)
-      $link[] = "<a href='view.php?id={$cmid}&amp;work=down&amp;requid={$requirement->id}&amp;view=requirements#node{$requirement->id}'>
-  <img src='".$OUTPUT->pix_url('/t/down')."' alt=\"".get_string('down', 'project')."\" /></a>";
-  if ($requirement->fatherid != 0)
-      $link[] = "<a href='view.php?id={$cmid}&amp;work=left&amp;requid={$requirement->id}&amp;view=requirements#node{$requirement->id}'>
-  <img src='".$OUTPUT->pix_url('/t/left')."' alt=\"".get_string('left', 'project')."\" /></a>";
-  if ($requirement->ordering > 1)
-      $link[] = "<a href='view.php?id={$cmid}&amp;work=right&amp;requid={$requirement->id}&amp;view=requirements#node{$requirement->id}'>
-  <img src='".$OUTPUT->pix_url('/t/right')."' alt=\"".get_string('right', 'project')."\" /></a>";
-  $table->data[] = array($indent . implode(' ', $link));
-  $table->rowclass[] = 'controls';
+ $link = array();
+ $link[] = "<a href='view.php?id={$cmid}&amp;work=add&amp;fatherid={$requirement->id}&amp;view=requirements'>
+ <img src='".$OUTPUT->pix_url('/p/newnode', 'project')."' alt=\"".get_string('addsubrequ', 'project')."\" /></a>";
+ $link[] = "<a href='view.php?id={$cmid}&amp;work=update&amp;requid={$requirement->id}&amp;view=requirements'>
+ <img src='".$OUTPUT->pix_url('/t/edit')."' alt=\"".get_string('update')."\" /></a>";
+ $link[] = "<a href='view.php?id={$cmid}&amp;work=delete&amp;requid={$requirement->id}&amp;view=requirements'>
+ <img src='".$OUTPUT->pix_url('/t/delete')."' alt=\"".get_string('delete')."\" /></a>";
+ if ($requirement->ordering > 1)
+  $link[] = "<a href='view.php?id={$cmid}&amp;work=up&amp;requid={$requirement->id}&amp;view=requirements#node{$requirement->id}'>
+<img src='".$OUTPUT->pix_url('/t/up')."' alt=\"".get_string('up', 'project')."\" /></a>";
+if ($requirement->ordering < $setSize)
+  $link[] = "<a href='view.php?id={$cmid}&amp;work=down&amp;requid={$requirement->id}&amp;view=requirements#node{$requirement->id}'>
+<img src='".$OUTPUT->pix_url('/t/down')."' alt=\"".get_string('down', 'project')."\" /></a>";
+if ($requirement->fatherid != 0)
+  $link[] = "<a href='view.php?id={$cmid}&amp;work=left&amp;requid={$requirement->id}&amp;view=requirements#node{$requirement->id}'>
+<img src='".$OUTPUT->pix_url('/t/left')."' alt=\"".get_string('left', 'project')."\" /></a>";
+if ($requirement->ordering > 1)
+  $link[] = "<a href='view.php?id={$cmid}&amp;work=right&amp;requid={$requirement->id}&amp;view=requirements#node{$requirement->id}'>
+<img src='".$OUTPUT->pix_url('/t/right')."' alt=\"".get_string('right', 'project')."\" /></a>";
+$table->data[] = array($indent . implode(' ', $link));
+$table->rowclass[] = 'controls';
 }
 
 $table->style = "generaltable";
@@ -643,46 +643,46 @@ function project_print_tasks($project, $group, $fatherid, $cmid, $propagated=nul
 	
 	// get current level task nodes
 	$query = "
-   SELECT 
-   t.*,
-   m.abstract as milestoneabstract,
-   c.collapsed
-   FROM 
-   {project_task} t
-   LEFT JOIN
-   {project_milestone} m
-   ON
-   t.milestoneid = m.id
-   LEFT JOIN
-   {project_collapse} c
-   ON
-   t.id = c.entryid AND
-   c.entity = 'tasks' AND
-   c.userid = $USER->id
-   WHERE 
-   t.groupid = {$group} AND 
-   t.projectid = {$project->id} AND 
-   t.fatherid = {$fatherid}
-   ORDER BY 
-   t.ordering
-   ";
-   if ($tasks = $DB->get_records_sql($query)) {
-      foreach($tasks as $task){
-        echo "<div class=\"nodelevel{$level}\">";
-        $level++;
-        $propagatedroot = $propagated;
-        if ($propagated == null || !isset($propagated->milestoneid) && $task->milestoneid) {
-          $propagatedroot->milestoneid = $task->milestoneid;
-          $propagatedroot->milestoneabstract = $task->milestoneabstract;
-      }
-      else{
-       $task->milestoneid = $propagated->milestoneid;
-       $task->milestoneabstract = $propagated->milestoneabstract;
-       $task->milestoneforced = 1;
-   }
-   if (!@$propagated->collapsed || !$CFG->enablecourseajax || !$CFG->enableajax){
-       project_print_single_task($task, $project, $group, $cmid, count($tasks), false, '');
-   }
+ SELECT 
+ t.*,
+ m.abstract as milestoneabstract,
+ c.collapsed
+ FROM 
+ {project_task} t
+ LEFT JOIN
+ {project_milestone} m
+ ON
+ t.milestoneid = m.id
+ LEFT JOIN
+ {project_collapse} c
+ ON
+ t.id = c.entryid AND
+ c.entity = 'tasks' AND
+ c.userid = $USER->id
+ WHERE 
+ t.groupid = {$group} AND 
+ t.projectid = {$project->id} AND 
+ t.fatherid = {$fatherid}
+ ORDER BY 
+ t.ordering
+ ";
+ if ($tasks = $DB->get_records_sql($query)) {
+  foreach($tasks as $task){
+    echo "<div class=\"nodelevel{$level}\">";
+    $level++;
+    $propagatedroot = $propagated;
+    if ($propagated == null || !isset($propagated->milestoneid) && $task->milestoneid) {
+      $propagatedroot->milestoneid = $task->milestoneid;
+      $propagatedroot->milestoneabstract = $task->milestoneabstract;
+  }
+  else{
+     $task->milestoneid = $propagated->milestoneid;
+     $task->milestoneabstract = $propagated->milestoneabstract;
+     $task->milestoneforced = 1;
+ }
+ if (!@$propagated->collapsed || !$CFG->enablecourseajax || !$CFG->enableajax){
+     project_print_single_task($task, $project, $group, $cmid, count($tasks), false, '');
+ }
 
 			if ($task->collapsed) $propagatedroot->collapsed = true; // give signal for lower branch
           $visibility = ($task->collapsed) ? 'display: none' : 'display: block' ; 
@@ -694,10 +694,10 @@ function project_print_tasks($project, $group, $fatherid, $cmid, $propagated=nul
       }
   } else {
     if ($level == 0){
-       echo $OUTPUT->box_start();
-       print_string('notasks', 'project');
-       echo $OUTPUT->box_end();
-   }
+     echo $OUTPUT->box_start();
+     print_string('notasks', 'project');
+     echo $OUTPUT->box_end();
+ }
 }
 }
 
@@ -728,23 +728,23 @@ function project_print_single_task($task, $project, $group, $cmid, $setSize, $fu
     $hasSlaves = $DB->count_records('project_task_dependency', array('master' => $task->id));
     $taskDependency = "<img src=\"{$CFG->wwwroot}/mod/project/pix/p/task_alone.gif\" title=\"".get_string('taskalone','project')."\" />";
     if ($hasSlaves && $hasMasters){
-     $taskDependency = "<img src=\"".$OUTPUT->pix_url('/p/task_middle', 'project')."\" title=\"".get_string('taskmiddle','project')."\" />";
- } else if ($hasMasters){
-     $taskDependency = "<img src=\"".$OUTPUT->pix_url('/p/task_end', 'project')."\" title=\"".get_string('taskend','project')."\" />";
- } else if ($hasSlaves){
-     $taskDependency = "<img src=\"".$OUTPUT->pix_url('/p/task_start', 'project')."\" title=\"".get_string('taskstart','project')."\" />";
- }
+       $taskDependency = "<img src=\"".$OUTPUT->pix_url('/p/task_middle', 'project')."\" title=\"".get_string('taskmiddle','project')."\" />";
+   } else if ($hasMasters){
+       $taskDependency = "<img src=\"".$OUTPUT->pix_url('/p/task_end', 'project')."\" title=\"".get_string('taskend','project')."\" />";
+   } else if ($hasSlaves){
+       $taskDependency = "<img src=\"".$OUTPUT->pix_url('/p/task_start', 'project')."\" title=\"".get_string('taskstart','project')."\" />";
+   }
 
- $numtask = implode('.', project_tree_get_upper_branch('project_task', $task->id, true, true));
- if (!$fullsingle && !$nocollapse){
-     if (project_count_subs('project_task', $task->id) > 0) {
+   $numtask = implode('.', project_tree_get_upper_branch('project_task', $task->id, true, true));
+   if (!$fullsingle && !$nocollapse){
+       if (project_count_subs('project_task', $task->id) > 0) {
         $ajax = $CFG->enableajax && $CFG->enablecourseajax;
         $hidesub = "<a href=\"javascript:toggle('{$task->id}','sub{$task->id}', '$ajax', '$CFG->wwwroot');\"><img name=\"img{$task->id}\" src=\"".$OUTPUT->pix_url('/p/switch_minus', 'project')."\" alt=\"collapse\" /></a>";
     } else {
         $hidesub = "<img src=\"".$OUTPUT->pix_url('/p/empty', 'project')."\" />";
     }
 } else {
-   $hidesub = '';
+ $hidesub = '';
 }
 
 $tasklevel = count(explode('.', $numtask)) - 1;
@@ -760,31 +760,31 @@ $over = ($task->planned && $task->planned < $task->used) ? floor((($task->used -
         $milestonepix = (isset($task->milestoneforced)) ? 'milestoneforced' : 'milestone' ; 
         $milestone = ($task->milestoneid) ? "<img src=\"".$OUTPUT->pix_url("/p/{$milestonepix}", 'project')."\" title=\"".format_string(@$task->milestoneabstract)."\" />" : '';
         if (!$fullsingle || $fullsingle === 'HEAD'){
-           $hideicon = (!empty($task->description)) ? 'hide' : 'hide_shadow' ;
-           $hidetask = "<a href=\"javascript:toggle_show('{$numtask}','{$numtask}', '{$CFG->wwwroot}');\"><img name=\"eye{$numtask}\" src=\"".$OUTPUT->pix_url("/p/{$hideicon}", 'project')."\" alt=\"collapse\" /></a>";
-       } else {
-           $hidetask = '';
-       }
-       $assigneestr = '';
-       $headdetaillink = '';
-       $timeduestr = '';
-       if (!preg_match('/SHORT_WITHOUT_ASSIGNEE/', $style) && $task->assignee){
-           $assignee = $DB->get_record('user', array('id' => $task->assignee));
-           $assigneestr = "<span class=\"taskassignee\">({$assignee->lastname} {$assignee->firstname})</span>";
-           if ($task->taskendenable) {
-              $tasklate = ($task->taskend < time()) ? 'toolate' : 'futuretime' ;
-              $timeduestr = "<span class=\"$tasklate timedue\">[".userdate($task->taskend)."]</span>";
-          } 
-      } else {
-        $headdetaillink = "<a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cmid}&amp;view=view_detail&amp;objectId={$task->id}&amp;objectClass=task\" ><img src=\"{$CFG->wwwroot}/mod/project/pix/p/hide.gif\" title=\"".get_string('detail', 'project')."\" /></a>";
-    }
+         $hideicon = (!empty($task->description)) ? 'hide' : 'hide_shadow' ;
+         $hidetask = "<a href=\"javascript:toggle_show('{$numtask}','{$numtask}', '{$CFG->wwwroot}');\"><img name=\"eye{$numtask}\" src=\"".$OUTPUT->pix_url("/p/{$hideicon}", 'project')."\" alt=\"collapse\" /></a>";
+     } else {
+         $hidetask = '';
+     }
+     $assigneestr = '';
+     $headdetaillink = '';
+     $timeduestr = '';
+     if (!preg_match('/SHORT_WITHOUT_ASSIGNEE/', $style) && $task->assignee){
+         $assignee = $DB->get_record('user', array('id' => $task->assignee));
+         $assigneestr = "<span class=\"taskassignee\">({$assignee->lastname} {$assignee->firstname})</span>";
+         if ($task->taskendenable) {
+          $tasklate = ($task->taskend < time()) ? 'toolate' : 'futuretime' ;
+          $timeduestr = "<span class=\"$tasklate timedue\">[".userdate($task->taskend)."]</span>";
+      } 
+  } else {
+    $headdetaillink = "<a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cmid}&amp;view=view_detail&amp;objectId={$task->id}&amp;objectClass=task\" ><img src=\"{$CFG->wwwroot}/mod/project/pix/p/hide.gif\" title=\"".get_string('detail', 'project')."\" /></a>";
+}
 
-    $worktypeicon = '';
-    $worktypeoption = project_get_option_by_key('worktype', $project->id, $task->worktype);
-    if ($style == '' || !$style === 'SHORT_WITHOUT_TYPE'){
-     if (file_exists("{$CFG->dirroot}/mod/project/pix/p/".@$worktypeoption->code.".gif")){
-       $worktypeicon = "<img src=\"".$OUTPUT->pix_url("/p/{$worktypeoption->code}", 'project')."\" title=\"".$worktypeoption->label."\" height=\"24\" align=\"middle\" />";
-   }
+$worktypeicon = '';
+$worktypeoption = project_get_option_by_key('worktype', $project->id, $task->worktype);
+if ($style == '' || !$style === 'SHORT_WITHOUT_TYPE'){
+   if (file_exists("{$CFG->dirroot}/mod/project/pix/p/".@$worktypeoption->code.".gif")){
+     $worktypeicon = "<img src=\"".$OUTPUT->pix_url("/p/{$worktypeoption->code}", 'project')."\" title=\"".$worktypeoption->label."\" height=\"24\" align=\"middle\" />";
+ }
 }
 $orderCell = '';
 if (preg_match('/SHORT_WITH_ASSIGNEE_ORDERED/', $style)){
@@ -838,7 +838,7 @@ if (!$fullsingle || $fullsingle === 'HEAD'){
 }
 $desc = "<div id='{$numtask}' class='entitycontent' style='display: {$initialDisplay};'>{$parms}".$description;
 if (!$fullsingle || $fullsingle === 'SHORT' || $fullsingle === 'SHORT_WITHOUT_TYPE'){
-   $desc .= "<br/><a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cmid}&amp;view=view_detail&amp;objectId={$task->id}&amp;objectClass=task\" >".get_string('seedetail','project')."</a></p>"; 
+ $desc .= "<br/><a href=\"{$CFG->wwwroot}/mod/project/view.php?id={$cmid}&amp;view=view_detail&amp;objectId={$task->id}&amp;objectClass=task\" >".get_string('seedetail','project')."</a></p>"; 
 }
 $desc .= "</div>";
 
@@ -853,30 +853,30 @@ $table->data[] = array($desc);
 $table->rowclass[] = 'description';
 
 if ($canedit) {
-   $link = array();
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=add&amp;fatherid={$task->id}&amp;view=tasks'>
-   <img src='".$OUTPUT->pix_url('/p/newnode', 'project')."' title=\"".get_string('addsubtask', 'project')."\" /></a>";
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=update&amp;taskid={$task->id}&amp;view=tasks'>
-   <img src='".$OUTPUT->pix_url('/t/edit')."' title=\"".get_string('updatetask', 'project')."\" /></a>";
-   $templateicon = ($task->id == @$SESSION->project->tasktemplateid) ? $OUTPUT->pix_url('/p/activetemplate', 'project') : $OUTPUT->pix_url('/p/marktemplate', 'project') ;
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=domarkastemplate&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
-   <img src='$templateicon' title=\"".get_string('markastemplate', 'project')."\" /></a>";
-   $link[] = "<a href='view.php?id={$cmid}&amp;work=delete&amp;taskid={$task->id}&amp;view=tasks'>
-   <img src='".$OUTPUT->pix_url('/t/delete')."' title=\"".get_string('deletetask', 'project')."\" /></a>";
-   if ($task->ordering > 1)
-      $link[] = "<a href='view.php?id={$cmid}&amp;work=up&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
-  <img src='".$OUTPUT->pix_url('/t/up')."' title=\"".get_string('up', 'project')."\" /></a>";
-  if ($task->ordering < $setSize)
-      $link[] = "<a href='view.php?id={$cmid}&amp;work=down&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
-  <img src='".$OUTPUT->pix_url('/t/down')."' title=\"".get_string('down', 'project')."\" /></a>";
-  if ($task->fatherid != 0)
-      $link[] = "<a href='view.php?id={$cmid}&amp;work=left&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
-  <img src='".$OUTPUT->pix_url('/t/left')."' title=\"".get_string('left', 'project')."\" /></a>";
-  if ($task->ordering > 1)
-      $link[] = "<a href='view.php?id={$cmid}&amp;work=right&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
-  <img src='".$OUTPUT->pix_url('/t/right')."' title=\"".get_string('right', 'project')."\" /></a>";
-  $table->data[] = array($indent . implode(' ', $link));
-  $table->rowclass[] = 'controls';
+ $link = array();
+ $link[] = "<a href='view.php?id={$cmid}&amp;work=add&amp;fatherid={$task->id}&amp;view=tasks'>
+ <img src='".$OUTPUT->pix_url('/p/newnode', 'project')."' title=\"".get_string('addsubtask', 'project')."\" /></a>";
+ $link[] = "<a href='view.php?id={$cmid}&amp;work=update&amp;taskid={$task->id}&amp;view=tasks'>
+ <img src='".$OUTPUT->pix_url('/t/edit')."' title=\"".get_string('updatetask', 'project')."\" /></a>";
+ $templateicon = ($task->id == @$SESSION->project->tasktemplateid) ? $OUTPUT->pix_url('/p/activetemplate', 'project') : $OUTPUT->pix_url('/p/marktemplate', 'project') ;
+ $link[] = "<a href='view.php?id={$cmid}&amp;work=domarkastemplate&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
+ <img src='$templateicon' title=\"".get_string('markastemplate', 'project')."\" /></a>";
+ $link[] = "<a href='view.php?id={$cmid}&amp;work=delete&amp;taskid={$task->id}&amp;view=tasks'>
+ <img src='".$OUTPUT->pix_url('/t/delete')."' title=\"".get_string('deletetask', 'project')."\" /></a>";
+ if ($task->ordering > 1)
+  $link[] = "<a href='view.php?id={$cmid}&amp;work=up&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
+<img src='".$OUTPUT->pix_url('/t/up')."' title=\"".get_string('up', 'project')."\" /></a>";
+if ($task->ordering < $setSize)
+  $link[] = "<a href='view.php?id={$cmid}&amp;work=down&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
+<img src='".$OUTPUT->pix_url('/t/down')."' title=\"".get_string('down', 'project')."\" /></a>";
+if ($task->fatherid != 0)
+  $link[] = "<a href='view.php?id={$cmid}&amp;work=left&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
+<img src='".$OUTPUT->pix_url('/t/left')."' title=\"".get_string('left', 'project')."\" /></a>";
+if ($task->ordering > 1)
+  $link[] = "<a href='view.php?id={$cmid}&amp;work=right&amp;taskid={$task->id}&amp;view=tasks#node{$task->id}'>
+<img src='".$OUTPUT->pix_url('/t/right')."' title=\"".get_string('right', 'project')."\" /></a>";
+$table->data[] = array($indent . implode(' ', $link));
+$table->rowclass[] = 'controls';
 }
 
 $table->style = "generaltable";
@@ -1027,7 +1027,7 @@ if(count($ressources)>0){
 			$abstract = $ressource->abstract;
 		}
 		*/
-        $abstract= "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$ressource->id}&amp;view=deliverables\">".$ressource->abstract."</a>";
+        $abstract= "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$ressource->id}&amp;view=deliverables&amp;typeelm=0\">".$ressource->abstract."</a>";
         echo "<td>".$abstract."</td></tr>";
     }
 }else{
@@ -1044,7 +1044,7 @@ if(count($deliverables)>0){
             echo "<tr><td>Livrables&nbsp;:</td>";
             $j=1;
         }
-        $abstract= "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$deliverable->id}&amp;view=deliverables\">".$deliverable->abstract."</a>";
+        $abstract= "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$deliverable->id}&amp;view=deliverables&amp;typeelm=1\">".$deliverable->abstract."</a>";
         echo "<td>".$abstract."</td></tr>";
     }
     echo "<tr><td colspan='2'></td></tr>";
@@ -1066,7 +1066,8 @@ if(!empty($files)){
         $path = '/'.$context->id.'/mod_project/deliverablearchive/'.$file->get_itemid().$file->get_filepath().$file->get_filename();
         $url = moodle_url::make_file_url('/pluginfile.php', $path, '');
         $lienArchive = html_writer::link($url, $file->get_filename());
-        echo "<td>".$lienArchive."</td></tr>";
+        echo "<td>".$lienArchive."</td></tr>"; 
+        
     }
 }
 
@@ -1259,12 +1260,12 @@ function project_print_single_deliverable($deliverable, $project, $group, $cmid,
         $taskcount = project_print_entitycount('project_deliverable', 'project_task_to_deliv', $project->id, $group, 'deliv', 'task', $deliverable->id);
         $checkbox = ($canedit) ? "<input type=\"checkbox\" name=\"ids[]\" value=\"{$deliverable->id}\" />" : '' ;
         if (!$fullsingle){
-           $hideicon = (!empty($deliverable->description)) ? 'hide' : 'hide_shadow' ;
+         $hideicon = (!empty($deliverable->description)) ? 'hide' : 'hide_shadow' ;
 	        //$hidedeliv = "<a href=\"javascript:toggle_show('{$numdeliv}','{$numdeliv}', '$CFG->wwwroot');\"><img name=\"eye{$numdeliv}\" src=\"".$OUTPUT->pix_url("/p/{$hideicon}", 'project')."\" alt=\"collapse\" /></a>";
-           $hidedeliv = '';
-       } else {
-           $hidedeliv = '';
-       }
+         $hidedeliv = '';
+     } else {
+         $hidedeliv = '';
+     }
 	/*
 	if ($deliverable->localfile){
 		$fs = get_file_storage();
@@ -1331,14 +1332,14 @@ function project_print_single_deliverable($deliverable, $project, $group, $cmid,
 	$table->rowclass[] = 'description';
 	*/
 	if ($canedit) {
-     $link = array();
+       $link = array();
 		/*$link[] = "<a href=\"view.php?id={$cmid}&amp;work=add&amp;fatherid={$deliverable->id}&amp;view=deliverables\">
-     <img src=\"".$OUTPUT->pix_url('/p/newnode', 'project')."\" alt=\"".get_string('addsubdeliv', 'project')."\" /></a>";*/
-     $link[] = "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$deliverable->id}&amp;view=".$stringelm."&amp;typeelm=".$typeelm."\">
-     <img src=\"".$OUTPUT->pix_url('/t/edit')."\" alt=\"".get_string('update')."\" /></a>";
-     $link[] = "<p style=\"cursor:pointer;display:inline;\" onclick=\"javascript:var r=confirm('Etes vous sure de vouloir supprimer ".addslashes($deliverable->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=delete&amp;delivid={$deliverable->id}&amp;view=".$stringelm."';}\"><img src=\"".$OUTPUT->pix_url('/t/delete')."\" alt=\"".get_string('delete')."\" /></p>";
+       <img src=\"".$OUTPUT->pix_url('/p/newnode', 'project')."\" alt=\"".get_string('addsubdeliv', 'project')."\" /></a>";*/
+       $link[] = "<a href=\"view.php?id={$cmid}&amp;work=update&amp;delivid={$deliverable->id}&amp;view=".$stringelm."&amp;typeelm=".$typeelm."\">
+       <img src=\"".$OUTPUT->pix_url('/t/edit')."\" alt=\"".get_string('update')."\" /></a>";
+       $link[] = "<p style=\"cursor:pointer;display:inline;\" onclick=\"javascript:var r=confirm('Etes vous sure de vouloir supprimer ".addslashes($deliverable->abstract)." ?');if (r==true){window.location.href='view.php?id={$cmid}&amp;work=delete&amp;delivid={$deliverable->id}&amp;view=".$stringelm."';}\"><img src=\"".$OUTPUT->pix_url('/t/delete')."\" alt=\"".get_string('delete')."\" /></p>";
 		/*$link[] = "<a href=\"view.php?id={$cmid}&amp;work=delete&amp;delivid={$deliverable->id}&amp;view=deliverables\">
-     <img src=\"".$OUTPUT->pix_url('/t/delete')."\" alt=\"".get_string('delete')."\" /></a>";*/
+       <img src=\"".$OUTPUT->pix_url('/t/delete')."\" alt=\"".get_string('delete')."\" /></a>";*/
 		/*
 		if ($deliverable->ordering > 1)
 		        $link[] = "<a href=\"view.php?id={$cmid}&amp;work=up&amp;delivid={$deliverable->id}&amp;view=deliverables#node{$deliverable->id}\">
@@ -1351,20 +1352,20 @@ function project_print_single_deliverable($deliverable, $project, $group, $cmid,
 				 <img src=\"".$OUTPUT->pix_url('/t/left')."\" alt=\"".get_string('left', 'project')."\" /></a>";
 		if ($deliverable->ordering > 1)
 		        $link[] = "<a href=\"view.php?id={$cmid}&amp;work=right&amp;delivid={$deliverable->id}&amp;view=deliverables#node{$deliverable->id}\">
-             <img src=\"".$OUTPUT->pix_url('/t/right')."\" alt=\"".get_string('right', 'project')."\" /></a>";*/
+               <img src=\"".$OUTPUT->pix_url('/t/right')."\" alt=\"".get_string('right', 'project')."\" /></a>";*/
 		//$table->data[] = array($indent . implode (' ' , $link));
 	     // $table->rowclass[] = 'controls';
-             $customTable .= "<tr><td>".implode (' ' , $link)."</td></tr>";
-         }
-         $customTable .= "</table>";
-         echo $customTable;
+               $customTable .= "<tr><td>".implode (' ' , $link)."</td></tr>";
+           }
+           $customTable .= "</table>";
+           echo $customTable;
 
 
 
 	//$table->style = "generaltable";
 	//project_print_project_table($table);
 	//unset($table);
-     }
+       }
 
 /**
 * prints the heading section of the project
@@ -1379,22 +1380,22 @@ function project_print_heading(&$project, $group){
 
         // if missing create one
   if (!$projectheading){
-     $projectheading = new StdClass;
-     $projectheading->id = 0;
-     $projectheading->projectid = $project->id;
-     $projectheading->groupid = $group;
-     $projectheading->title = '';
-     $projectheading->abstract = '';
-     $projectheading->rationale = '';
-     $projectheading->environment = '';
-     $projectheading->organisation = '';
-     $projectheading->department = '';                
-     $DB->insert_record('project_heading', $projectheading);
- }
+   $projectheading = new StdClass;
+   $projectheading->id = 0;
+   $projectheading->projectid = $project->id;
+   $projectheading->groupid = $group;
+   $projectheading->title = '';
+   $projectheading->abstract = '';
+   $projectheading->rationale = '';
+   $projectheading->environment = '';
+   $projectheading->organisation = '';
+   $projectheading->department = '';                
+   $DB->insert_record('project_heading', $projectheading);
+}
         //echo $OUTPUT->heading(get_string('projectis', 'project') . $projectheading->title);
- echo '<br/>';
- echo $OUTPUT->box_start('center', '100%');
- if ($projectheading->organisation != ''){
+echo '<br/>';
+echo $OUTPUT->box_start('center', '100%');
+if ($projectheading->organisation != ''){
   echo $OUTPUT->heading(format_string($projectheading->organisation), 3);
   echo $OUTPUT->heading(format_string($projectheading->department), 4);
 }
@@ -1479,11 +1480,11 @@ if (!$option = $DB->get_record('project_qualifier', array('domain' => $domain, '
     if ($option = $DB->get_record('project_qualifier', array('domain' => $domain, 'projectid' => 0, 'code' => $value))){
       getLocalized($option);
   } else {
-   $option->id = 0;
-   $option->truelabel = 'default';
-   $option->label = get_string('unqualified', 'project');
-   $option->description = '';
-}
+     $option->id = 0;
+     $option->truelabel = 'default';
+     $option->label = get_string('unqualified', 'project');
+     $option->description = '';
+ }
 }
 return $option;
 }
@@ -1551,51 +1552,51 @@ function project_print_entitycount($table1, $table2, $projectid, $groupid, $what
 
         // get concerned subtree if not provided
   if (!isset($whatList) || empty($whatList)){
-     $whatList = str_replace(",", "','", project_get_subtree_list($table1, $id));
- }
+   $whatList = str_replace(",", "','", project_get_subtree_list($table1, $id));
+}
 
 	// assigned reqs by subspecs count
- $query = "
- SELECT 
- COUNT(*) as subs
- FROM
- {{$table2}}
- WHERE
- {$what}id IN ('{$whatList}') AND
- projectid = {$projectid} AND
- groupid = {$groupid}
- ";
- $res = $DB->get_record_sql($query);
- $subcount = "[" . $res->subs . "]";
+$query = "
+SELECT 
+COUNT(*) as subs
+FROM
+{{$table2}}
+WHERE
+{$what}id IN ('{$whatList}') AND
+projectid = {$projectid} AND
+groupid = {$groupid}
+";
+$res = $DB->get_record_sql($query);
+$subcount = "[" . $res->subs . "]";
 
 	// directly assigned reqs count (must count separately)
- $query = "
- SELECT
- COUNT(t2.{$relwhat}Id) as subs
- FROM
- {{$table1}} AS t1
- LEFT JOIN
- {{$table2}} AS t2
- ON
- t1.id = t2.{$what}Id
- WHERE 
- t1.groupid = {$groupid} AND 
- t1.projectid = {$projectid} AND 
- t1.id = {$id}
- GROUP BY 
- t1.id
- ";
- $res = $DB->get_record_sql($query);
- if (!$res) 
-     $res->subs = 0;
- else
-     $res->subs += 0;
- if ($res->subs > 0 || $subcount > 0){
-     $output = "<img src=\"{$CFG->wwwroot}/mod/project/pix/p/{$relwhat}.gif\" title=\"".get_string('bounditems', 'project', $relwhat)."\" />(".$res->subs."){$subcount}";
- } else {
-     $output = '';
- }
- return $output;
+$query = "
+SELECT
+COUNT(t2.{$relwhat}Id) as subs
+FROM
+{{$table1}} AS t1
+LEFT JOIN
+{{$table2}} AS t2
+ON
+t1.id = t2.{$what}Id
+WHERE 
+t1.groupid = {$groupid} AND 
+t1.projectid = {$projectid} AND 
+t1.id = {$id}
+GROUP BY 
+t1.id
+";
+$res = $DB->get_record_sql($query);
+if (!$res) 
+   $res->subs = 0;
+else
+   $res->subs += 0;
+if ($res->subs > 0 || $subcount > 0){
+   $output = "<img src=\"{$CFG->wwwroot}/mod/project/pix/p/{$relwhat}.gif\" title=\"".get_string('bounditems', 'project', $relwhat)."\" />(".$res->subs."){$subcount}";
+} else {
+   $output = '';
+}
+return $output;
 }
 
 /**
@@ -1912,14 +1913,14 @@ function project_get_users_not_in_group($courseid){
   if ($users){
     if ($groups = groups_get_all_groups($courseid)){
       foreach($groups as $aGroup){
-         if ($aGroup->id == 0) continue;
-         $groupset = groups_get_members($aGroup->id);
-         if ($groupset){
-            foreach(array_keys($groupset) as $userid){
-               unset($users[$userid]);
-           }
-       }
-   }
+       if ($aGroup->id == 0) continue;
+       $groupset = groups_get_members($aGroup->id);
+       if ($groupset){
+        foreach(array_keys($groupset) as $userid){
+         unset($users[$userid]);
+     }
+ }
+}
 }
 }
 return $users;
@@ -2008,7 +2009,7 @@ $xmlspecs = recordstoxml($specifications, 'specification', $xmlpriorities.$xmlse
         // getting tasks
 project_tree_get_tree('project_task', $project->id, $groupid, $tasks, 0);
 if (!empty($tasks)){
- foreach($tasks as $taskid => $task){
+   foreach($tasks as $taskid => $task){
     $tasks[$taskid]->taskstart = ($task->taskstart) ? usertime($task->taskstart) : 0 ;
     $tasks[$taskid]->taskend = ($task->taskend) ? usertime($task->taskend) : 0 ;
 }
@@ -2156,30 +2157,30 @@ function project_print_validations($project, $groupid, $fatherid, $cmid){
       $validationsessions[$sessid]->states = $DB->get_records('project_valid_state', array('validationsessionid' => $session->id), '', 'reqid,status,comment');
       $validationcaption = '&lt;'.userdate($session->datecreated).'&gt;';
       if (has_capability('mod/project:managevalidations', context_module::instance($cmid))){
-         $validationcaption .= " <a href=\"{$CFG->wwwroot}/mod/project/view.php?id=$cmid&view=validations&work=dodelete&validid={$sessid}\">$deletestr</a>";
-     }
-     if ($session->dateclosed == 0){
-         if (has_capability('mod/project:managevalidations', context_module::instance($cmid))){
-            $validationcaption .= " <a href=\"{$CFG->wwwroot}/mod/project/view.php?id=$cmid&view=validations&work=close&validid={$sessid}\">$closestr</a>";
-        }
-        if (has_capability('mod/project:validate', context_module::instance($cmid))){
-            $validationcaption .= " <a href=\"{$CFG->wwwroot}/mod/project/view.php?id=$cmid&view=validation&validid={$sessid}\">$updatestr</a>";
-        }
+       $validationcaption .= " <a href=\"{$CFG->wwwroot}/mod/project/view.php?id=$cmid&view=validations&work=dodelete&validid={$sessid}\">$deletestr</a>";
+   }
+   if ($session->dateclosed == 0){
+       if (has_capability('mod/project:managevalidations', context_module::instance($cmid))){
+        $validationcaption .= " <a href=\"{$CFG->wwwroot}/mod/project/view.php?id=$cmid&view=validations&work=close&validid={$sessid}\">$closestr</a>";
     }
-    $validationcaptions .= "<td>$validationcaption</td>";
+    if (has_capability('mod/project:validate', context_module::instance($cmid))){
+        $validationcaption .= " <a href=\"{$CFG->wwwroot}/mod/project/view.php?id=$cmid&view=validation&validid={$sessid}\">$updatestr</a>";
+    }
+}
+$validationcaptions .= "<td>$validationcaption</td>";
 }
 if ($level == 0){
- $caption = "<table width='100%' class=\"validations\"><tr><td align='left' width='50%'></td>$validationcaptions</tr></table>";
- echo $caption;
+   $caption = "<table width='100%' class=\"validations\"><tr><td align='left' width='50%'></td>$validationcaptions</tr></table>";
+   echo $caption;
 }
 if (!empty($project->projectusesrequs)){
- $entityname = 'requirement';
+   $entityname = 'requirement';
 } elseif (!empty($project->projectusesspecs)){
- $entityname = 'specification';
+   $entityname = 'specification';
 } elseif (!empty($project->projectusesdelivs)) {
- $entityname = 'deliverable';
+   $entityname = 'deliverable';
 } else {
- print_error('errornovalidatingentity', 'project');
+   print_error('errornovalidatingentity', 'project');
 }
 $query = "
 SELECT 
@@ -2203,20 +2204,20 @@ ORDER BY
 ordering
 ";
 if ($entities = $DB->get_records_sql($query)) {
- $i = 1;
- foreach($entities as $entity){
-   echo "<div class=\"nodelevel{$level}\">";
-   $level++;
-   project_print_single_entity_validation($validationsessions, $entity, $project, $groupid, $cmid, count($entities), $entityname);
-   $visibility = ($entity->collapsed) ? 'display: none' : 'display: block' ; 
-   echo "<div id=\"sub{$entity->id}\" class=\"treenode\" style=\"$visibility\" >";
-   project_print_validations($project, $groupid, $entity->id, $cmid);
-   echo "</div>";
-   $level--;
-   echo "</div>";
-}
+   $i = 1;
+   foreach($entities as $entity){
+     echo "<div class=\"nodelevel{$level}\">";
+     $level++;
+     project_print_single_entity_validation($validationsessions, $entity, $project, $groupid, $cmid, count($entities), $entityname);
+     $visibility = ($entity->collapsed) ? 'display: none' : 'display: block' ; 
+     echo "<div id=\"sub{$entity->id}\" class=\"treenode\" style=\"$visibility\" >";
+     project_print_validations($project, $groupid, $entity->id, $cmid);
+     echo "</div>";
+     $level--;
+     echo "</div>";
+ }
 } else {
- if ($level == 0){
+   if ($level == 0){
     echo $OUTPUT->box_start();
     print_string('emptyproject', 'project');
     echo $OUTPUT->box_end();
@@ -2224,10 +2225,10 @@ if ($entities = $DB->get_records_sql($query)) {
 }
 } else {
   if ($level == 0){
-     echo $OUTPUT->box_start();
-     print_string('novalidationsession', 'project');
-     echo $OUTPUT->box_end();
- }
+   echo $OUTPUT->box_start();
+   print_string('novalidationsession', 'project');
+   echo $OUTPUT->box_end();
+}
 }
 }
 
@@ -2261,21 +2262,21 @@ $indent = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $level);
 $validationcells = '';
 foreach($validationsessions as $session){
     if (!isset($session->states[$entity->id])){
-       $newstate->projectid = $project->id;
-       $newstate->reqid = $entity->id;
-       $newstate->groupid = $group;
-       $newstate->validationsessionid = $session->id;
-       $newstate->validatorid = $USER->id;
-       $newstate->lastchangeddate = time();
-       $newstate->status = 'UNTRACKED';
-       $newstate->comment = '';
-       $stateid = $DB->insert_record('project_valid_state', $newstate);
-       $session->states[$entity->id] = $newstate;
-   }
-   $colwidth = floor(50 / count($validationsessions));
-   $validationcells .= '<td width="'.$colwidth.'%" class="validationrowbordered '.$classswitch.' validation-'.$session->states[$entity->id]->status.'">';
-   $validationcells .= '<span title="'.$session->states[$entity->id]->comment.'">'.get_string(strtolower($session->states[$entity->id]->status), 'project').'</span>';
-   $validationcells .= '</td>';
+     $newstate->projectid = $project->id;
+     $newstate->reqid = $entity->id;
+     $newstate->groupid = $group;
+     $newstate->validationsessionid = $session->id;
+     $newstate->validatorid = $USER->id;
+     $newstate->lastchangeddate = time();
+     $newstate->status = 'UNTRACKED';
+     $newstate->comment = '';
+     $stateid = $DB->insert_record('project_valid_state', $newstate);
+     $session->states[$entity->id] = $newstate;
+ }
+ $colwidth = floor(50 / count($validationsessions));
+ $validationcells .= '<td width="'.$colwidth.'%" class="validationrowbordered '.$classswitch.' validation-'.$session->states[$entity->id]->status.'">';
+ $validationcells .= '<span title="'.$session->states[$entity->id]->comment.'">'.get_string(strtolower($session->states[$entity->id]->status), 'project').'</span>';
+ $validationcells .= '</td>';
 }
 
 $entitymark = strtoupper(substr($entityname, 0, 1));
@@ -2328,26 +2329,26 @@ function project_print_validation_states_form($validsessid, &$project, $groupid,
   ordering
   ";
   if ($states = $DB->get_records_sql($sql)){
-     echo "<form name=\"statesform\" action=\"#\" method=\"POST\" >";
-     $i = 1;
-     foreach($states as $state){
-        echo "<div class=\"nodelevel{$level}\">";
-        $level++;
-        project_print_single_validation_form($state, $entityname);
+   echo "<form name=\"statesform\" action=\"#\" method=\"POST\" >";
+   $i = 1;
+   foreach($states as $state){
+    echo "<div class=\"nodelevel{$level}\">";
+    $level++;
+    project_print_single_validation_form($state, $entityname);
 
-        $visibility = ($state->collapsed) ? 'display: none' : 'display: block' ; 
-        echo "<div id=\"sub{$state->reqid}\" class=\"treenode\" style=\"$visibility\" >";
-        project_print_validation_states_form($validsessid, $project, $groupid, $state->reqid, $cmid);
-        echo "</div>";
-        $level--;
-        echo "</div>";
-    }
+    $visibility = ($state->collapsed) ? 'display: none' : 'display: block' ; 
+    echo "<div id=\"sub{$state->reqid}\" class=\"treenode\" style=\"$visibility\" >";
+    project_print_validation_states_form($validsessid, $project, $groupid, $state->reqid, $cmid);
+    echo "</div>";
+    $level--;
+    echo "</div>";
+}
 
-    if ($level == 0){
-     $updatestr = get_string('update');
-     echo "<center><input type=\"submit\" name=\"go_btn\" value=\"$updatestr\" >";
-     echo "</form>";
- }
+if ($level == 0){
+   $updatestr = get_string('update');
+   echo "<center><input type=\"submit\" name=\"go_btn\" value=\"$updatestr\" >";
+   echo "</form>";
+}
 }
 }
 
@@ -2481,101 +2482,101 @@ return $control;
 }
 
 function project_check_startup_level($entity, $fatherid, &$level, &$startuplevelcheck){
-   global $DB;
+ global $DB;
 
-   if (!$startuplevelcheck){
-      if (!$fatherid){
-         $level = 0;
-     } else {
-         $level = 1;
-         $rec->fatherid = $fatherid;
-         while($rec->fatherid){
-            $rec = $DB->get_record('project_'.$entity, array('id' => $rec->fatherid), 'id, fatherid');
-            $level++;
-        }
-    }
-    $startuplevelcheck = true;
+ if (!$startuplevelcheck){
+  if (!$fatherid){
+   $level = 0;
+} else {
+   $level = 1;
+   $rec->fatherid = $fatherid;
+   while($rec->fatherid){
+    $rec = $DB->get_record('project_'.$entity, array('id' => $rec->fatherid), 'id, fatherid');
+    $level++;
+}
+}
+$startuplevelcheck = true;
 }
 }
 
 function project_print_localfile($deliverable, $cmid, $type=NULL, $align="left") {
-   global $CFG, $DB, $OUTPUT;
+ global $CFG, $DB, $OUTPUT;
 
-   if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
-     return '';
- }
+ if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
+   return '';
+}
 
- $fs = get_file_storage();
+$fs = get_file_storage();
 
- $imagereturn = '';
- $output = '';
+$imagereturn = '';
+$output = '';
 
- if ($files = $fs->get_area_files($context->id, 'mod_project', 'localfile', $deliverable->id, "timemodified", false)) {
-     foreach ($files as $file) {
-       $filename = $file->get_filename();
-       $mimetype = $file->get_mimetype();
-       $iconimage = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />';
-       $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/mod_project/localfile/'.$deliverable->id.'/'.$filename);
+if ($files = $fs->get_area_files($context->id, 'mod_project', 'localfile', $deliverable->id, "timemodified", false)) {
+   foreach ($files as $file) {
+     $filename = $file->get_filename();
+     $mimetype = $file->get_mimetype();
+     $iconimage = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />';
+     $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/mod_project/localfile/'.$deliverable->id.'/'.$filename);
 
-       if ($type == 'html') {
-         $output .= "<a href=\"$path\">$iconimage</a> ";
-         $output .= "<a href=\"$path\">".s($filename)."</a>";
-         $output .= "<br />";
+     if ($type == 'html') {
+       $output .= "<a href=\"$path\">$iconimage</a> ";
+       $output .= "<a href=\"$path\">".s($filename)."</a>";
+       $output .= "<br />";
 
-     } else if ($type == 'text') {
-         $output .= "$strattachment ".s($filename).":\n$path\n";
+   } else if ($type == 'text') {
+       $output .= "$strattachment ".s($filename).":\n$path\n";
 
-     } else {
-         if (in_array($mimetype, array('image/gif', 'image/jpeg', 'image/png'))) {
+   } else {
+       if (in_array($mimetype, array('image/gif', 'image/jpeg', 'image/png'))) {
 	                                        // Image attachments don't get printed as links
-           $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
-       } else {
-           $output .= "<a href=\"$path\">$iconimage</a> ";
-           $output .= format_text("<a href=\"$path\">".s($filename)."</a>", FORMAT_HTML, array('context'=>$context));
-           $output .= '<br />';
-       }
-   }
+         $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
+     } else {
+         $output .= "<a href=\"$path\">$iconimage</a> ";
+         $output .= format_text("<a href=\"$path\">".s($filename)."</a>", FORMAT_HTML, array('context'=>$context));
+         $output .= '<br />';
+     }
+ }
 }
 }
 
 if ($type) {
- return $output;
+   return $output;
 } else {
- echo $output;
- return $imagereturn;
+   echo $output;
+   return $imagereturn;
 }
 }
 function project_print_messages($project, $group, $cmid, $parent, $propagated=null){
-   global $CFG, $USER, $DB, $OUTPUT;
-   echo "<h2>".get_string('disculiste','project')."</h2>";
-   $query = "
-   SELECT 
-   d.*
-   FROM 
-   {project_messages} as d
-   WHERE 
-   d.groupid = {$group} AND 
-   d.projectid = {$project->id} AND 
-   d.parent = {$parent}
-   ORDER BY 
-   d.ordering
-   ";	
+ global $CFG, $USER, $DB, $OUTPUT;
+ echo "<h2>".get_string('disculiste','project')."</h2>";
+ $query = "
+ SELECT 
+ d.*
+ FROM 
+ {project_messages} as d
+ WHERE 
+ d.groupid = {$group} AND 
+ d.projectid = {$project->id} AND 
+ d.parent = {$parent}
+ ORDER BY 
+ d.ordering
+ ";	
 
-   if ($discussions = $DB->get_records_sql($query)) {
-      echo "<table width='100%' id='recapediscu'>
-      <thead>
-      <tr>
-      <th class='header'>".get_string('discu','project')."</th>
-      <th class='header' colspan='2'>".get_string('discupar','project')."</th>
-      <th class='header'>".get_string('nbreponse','project')."</th>
-      <th class='header'>".get_string('derniermessage','project')."</th>
-      </tr>
-      </thead>";
-      foreach($discussions as $discussion){
+ if ($discussions = $DB->get_records_sql($query)) {
+  echo "<table width='100%' id='recapediscu'>
+  <thead>
+  <tr>
+  <th class='header'>".get_string('discu','project')."</th>
+  <th class='header' colspan='2'>".get_string('discupar','project')."</th>
+  <th class='header'>".get_string('nbreponse','project')."</th>
+  <th class='header'>".get_string('derniermessage','project')."</th>
+  </tr>
+  </thead>";
+  foreach($discussions as $discussion){
 		//affichages des discussions 
-        project_print_single_message($discussion, $project, $group, $cmid, count($discussions));
-    }
-    echo "</table>";
+    project_print_single_message($discussion, $project, $group, $cmid, count($discussions));
+}
+echo "</table>";
 } else {
   echo "<p>".get_string('nodiscu','project')."</p>";
 }
@@ -2588,16 +2589,16 @@ function project_print_single_message($discussion, $project, $group, $cmid, $set
     $context = context_module::instance($cmid);
 	$affDiscuName = "<a href=\"view.php?id={$cmid}&amp;work=add&amp;parent={$discussion->id}&amp;view=messages\">".$discussion->abstract."</a>";//Nom de la discussion
 	$query = "
-   SELECT 
-   count(*) as count
-   FROM 
-   {project_messages}
-   WHERE 
-   parent = {$discussion->id}
-   ";	
+ SELECT 
+ count(*) as count
+ FROM 
+ {project_messages}
+ WHERE 
+ parent = {$discussion->id}
+ ";	
 
-   $nbRep = $DB->get_records_sql($query);
-   $nbReponse = array_pop($nbRep)->count;
+ $nbRep = $DB->get_records_sql($query);
+ $nbReponse = array_pop($nbRep)->count;
 	$affNbReponse = "<a href='view.php?id={$cmid}&amp;work=add&amp;parent={$discussion->id}&amp;view=messages'>".$nbReponse."</a>";//Nombre de réponse à la discussion
 	
 	$userCreator = $DB->get_record('user', array('id' => $discussion->userid));
@@ -2612,24 +2613,24 @@ function project_print_single_message($discussion, $project, $group, $cmid, $set
 	if($nbReponse>0){
 		$query = "
 		SELECT 
-     d.*
-     FROM 
-     {project_messages} as d
-     WHERE 
-     d.groupid = {$group} AND 
-     d.projectid = {$project->id} AND 
-     d.parent = {$discussion->id}
-     ORDER BY 
-     d.modified
-     ";
-     if ($messages = $DB->get_records_sql($query)) {
-       $lastMessage= array_pop($messages);
-       $userCreator = $DB->get_record('user', array('id' => $lastMessage->userid));
-       $affDerMessage = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$lastMessage->userid.'">'.
-       fullname($userCreator, has_capability('moodle/site:viewfullnames', $context)).'</a><br />';
-       $affDerMessage .= "<a href='view.php?id={$cmid}&amp;work=add&amp;parent={$discussion->id}&amp;view=messages'>".userdate($lastMessage->modified, $dateType)."</a>";
-   }
-}else{
+       d.*
+       FROM 
+       {project_messages} as d
+       WHERE 
+       d.groupid = {$group} AND 
+       d.projectid = {$project->id} AND 
+       d.parent = {$discussion->id}
+       ORDER BY 
+       d.modified
+       ";
+       if ($messages = $DB->get_records_sql($query)) {
+         $lastMessage= array_pop($messages);
+         $userCreator = $DB->get_record('user', array('id' => $lastMessage->userid));
+         $affDerMessage = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$lastMessage->userid.'">'.
+         fullname($userCreator, has_capability('moodle/site:viewfullnames', $context)).'</a><br />';
+         $affDerMessage .= "<a href='view.php?id={$cmid}&amp;work=add&amp;parent={$discussion->id}&amp;view=messages'>".userdate($lastMessage->modified, $dateType)."</a>";
+     }
+ }else{
   $affDerMessage = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$discussion->userid.'">'.
   fullname($userCreator, has_capability('moodle/site:viewfullnames', $context)).'</a><br />';
   $affDerMessage .= "<a href='view.php?id={$cmid}&amp;work=add&amp;parent={$discussion->id}&amp;view=messages'>".userdate($discussion->modified, $dateType)."</a>";
