@@ -50,7 +50,7 @@ if ($data = $mform->get_data()){
         //si c'est un livrable et qu'on peut éditer ==> c'est un type enseignant
         $data->descriptionformat = $data->description_editor['format'];
         $data->description = $data->description_editor['text'];
-            // editors pre save processing
+        // editors pre save processing
         $draftid_editor = file_get_submitted_draft_itemid('description_editor');
         $data->description = file_save_draft_area_files($draftid_editor, $context->id, 'mod_project', 'deliverabledescription', $data->id, array('subdirs' => true), $data->description);
         $data = file_postupdate_standard_editor($data, 'description', $mform->descriptionoptions, $context, 'mod_project', 'deliverabledescription', $data->id);
@@ -85,9 +85,11 @@ if ($data = $mform->get_data()){
     
     if ($data->delivid) {
     //cas d'une edition
-        $data->id = $data->delivid; // id is course module id
+        $data->id = $data->delivid; 
+        // id is course module id
         $DB->update_record('project_deliverable', $data);
-        $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);// <== on fait le lien entre le fichier et la ressource/livrable par l'id de la ressource/livrable qui est en tant qu'itemid dans la table _files
+        //on fait le lien entre le fichier et la ressource/livrable par l'id de la ressource/livrable qui est en tant qu'itemid dans la table _files
+        $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);
         //add_to_log($course->id, 'project', 'changedeliverable', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'update', $cm->id);
         $DB->update_record('project_deliverable', $data);
         /*
@@ -110,25 +112,27 @@ if ($data = $mform->get_data()){
     else {
         $data->created = time();
         $data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_deliverable', true, $data->fatherid) + 1;
-            unset($data->id); // id is course module id
-            if ($data->groupid == 0 && $groupmode != NOGROUPS) {
-                $groups = groups_get_all_groups($COURSE->id);
-                //this is a bit hacky and hazardous thing to do, sorry, but i see no other way to do it.
-                $originalmilestone = $DB->get_record('project_milestone', array('id' => $data->milestoneid));
-                foreach ($groups as $group) {
-                    $thegoodmilestone = $DB->get_record('project_milestone', array('projectid' => $originalmilestone->projectid, 'groupid' => $group->id, 'created'=>$originalmilestone->created));
-                    $data->groupid = $group->id;
-                    $data->milestoneid = $thegoodmilestone->id;
-                    $data->id = $DB->insert_record('project_deliverable', $data);
-                    $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);
-                    $DB->update_record('project_deliverable', $data);
-                }
-            }
-            else{
+        unset($data->id); 
+        // id is course module id
+        if ($data->groupid == 0 && $groupmode != NOGROUPS) {
+            $groups = groups_get_all_groups($COURSE->id);
+            //i get the group 0 milestone, allowing me to use it's param to select the good milestone for each group to assign the deliverable to
+            $originalmilestone = $DB->get_record('project_milestone', array('id' => $data->milestoneid));
+            foreach ($groups as $group) {
+                //this is the milestone that will 'recieve' the deliverable
+                $thegoodmilestone = $DB->get_record('project_milestone', array('projectid' => $originalmilestone->projectid, 'groupid' => $group->id, 'created'=>$originalmilestone->created));
+                $data->groupid = $group->id;
+                $data->milestoneid = $thegoodmilestone->id;
                 $data->id = $DB->insert_record('project_deliverable', $data);
                 $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);
                 $DB->update_record('project_deliverable', $data);
             }
+        }
+        else{
+            $data->id = $DB->insert_record('project_deliverable', $data);
+            $data = file_postupdate_standard_filemanager($data, 'localfile', $mform->attachmentoptions, $context, 'mod_project', 'deliverablelocalfile', $data->id);
+            $DB->update_record('project_deliverable', $data);
+        }
             //add_to_log($course->id, 'project', 'adddeliv', "view.php?id=$cm->id&view=deliverables&group={$currentGroupId}", 'add', $cm->id);
 
             /*
@@ -147,7 +151,8 @@ if ($data = $mform->get_data()){
         $deliverable->fatherid = required_param('fatherid', PARAM_INT);
         $delivtitle = ($_GET['typeelm']==0) ? 'address' : 'adddeliv';
         echo $OUTPUT->heading(get_string($delivtitle, 'project'));
-        $deliverable->id = $cm->id; // course module
+        $deliverable->id = $cm->id; 
+        // course module
         $deliverable->projectid = $project->id;
         $deliverable->descriptionformat = FORMAT_HTML;
         $deliverable->description = '';
@@ -163,7 +168,7 @@ if ($data = $mform->get_data()){
         //type livrable
             echo $OUTPUT->heading(get_string('updatedeliv','project'));
         }else if(has_capability('mod/project:editdeliverables', $context)){
-        //ressource vu enseignant
+            //ressource vue enseignant
             echo $OUTPUT->heading(get_string('updateressource','project'));
         }else{
             echo $OUTPUT->heading(get_string('viewressource','project'));

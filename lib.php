@@ -43,16 +43,12 @@ function project_add_instance($project){
 	}else{
 		$projetid=0;
 	}
-	/*var_dump($context);
-	var_dump($project);die();*/
 	
 	/*$draftitemid = $project->introimg;
     if ($draftitemid) {
         file_save_draft_area_files($draftitemid, $context->id, 'mod_project', 'introimg', 0, array('subdirs'=>true));
     }*/
     if ($project->projectconfidential==1) {
-    	//role id has been hardcoded because the get_role_id was not finishing for whatever reasons
-    	//role_change_permission(4, $context, 'moodle/course:viewhiddenactivities', CAP_PROHIBIT);
     	$roles = get_archetype_roles('teacher');
     	foreach ($roles as $value) {
     		role_change_permission($value->id, $context, 'moodle/course:viewhiddenactivities', CAP_PROHIBIT);
@@ -84,7 +80,7 @@ function project_add_instance($project){
     	foreach ($worktypes as $worktype) {
     		$code = substr($worktype, 1,3);
     		$name = substr($worktype, 5);
-    		//prepare the insert. blahblah is theorically unused but mut be not null so ...
+    		//prepare the insert. blahblah is here because the description field must not be null
     		$insert= array('projectid' => $returnid,'domain'=>'worktype','code'=>$code,'label'=>$name,'description'=>'blahblah');
     		$DB->insert_record('project_qualifier', $insert);
     	}
@@ -136,8 +132,6 @@ function project_update_instance($project){
     $introimgoptions = array('maxbytes' =>2000000, 'maxfiles'=> 1,'accepted_types' => array('.jpeg', '.jpg', '.png','return_types'=>FILE_INTERNAL));
     $project = file_postupdate_standard_filemanager($project, 'introimg', $introimgoptions, $context, 'mod_project', 'introimg', $project->id);
     if ($project->projectconfidential==1) {
-    	//role id has been hardcoded because the get_role_id was not finishing for whatever reasons
-    	//role_change_permission(4, $context, 'moodle/course:viewhiddenactivities', CAP_PROHIBIT);
     	$roles = get_archetype_roles('teacher');
     	foreach ($roles as $value) {
     		role_change_permission($value->id, $context, 'moodle/course:viewhiddenactivities', CAP_PROHIBIT);
@@ -152,7 +146,7 @@ function project_update_instance($project){
     		foreach ($worktypes as $worktype) {
     			$code = substr($worktype, 1,3);
     			$name = substr($worktype, 5);
-    			//prepare the insert. blahblah is theorically unused but mut be not null so ...
+    			//prepare the insert. blahblah is here because the description field must not be null
     			$insert= array('projectid' => $returnid,'domain'=>'worktype','code'=>$code,'label'=>$name,'description'=>'blahblah');
     			$DB->insert_record('project_qualifier', $insert);
     		}
@@ -193,7 +187,7 @@ function project_update_instance($project){
     	foreach ($worktypes as $worktype) {
     		$code = substr($worktype, 1,3);
     		$name = substr($worktype, 5);
-    		//prepare the insert. blahblah is theorically unused but mut be not null so ...
+    		//prepare the insert. blahblah is here because the description field must not be null
     		$insert= array('projectid' => $returnid,'domain'=>'worktype','code'=>$code,'label'=>$name,'description'=>'blahblah');
     		$DB->insert_record('project_qualifier', $insert);
     	}
@@ -247,7 +241,7 @@ function project_delete_instance($id){
 		$result = false;
 	}
 
-	echo "full delete : $result<br/>";
+	// echo "full delete : $result<br/>";
     // return $result;
 	return true;
 }
@@ -561,150 +555,158 @@ function project_print_recent_activity($course, $isteacher, $timestart){
 
     // have a look for what has changed in requ
 	$changerequcontent = false;
-    if (!$isteacher) { // teachers only need to see project
-    	if ($logs = project_get_entitychange_logs($course, $timestart, 'changerequ')) {
+	if (!$isteacher) { 
+    // teachers only need to see project
+		if ($logs = project_get_entitychange_logs($course, $timestart, 'changerequ')) {
             // got some, see if any belong to a visible module
-    		foreach ($logs as $log) {
+			foreach ($logs as $log) {
                 // Create a temp valid module structure (only need courseid, moduleid)
-    			$tempmod = new StdClass;
-    			$tempmod->course = $course->id;
-    			$tempmod->id = $log->projectid;
+				$tempmod = new StdClass;
+				$tempmod->course = $course->id;
+				$tempmod->id = $log->projectid;
                 //Obtain the visible property from the instance
-    			if (instance_is_visible('project',$tempmod)) {
-    				$changerequcontent = true;
-    				break;
-    			}
-    		}
+				if (instance_is_visible('project',$tempmod)) {
+					$changerequcontent = true;
+					break;
+				}
+			}
             // if we got some "live" ones then output them
-    		if ($changerequcontent) {
-    			print_headline(get_string('projectchangedrequ', 'project').":");
-    			foreach ($logs as $log) {
+			if ($changerequcontent) {
+				print_headline(get_string('projectchangedrequ', 'project').":");
+				foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
-    				$tempmod = new StdClass;
-    				$tempmod->course = $course->id;
-    				$tempmod->id = $log->projectid;
+					$tempmod = new StdClass;
+					$tempmod->course = $course->id;
+					$tempmod->id = $log->projectid;
                     //Obtain the visible property from the instance
-    				if (instance_is_visible('project',$tempmod)) {
-                        if (!has_capability('mod/project:gradeproject', $context, $log->userid)) {  // don't break anonymous rule
-                        $log->firstname = $course->student;
-                        $log->lastname = '';
-                    }
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,$CFG->wwwroot.'/mod/project/'.$log->url);
-                }
-            }
-        }
-    }
-}
+					if (instance_is_visible('project',$tempmod)) {
+						if (!has_capability('mod/project:gradeproject', $context, $log->userid)) {  
+                        // don't break anonymous rule
+							$log->firstname = $course->student;
+							$log->lastname = '';
+						}
+						print_recent_activity_note($log->time, $log, $isteacher, $log->name,$CFG->wwwroot.'/mod/project/'.$log->url);
+					}
+				}
+			}
+		}
+	}
 
-   // have a look for what has changed in specs
-$changespeccontent = false;
-    if (!$isteacher) { // teachers only need to see project
-    	if ($logs = project_get_entitychange_logs($course, $timestart, 'changespec')) {
+    // have a look for what has changed in specs
+	$changespeccontent = false;
+	if (!$isteacher) { 
+    // teachers only need to see project
+		if ($logs = project_get_entitychange_logs($course, $timestart, 'changespec')) {
             // got some, see if any belong to a visible module
-    		foreach ($logs as $log) {
+			foreach ($logs as $log) {
                 // Create a temp valid module structure (only need courseid, moduleid)
-    			$tempmod->course = $course->id;
-    			$tempmod->id = $log->projectid;
+				$tempmod->course = $course->id;
+				$tempmod->id = $log->projectid;
                 //Obtain the visible property from the instance
-    			if (instance_is_visible('project',$tempmod)) {
-    				$changespeccontent = true;
-    				break;
-    			}
-    		}
+				if (instance_is_visible('project',$tempmod)) {
+					$changespeccontent = true;
+					break;
+				}
+			}
             // if we got some "live" ones then output them
-    		if ($changespeccontent) {
-    			print_headline(get_string('projectchangedspec', 'project').":");
-    			foreach ($logs as $log) {
+			if ($changespeccontent) {
+				print_headline(get_string('projectchangedspec', 'project').":");
+				foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
-    				$tempmod->course = $course->id;
-    				$tempmod->id = $log->projectid;
+					$tempmod->course = $course->id;
+					$tempmod->id = $log->projectid;
                     //Obtain the visible property from the instance
-    				if (instance_is_visible('project',$tempmod)) {
-                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
-                        $log->firstname = $course->student;
-                        $log->lastname = '';
-                    }
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                    	$CFG->wwwroot.'/mod/project/'.$log->url);
-                }
-            }
-        }
-    }
-}
+					if (instance_is_visible('project',$tempmod)) {
+						if (!isteacher($course->id, $log->userid)) {  
+                        // don't break anonymous rule
+							$log->firstname = $course->student;
+							$log->lastname = '';
+						}
+						print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+							$CFG->wwwroot.'/mod/project/'.$log->url);
+					}
+				}
+			}
+		}
+	}
 
     // have a look for what has changed in tasks
-$changetaskcontent = false;
-    if (!$isteacher) { // teachers only need to see project
-    	if ($logs = project_get_entitychange_logs($course, $timestart, 'changetask')) {
+	$changetaskcontent = false;
+	if (!$isteacher) { 
+    // teachers only need to see project
+		if ($logs = project_get_entitychange_logs($course, $timestart, 'changetask')) {
             // got some, see if any belong to a visible module
-    		foreach ($logs as $log) {
+			foreach ($logs as $log) {
                 // Create a temp valid module structure (only need courseid, moduleid)
-    			$tempmod->course = $course->id;
-    			$tempmod->id = $log->projectid;
+				$tempmod->course = $course->id;
+				$tempmod->id = $log->projectid;
                 //Obtain the visible property from the instance
-    			if (instance_is_visible('project',$tempmod)) {
-    				$changetaskcontent = true;
-    				break;
-    			}
-    		}
+				if (instance_is_visible('project',$tempmod)) {
+					$changetaskcontent = true;
+					break;
+				}
+			}
             // if we got some "live" ones then output them
-    		if ($changetaskcontent) {
-    			print_headline(get_string('projectchangedtask', 'project').":");
-    			foreach ($logs as $log) {
+			if ($changetaskcontent) {
+				print_headline(get_string('projectchangedtask', 'project').":");
+				foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
-    				$tempmod->course = $course->id;
-    				$tempmod->id = $log->projectid;
+					$tempmod->course = $course->id;
+					$tempmod->id = $log->projectid;
                     //Obtain the visible property from the instance
-    				if (instance_is_visible('project',$tempmod)) {
-                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
-                        $log->firstname = $course->student;
-                        $log->lastname = '';
-                    }
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                    	$CFG->wwwroot.'/mod/project/'.$log->url);
-                }
-            }
-        }
-    }
-}
+					if (instance_is_visible('project',$tempmod)) {
+						if (!isteacher($course->id, $log->userid)) {  
+                        // don't break anonymous rule
+							$log->firstname = $course->student;
+							$log->lastname = '';
+						}
+						print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+							$CFG->wwwroot.'/mod/project/'.$log->url);
+					}
+				}
+			}
+		}
+	}
 
     // have a look for what has changed in milestones
-$changemilescontent = false;
-    if (!$isteacher) { // teachers only need to see project
-    	if ($logs = project_get_entitychange_logs($course, $timestart, 'changemilestone')) {
+	$changemilescontent = false;
+	if (!$isteacher) { 
+    // teachers only need to see project
+		if ($logs = project_get_entitychange_logs($course, $timestart, 'changemilestone')) {
             // got some, see if any belong to a visible module
-    		foreach ($logs as $log) {
+			foreach ($logs as $log) {
                 // Create a temp valid module structure (only need courseid, moduleid)
-    			$tempmod->course = $course->id;
-    			$tempmod->id = $log->projectid;
+				$tempmod->course = $course->id;
+				$tempmod->id = $log->projectid;
                 //Obtain the visible property from the instance
-    			if (instance_is_visible('project',$tempmod)) {
-    				$changemilescontent = true;
-    				break;
-    			}
-    		}
+				if (instance_is_visible('project',$tempmod)) {
+					$changemilescontent = true;
+					break;
+				}
+			}
             // if we got some "live" ones then output them
-    		if ($changemilescontent) {
-    			print_headline(get_string('projectchangedmilestone', 'project').":");
-    			foreach ($logs as $log) {
+			if ($changemilescontent) {
+				print_headline(get_string('projectchangedmilestone', 'project').":");
+				foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
-    				$tempmod->course = $course->id;
-    				$tempmod->id = $log->projectid;
+					$tempmod->course = $course->id;
+					$tempmod->id = $log->projectid;
                     //Obtain the visible property from the instance
-    				if (instance_is_visible('project',$tempmod)) {
-                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
-                        $log->firstname = $course->student;
-                        $log->lastname = '';
-                    }
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                    	$CFG->wwwroot.'/mod/project/'.$log->url);
-                }
-            }
-        }
-    }
-}
-    // have a look for what has changed in deliverables
-$changedelivcontent = false;
+					if (instance_is_visible('project',$tempmod)) {
+						if (!isteacher($course->id, $log->userid)) {  
+                        // don't break anonymous rule
+							$log->firstname = $course->student;
+							$log->lastname = '';
+						}
+						print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+							$CFG->wwwroot.'/mod/project/'.$log->url);
+					}
+				}
+			}
+		}
+	}
+// have a look for what has changed in deliverables
+	$changedelivcontent = false;
     if (!$isteacher) { // teachers only need to see project
     	if ($logs = project_get_entitychange_logs($course, $timestart, 'changedeliverable')) {
             // got some, see if any belong to a visible module
@@ -727,48 +729,50 @@ $changedelivcontent = false;
     				$tempmod->id = $log->projectid;
                     //Obtain the visible property from the instance
     				if (instance_is_visible('project',$tempmod)) {
-                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
-                        $log->firstname = $course->student;
-                        $log->lastname = '';
-                    }
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                    	$CFG->wwwroot.'/mod/project/'.$log->url);
-                }
-            }
-        }
+    					if (!isteacher($course->id, $log->userid)) {  
+                        // don't break anonymous rule
+    						$log->firstname = $course->student;
+    						$log->lastname = '';
+    					}
+    					print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+    						$CFG->wwwroot.'/mod/project/'.$log->url);
+    				}
+    			}
+    		}
+    	}
     }
-}
 
     // have a look for new gradings for this user (grade)
-$gradecontent = false;
-if ($logs = project_get_grade_logs($course, $timestart)) {
+    $gradecontent = false;
+    if ($logs = project_get_grade_logs($course, $timestart)) {
         // got some, see if any belong to a visible module
-	foreach ($logs as $log) {
-            // Create a temp valid module structure (only need courseid, moduleid)
-		$tempmod->course = $course->id;
-		$tempmod->id = $log->projectid;
-            //Obtain the visible property from the instance
-		if (instance_is_visible('project',$tempmod)) {
-			$gradecontent = true;
-			break;
-		}
-	}
+    	foreach ($logs as $log) {
+        // Create a temp valid module structure (only need courseid, moduleid)
+    		$tempmod->course = $course->id;
+    		$tempmod->id = $log->projectid;
+        //Obtain the visible property from the instance
+    		if (instance_is_visible('project',$tempmod)) {
+    			$gradecontent = true;
+    			break;
+    		}
+    	}
         // if we got some "live" ones then output them
-	if ($gradecontent) {
-		print_headline(get_string('projectfeedback', 'project').":");
-		foreach ($logs as $log) {
+    	if ($gradecontent) {
+    		print_headline(get_string('projectfeedback', 'project').":");
+    		foreach ($logs as $log) {
                 //Create a temp valid module structure (only need courseid, moduleid)
-			$tempmod->course = $course->id;
-			$tempmod->id = $log->projectid;
+    			$tempmod->course = $course->id;
+    			$tempmod->id = $log->projectid;
                 //Obtain the visible property from the instance
-			if (instance_is_visible('project',$tempmod)) {
-                    $log->firstname = $course->teacher;    // Keep anonymous
-                    $log->lastname = '';
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                    	$CFG->wwwroot.'/mod/project/'.$log->url);
-                }
-            }
-        }
+    			if (instance_is_visible('project',$tempmod)) {
+    				$log->firstname = $course->teacher;    
+                    // Keep anonymous
+    				$log->lastname = '';
+    				print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+    					$CFG->wwwroot.'/mod/project/'.$log->url);
+    			}
+    		}
+    	}
     }
 
     // have a look for new project (only show to teachers) (submit)
@@ -829,68 +833,70 @@ function project_grades($cmid) {
 		return NULL;
 	}
 
-    if ($project->grade == 0) { // No grading
-    	return NULL;
-    }
+	if ($project->grade == 0) { 
+    // No grading
+		return NULL;
+	}
 
-    $query = "
-    SELECT
-    a.*,
-    c.weight
-    FROM
-    {project_assessment} as a
-    LEFT JOIN
-    {project_criterion} as c
-    ON
-    a.criterion = c.id
-    WHERE
-    a.projectid = {$project->id}
-    ";
-    // echo $query ;
-    $grades = $DB->get_records_sql($query);
-    if ($grades){
-        if ($project->grade > 0 ){ // Grading numerically
-        	$finalgrades = array();
-        	foreach($grades as $aGrade){
-        		$finalgrades[$aGrade->userid] = @$finalgrades[$aGrade->userid] + $aGrade->grade * $aGrade->weight;
-        		$totalweights[$aGrade->userid] = @$totalweights[$aGrade->userid] + $aGrade->weight;
-        	}
-        	foreach(array_keys($finalgrades) as $aUserId){
-        		if($totalweights[$aGrade->userid] != 0){
-        			$final[$aUserId] = round($finalgrades[$aUserId] / $totalweights[$aGrade->userid]);
-        		}
-        		else{
-        			$final[$aUserId] = 0;
-        		}
-        	}
-        	$return->grades = @$final;
-        	$return->maxgrade = $project->grade;
-        } else { // Scales
-        	$finalgrades = array();
-        	$scaleid = - ($project->grade);
-        	$maxgrade = '';
-        	if ($scale = $DB->get_record('scale', array('id' => $scaleid))) {
-        		$scalegrades = make_menu_from_list($scale->scale);
-        		foreach ($grades as $aGrade) {
-        			$finalgrades[$userid] = @$finalgrades[$userid] + $scalegrades[$aGgrade->grade] * $aGrade->weight;
-        			$totalweights[$aGrade->userid] = @$totalweights[$aGrade->userid] + $aGrade->weight;
-        		}
-        		$maxgrade = $scale->name;
+	$query = "
+	SELECT
+	a.*,
+	c.weight
+	FROM
+	{project_assessment} as a
+	LEFT JOIN
+	{project_criterion} as c
+	ON
+	a.criterion = c.id
+	WHERE
+	a.projectid = {$project->id}
+	";
+	$grades = $DB->get_records_sql($query);
+	if ($grades){
+		if ($project->grade > 0 ){ 
+        // Grading numerically
+			$finalgrades = array();
+			foreach($grades as $aGrade){
+				$finalgrades[$aGrade->userid] = @$finalgrades[$aGrade->userid] + $aGrade->grade * $aGrade->weight;
+				$totalweights[$aGrade->userid] = @$totalweights[$aGrade->userid] + $aGrade->weight;
+			}
+			foreach(array_keys($finalgrades) as $aUserId){
+				if($totalweights[$aGrade->userid] != 0){
+					$final[$aUserId] = round($finalgrades[$aUserId] / $totalweights[$aGrade->userid]);
+				}
+				else{
+					$final[$aUserId] = 0;
+				}
+			}
+			$return->grades = @$final;
+			$return->maxgrade = $project->grade;
+		} else { 
+        // Scales
+			$finalgrades = array();
+			$scaleid = - ($project->grade);
+			$maxgrade = '';
+			if ($scale = $DB->get_record('scale', array('id' => $scaleid))) {
+				$scalegrades = make_menu_from_list($scale->scale);
+				foreach ($grades as $aGrade) {
+					$finalgrades[$userid] = @$finalgrades[$userid] + $scalegrades[$aGgrade->grade] * $aGrade->weight;
+					$totalweights[$aGrade->userid] = @$totalweights[$aGrade->userid] + $aGrade->weight;
+				}
+				$maxgrade = $scale->name;
 
-        		foreach(array_keys($finalgrades) as $aUserId){
-        			if($totalweights[$aGrade->userid] != 0){
-        				$final[$userId] = round($finalgrades[$aUserId] / $totalweights[$aGrade->userid]);
-        			} else {
-        				$final[$userId] = 0;
-        			}
-        		}
-        	}
-        	$return->grades = @$final;
-        	$return->maxgrade = $maxgrade;
-        }
-        return $return;
-    }
-    return NULL;
+				foreach(array_keys($finalgrades) as $aUserId){
+					if($totalweights[$aGrade->userid] != 0){
+						$final[$userId] = round($finalgrades[$aUserId] / $totalweights[$aGrade->userid]);
+					} else {
+						$final[$userId] = 0;
+					}
+				}
+			}
+			$return->grades = @$final;
+			$return->maxgrade = $maxgrade;
+		}
+		return $return;
+	}
+	return NULL;
 }
 
 
@@ -1009,9 +1015,12 @@ function project_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
     // Make sure groups allow this user to see this file
 	if($entry){
 		if(isset($entry->groupid)){
-			if ($entry->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
-			   if (!groups_group_exists($entry->groupid)) { // Can't find group
-					return false;                           // Be safe and don't send it to anyone
+			if ($entry->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   
+				// Groups are being used
+				if (!groups_group_exists($entry->groupid)) { 
+			    	// Can't find group
+					return false;                           
+					// Be safe and don't send it to anyone
 				}
 
 				if (!groups_is_member($entry->groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
@@ -1026,7 +1035,8 @@ function project_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
 	}
 
     // finally send the file
-    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+	send_stored_file($file, 0, 0, true); 
+    // download MUST be forced - security!
 }
 function project_supports($feature) {
 	switch($feature) {

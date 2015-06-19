@@ -40,15 +40,18 @@ class Deliverable_Form extends moodleform {
         $typeelm = required_param('typeelm', PARAM_INT);
         $groupid = $this->currentGroupId;
         $modcontext = context_module::instance($this->project->cmid);
-        $canEdit=false; // just in case
+        $canEdit=false; 
+        // just in case
         if ($typeelm==0) {
             $canEdit = has_capability('mod/project:editressources', $modcontext);
         }else{
             $canEdit = has_capability('mod/project:editdeliverables', $modcontext);
         }
         
-        $maxfiles = 1;                // TODO: add some setting
-        $maxbytes = $COURSE->maxbytes; // TODO: add some setting    
+        $maxfiles = 1;                
+        // TODO: add some setting
+        $maxbytes = $COURSE->maxbytes; 
+        // TODO: add some setting    
         $this->descriptionoptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'context' => $modcontext);
         $this->attachmentoptions = array('subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
 
@@ -84,7 +87,6 @@ class Deliverable_Form extends moodleform {
             $query = "SELECT id, abstract, ordering FROM {project_milestone} WHERE projectid = {$this->project->id} AND groupid = {$this->currentGroupId} ORDER BY ordering";
             $milestones = $DB->get_records_sql($query);
             $milestonesoptions = array();
-            // le $nomilestone va servir a afficher une alerte si aucune étape n'estt définie pour la duplication
             $nomilestone=false;
             if(count($milestones)>0){
                 foreach($milestones as $aMilestone){

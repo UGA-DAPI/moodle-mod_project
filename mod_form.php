@@ -81,13 +81,13 @@ class mod_project_mod_form extends moodleform_mod {
         //note that those are advanced checkbox because we want it to return 0 when unchecked, and a regular checkbox don't do that.
         $mform->addElement('advcheckbox', 'projectconfidential', get_string('CONFIDENTIAL', 'project'));
         $mform->setDefault('projectconfidential', true); //set it a checked
-        $mform->addElement('advcheckbox', 'projectusesrequs', get_string('requirements', 'project')); //the page related to this is broken
+        //$mform->addElement('advcheckbox', 'projectusesrequs', get_string('requirements', 'project')); //the page related to this is broken
         $mform->addElement('advcheckbox', 'projectusestasks', get_string('tasks', 'project')); 
         $mform->setDefault('projectusestasks', true); //set it a checked
-        $mform->addElement('advcheckbox', 'projectusesspecs', get_string('specifications', 'project'));  //the page related to this is broken
+        //$mform->addElement('advcheckbox', 'projectusesspecs', get_string('specifications', 'project'));  //the page related to this is broken
         $mform->addElement('advcheckbox', 'projectusesdelivs', get_string('ressources', 'project')." & ".get_string('deliverables', 'project')); 
         $mform->setDefault('projectusesdelivs', true); //set it a checked
-        $mform->addElement('advcheckbox', 'projectusesvalidations', get_string('validations', 'project')); //the page related to this is broken
+        //$mform->addElement('advcheckbox', 'projectusesvalidations', get_string('validations', 'project')); //the page related to this is broken
         //this serve to customize the worktype options, replacing the default one that are suited for informatic modules
         $mform->addElement('text', 'howtoworktype', get_string('howtoworktype', 'project'));
         $mform->addHelpButton('howtoworktype', 'howtoworktype', 'project');

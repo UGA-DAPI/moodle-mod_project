@@ -58,7 +58,7 @@
 		include 'milestones.controller.php';
 	}
 	echo $pagebuffer;
-	//messages de changement de statut des étapes !!
+	//messages de changement de statut des étapes
 	if($work =='askvalider'){
 		echo $OUTPUT->confirm("Votre étape a bien été soumise à la validation. Vous pouvez, de plus, commenter cette demande de validation.<br /><br />Voulez-vous laisser un commentaire sur cette demande dans la partie messages ?", $url, $urlretour);
 	}elseif($work =='refuser'){
@@ -67,8 +67,6 @@
 		project_print_milestones($project, $currentGroupId, NULL, $cm->id);
 		if ($USER->editmode == 'on' && (has_capability('mod/project:changemilestone', $context)) && $project->etat==0) {
 			echo "<br/><a href='view.php?id={$cm->id}&amp;work=add'>".get_string('addmilestone','project')."</a>";
-			//echo " - <a href='view.php?id={$cm->id}&amp;work=clearall'>".get_string('clearall','project')."</a>";
-			//echo " - <a href='view.php?id={$cm->id}&amp;work=sortbydate'>".get_string('sortbydate','project')."</a>";
 		}
 	}
 }

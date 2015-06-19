@@ -20,22 +20,25 @@
 		$messageParent =0;
 	}
 	
-	if($messageid==0 && $messageParent==0){//cas ajout discussion
+	if($messageid==0 && $messageParent==0){
+		//cas ajout discussion
 		$mode = 'add';
 		$headingTitle= get_string('adddiscu','project');
-	}elseif($messageid==0 && $messageParent>0){//cas ajout d'une réponse
+	}elseif($messageid==0 && $messageParent>0){
+		//cas ajout d'une réponse
 		$mode = 'add';
 		//$headingTitle= get_string('addmessage','project');
 		$discussion = $DB->get_record('project_messages', array('id' => $messageParent));
 		$headingTitle= $discussion->abstract;
-	}elseif($messageid>0 && $messageParent==0){//cas modif d'une discution
+	}elseif($messageid>0 && $messageParent==0){
+		//cas modif d'une discution
 		$mode = 'update';
 		$headingTitle= get_string('updatediscu','project');
-	}elseif($messageid>0 && $messageParent>0){//cas modif d'une réponse
+	}elseif($messageid>0 && $messageParent>0){
+		//cas modif d'une réponse
 		$mode = 'update';
 		$headingTitle= get_string('updatemessage','project');
 	}
-	//$mode = ($messageid) ? 'update' : 'add' ;
 	
 	$url = $CFG->wwwroot.'/mod/project/view.php?id='.$id.'#node'.$messageid;
 	$mform = new Message_Form($url, $mode, $project, $messageid, $messageParent);
@@ -52,20 +55,22 @@
 		$data->message = $data->message_editor['text'];
 		$data->lastuserid = $USER->id;
 		// editors pre save processing
-		//gestoin fichier sur le champ message enlevé car maxfile = 0 et inutile ... 19/09/2013
+		//gestion fichier sur le champ message enlevé car maxfile = 0 et inutile ... 19/09/2013
 		//$draftid_editor = file_get_submitted_draft_itemid('message_editor');
 		//$data->message = file_save_draft_area_files($draftid_editor, $context->id, 'mod_project', 'message', $data->id, array('subdirs' => true), $data->message);
 	    //$data = file_postupdate_standard_editor($data, 'message', $mform->descriptionoptions, $context, 'mod_project', 'message', $data->id);
 		
 		if ($data->messageid) {
-			$data->id = $data->messageid; // id is course module id
+			$data->id = $data->messageid; 
+			// id is course module id
 			$DB->update_record('project_messages', $data);
             //add_to_log($course->id, 'project', 'changemessage', "view.php?id=$cm->id&view=messages&group={$currentGroupId}", 'update', $cm->id);
 
 		} else {
 			$data->created = time();
     		$data->ordering = project_tree_get_max_ordering_message($project->id, $currentGroupId, 'project_messages', true, $data->parent) + 1;
-			unset($data->id); // id is course module id
+			unset($data->id); 
+			// id is course module id
 			if ($data->groupid == 0 && $groupmode != NOGROUPS) {
                 $groups = groups_get_all_groups($COURSE->id);
                 foreach ($groups as $group) {
@@ -92,7 +97,8 @@
 		$message->parent = $messageParent;
 		//$messagetitle = ($message->parent) ? 'addmessage' : 'adddiscu';
 		echo $OUTPUT->heading($headingTitle);
-		$message->id = $cm->id; // course module
+		$message->id = $cm->id;
+		// course module
 		$message->projectid = $project->id;
 		$message->messageformat = FORMAT_HTML;
 		$message->message = '';

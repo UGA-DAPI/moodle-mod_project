@@ -44,7 +44,8 @@ if ($data = $mform->get_data()){
     $data = file_postupdate_standard_editor($data, 'description', $mform->descriptionoptions, $context, 'mod_project', 'taskdescription', $data->id);
 
     if ($data->taskid) {
-			$data->id = $data->taskid; // id is course module id
+			$data->id = $data->taskid; 
+            // id is course module id
             $oldAssigneeId = $DB->get_field('project_task', 'assignee', array('id' => $data->id));
             $DB->update_record('project_task', $data);
             //add_to_log($course->id, 'project', 'changetask', "view.php?id=$cm->id&view=tasks&group={$currentGroupId}", 'update', $cm->id);
@@ -104,7 +105,8 @@ if ($data = $mform->get_data()){
         else {
             $data->created = time();
             $data->ordering = project_tree_get_max_ordering($project->id, $currentGroupId, 'project_task', true, $data->fatherid) + 1;
-			unset($data->id); // id is course module id
+			unset($data->id); 
+            // id is course module id
 
 			if ($data->groupid == 0 && $groupmode != NOGROUPS) {
                 $groups = groups_get_all_groups($COURSE->id);
